@@ -3,12 +3,12 @@ This repo contains my notes, exercie solutions as well as lab solutions for the 
 Course. In this file, I will record my progress and the notes for the course and
 solutions.
 
-### xv6
+## xv6
 
 ```
-xv6 is a re-implementation of Dennis Ritchie's and Ken Thompson's Unix
-Version 6 (v6) by MIT.  xv6 loosely follows the structure and style of v6,
-but is implemented for a modern x86-based multiprocessor using ANSI C.
+xv6 is a re-implementation of Dennis Ritchie's and Ken Thompson's Unix Version 6 (v6) by MIT.
+xv6 loosely follows the structure and style of v6, but is implemented for a modern x86-based
+multiprocessor using ANSI C.
 ```
 
 #### What I did?
@@ -22,7 +22,7 @@ but is implemented for a modern x86-based multiprocessor using ANSI C.
   * Lec4: Lazy page allocation (no)
   * Lec5: xv6 CPU alarm (no)
 
-### JOS
+## JOS
 
 ```
 A OS for the labs assgnments. Only contains pieces of skeleton code.
