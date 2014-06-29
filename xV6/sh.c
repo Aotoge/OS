@@ -1,5 +1,4 @@
 // Shell.
-
 #include "types.h"
 #include "user.h"
 #include "fcntl.h"
@@ -55,8 +54,7 @@ struct cmd *parsecmd(char*);
 
 // Execute cmd.  Never returns.
 void
-runcmd(struct cmd *cmd)
-{
+runcmd(struct cmd *cmd) {
   int p[2];
   struct backcmd *bcmd;
   struct execcmd *ecmd;
@@ -66,36 +64,38 @@ runcmd(struct cmd *cmd)
 
   if(cmd == 0)
     exit();
-  
+
   switch(cmd->type){
-  default:
-    panic("runcmd");
+    default:
+      panic("runcmd");
 
-  case EXEC:
-    ecmd = (struct execcmd*)cmd;
-    if(ecmd->argv[0] == 0)
-      exit();
-    exec(ecmd->argv[0], ecmd->argv);
-    printf(2, "exec %s failed\n", ecmd->argv[0]);
-    break;
+    case EXEC:
+      ecmd = (struct execcmd*)cmd;
+      if(ecmd->argv[0] == 0) {
+        exit();
+      }
+      exec(ecmd->argv[0], ecmd->argv);
+      printf(2, "exec %s failed\n", ecmd->argv[0]);
+      break;
 
-  case REDIR:
-    rcmd = (struct redircmd*)cmd;
-    close(rcmd->fd);
-    if(open(rcmd->file, rcmd->mode) < 0){
-      printf(2, "open %s failed\n", rcmd->file);
-      exit();
-    }
-    runcmd(rcmd->cmd);
-    break;
+    case REDIR:
+      rcmd = (struct redircmd*)cmd;
+      close(rcmd->fd);
+      if(open(rcmd->file, rcmd->mode) < 0){
+        printf(2, "open %s failed\n", rcmd->file);
+        exit();
+      }
+      runcmd(rcmd->cmd);
+      break;
 
-  case LIST:
-    lcmd = (struct listcmd*)cmd;
-    if(fork1() == 0)
-      runcmd(lcmd->left);
-    wait();
-    runcmd(lcmd->right);
-    break;
+    case LIST:
+      lcmd = (struct listcmd*)cmd;
+      if(fork1() == 0) {
+        runcmd(lcmd->left);
+      }
+      wait();
+      runcmd(lcmd->right);
+      break;
 
   case PIPE:
     pcmd = (struct pipecmd*)cmd;
@@ -120,7 +120,7 @@ runcmd(struct cmd *cmd)
     wait();
     wait();
     break;
-    
+
   case BACK:
     bcmd = (struct backcmd*)cmd;
     if(fork1() == 0)
@@ -146,7 +146,7 @@ main(void)
 {
   static char buf[100];
   int fd;
-  
+
   // Assumes three file descriptors open.
   while((fd = open("console", O_RDWR)) >= 0){
     if(fd >= 3){
@@ -154,7 +154,7 @@ main(void)
       break;
     }
   }
-  
+
   // Read and run input commands.
   while(getcmd(buf, sizeof(buf)) >= 0){
     if(buf[0] == 'c' && buf[1] == 'd' && buf[2] == ' '){
@@ -183,7 +183,7 @@ int
 fork1(void)
 {
   int pid;
-  
+
   pid = fork();
   if(pid == -1)
     panic("fork");
@@ -268,7 +268,7 @@ gettoken(char **ps, char *es, char **q, char **eq)
 {
   char *s;
   int ret;
-  
+
   s = *ps;
   while(s < es && strchr(whitespace, *s))
     s++;
@@ -301,7 +301,7 @@ gettoken(char **ps, char *es, char **q, char **eq)
   }
   if(eq)
     *eq = s;
-  
+
   while(s < es && strchr(whitespace, *s))
     s++;
   *ps = s;
@@ -312,7 +312,7 @@ int
 peek(char **ps, char *es, char *toks)
 {
   char *s;
-  
+
   s = *ps;
   while(s < es && strchr(whitespace, *s))
     s++;
@@ -420,7 +420,7 @@ parseexec(char **ps, char *es)
   int tok, argc;
   struct execcmd *cmd;
   struct cmd *ret;
-  
+
   if(peek(ps, es, "("))
     return parseblock(ps, es);
 
@@ -459,7 +459,7 @@ nulterminate(struct cmd *cmd)
 
   if(cmd == 0)
     return 0;
-  
+
   switch(cmd->type){
   case EXEC:
     ecmd = (struct execcmd*)cmd;
@@ -478,7 +478,7 @@ nulterminate(struct cmd *cmd)
     nulterminate(pcmd->left);
     nulterminate(pcmd->right);
     break;
-    
+
   case LIST:
     lcmd = (struct listcmd*)cmd;
     nulterminate(lcmd->left);
