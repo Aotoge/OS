@@ -48,18 +48,3 @@ bochs" and then type "c" at the bochs prompt. To run in QEMU, run
 
 To create a typeset version of the code, run "make xv6.pdf".  This
 requires the "mpage" utility.  See http://www.mesa.nl/pub/mpage/.
-
--------------------------------------------------------------
-Modification : Mainly according to the assignments in 6.828
--------------------------------------------------------------
-# LEC3 In Class: Trace System Calls; add halt
-1. System Call Tracing (finish)
-2. Add halt (finish)
-    <1> in usys.S, defined a lot user functions that invoke the system call
-3. Add dup2
-
-# LEC4 In Class: xv6 CPU alarm
-1. add two system calls
-  <1> sys_alarm
-  <2> sys_handler_ret
-2. install some code on the stack
