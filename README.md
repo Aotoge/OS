@@ -16,7 +16,7 @@ multiprocessor using ANSI C.
   * modified the source code to solve the exercises given in the lecture
 
 #### Progress
-  * Lec1: shell exercises (no)
+  * [Lec1: shell exercises](shell-exercise) (no)
   * Lec2: Boot xv6 exercise (no)
   * Lec3: Trace system calls; add halt (no)
   * Lec4: Lazy page allocation (no)
@@ -32,3 +32,17 @@ A OS for the labs assgnments. Only contains pieces of skeleton code.
   * Lab 1 : C, Assembly, Tools, and Bootstrapping (no)
   * Lab 2 : Memory Management (no)
   *
+
+
+#### Shell-Exercise
+
+1. Executing simple commands
+
+    ```
+    use the execvp(const char *file, char *const argv[]) function
+    this function will duplicate the actions the shell in searching
+    an executable file if the specified file name does not contain '/'.
+    ```
+2.
+
+
