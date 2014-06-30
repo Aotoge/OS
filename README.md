@@ -16,7 +16,7 @@ multiprocessor using ANSI C.
   * modified the source code to solve the exercises given in the lecture
 
 #### Progress
-  * [Lec1: shell exercises](#shell-exercise)
+  * [Lec1: shell exercise](#shell-exercise)
     * basic exercises (ok)
     * challenge exercise (no)
   * Lec2: Boot xv6 exercise (no)
