@@ -49,14 +49,22 @@ sys_sbrk(void)
   int n;
   if(argint(0, &n) < 0)
     return -1;
-  // cprintf("before call sys_sbrk, sz = %x\n", proc->sz);
-  // cprintf("call sys_sbrk = %d\n", n);
   addr = proc->sz;
   if(growproc(n) < 0)
     return -1;
-  proc->sz += n;
   return addr;
   */
+
+  // Lazy-page Allocation
+  int addr;
+  int n;
+  if (argint(0, &n) < 0) {
+    return -1;
+  }
+  addr = proc->sz;
+  proc->sz += n;
+  return addr;
+  /*
   int addr;
   int n;
   if (argint(0, &n) < 0) {
@@ -75,6 +83,7 @@ sys_sbrk(void)
     proc->sz += n;
   }
   return addr;
+  */
 }
 
 int

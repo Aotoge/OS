@@ -149,13 +149,15 @@ trap(struct trapframe *tf)
     break;
 
   case T_PGFLT:
-    cprintf("Page Fault at address %x\n", rcr2());
+    // Ori-Stuff
     // cprintf("Oops pid %d %s: trap %d err %d on cpu %d "
     //         "eip 0x%x addr 0x%x--kill proc\n",
     //         proc->pid, proc->name, tf->trapno, tf->err, cpu->id, tf->eip,
     //         rcr2());
     // proc->killed = 1;
-    if (lazy_allocation(rcr2())) {
+
+    // cprintf("Page Fault at address %x\n", rcr2());
+    if (lazy_allocation(rcr2()) < 0) {
       proc->killed = 1;
     }
     break;
@@ -200,7 +202,8 @@ int lazy_allocation(uint addr) {
     return -1;
   }
   memset(mem, 0, PGSIZE);
-  if (mappages(proc->pgdir, (char*)a, PGSIZE, v2p(mem), PTE_W | PTE_U)) {
+  if (mappages(proc->pgdir, (char*)a, PGSIZE, v2p(mem), PTE_W | PTE_U) < 0) {
+    cprintf("mappages error\n");
     return -1;
   }
   return 0;

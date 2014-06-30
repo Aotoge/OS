@@ -27,7 +27,15 @@ multiprocessor using ANSI C.
     * Part 2
         * basic (ok)
         * implement dup2 system call (no)
-  * Lec4: Lazy page allocation (no)
+  * [Lec4: Lazy page allocation](#lazy-page-allocation)
+    * part 1
+        * Eliminate allocation from sbrk (ok)
+    * part 2
+        * Basic Lazy Allocation (ok)
+        * hangle negative sbrk() arg
+        * verify fork() and exit() work even if some sbrk() address have no memory allocated for them
+        * Correctly handle faults on the invalid page below the stack
+        * Make sure that kernel use of not-yet-allocated allocated user address works
   * Lec5: xv6 CPU alarm (no)
 
 #### Shell Exercise
@@ -125,6 +133,48 @@ check inclass_sh.c for solution.
 
     // modified syscall.c, syscall.h, usys.S (such as marco definiton...)
     // then implemnt the sys_halt() in file sysproc.c
+    ```
+
+#### Lazy Page Allocation
+
+1. Eliminate allocation from sbrk()
+
+    ```c++
+    // modified sys_sbrk() in sysproc.c
+    int addr;
+    int n;
+    if (argint(0, &n) < 0) {
+      return -1;
+    }
+    addr = proc->sz;
+    proc->sz += n;
+    return addr;
+    ```
+
+2. Lazy Allocation
+
+    ```c++
+    // modified trap() in trap.c
+    case T_PGFLT:
+        // rcr2() return the address that caused the page fault
+        if (lazy_page_allocation(rcr2()) < 0) {
+          proc->killed = 1;
+        }
+        break;
+
+    // lazy page allocation
+    int lazy_page_allocation(uint addr) {
+      uint a = PGROUNDDOWN(addr);
+      char *mem = kalloc();
+      if (mem == 0) {
+        return -1;
+      }
+      memset(mem, 0, PGSIZE);
+      if (mappages(proc->pgdir, (char*)a, PGSIZE, v2p(mem), PTE_W | PTE_U) < 0) {
+        return -1;
+      }
+      return 0;
+    }
     ```
 
 ## JOS
