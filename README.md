@@ -19,8 +19,14 @@ multiprocessor using ANSI C.
   * [Lec1: shell exercise](#shell-exercise)
     * basic exercises (ok)
     * challenge exercise (no)
-  * Lec2: Boot xv6 exercise (no)
-  * Lec3: Trace system calls; add halt (no)
+  * Lec2: Boot xv6 exercise (ok)
+  * [Lec3: Trace system calls; add halt](#system-call)
+    * Part 1
+        * basic (ok)
+        * print the system call arguments (no)
+    * Part 2
+        * basic (ok)
+        * implement dup2 system call (no)
   * Lec4: Lazy page allocation (no)
   * Lec5: xv6 CPU alarm (no)
 
@@ -101,6 +107,24 @@ check inclass_sh.c for solution.
     4.1 Implement lists of commands, sperated by ";"
     4.2 Implement sub shells by implementing "(" and ")"
     4.3 Implement running commands in the background by supporting "&" and "wait"
+    ```
+
+#### System call
+
+1. Sytem call tracing
+
+   ```
+   modified syscall() function in syscall.c
+   ```
+
+2. Halt system call
+
+    ```
+    // create a file called halt.c and modified Makefile, and this will
+    // generate a sh command: halt
+
+    // modified syscall.c, syscall.h, usys.S (such as marco definiton...)
+    // then implemnt the sys_halt() in file sysproc.c
     ```
 
 ## JOS
