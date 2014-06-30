@@ -26,6 +26,7 @@ multiprocessor using ANSI C.
 
 #### Shell Exercise
 check inclass_sh.c for solution.
+
 1. Executing simple commands
 
     ```c++
@@ -95,9 +96,12 @@ check inclass_sh.c for solution.
    ```
 
 4. Challenge Exercise
-4.1 Implement lists of commands, sperated by ";"
-4.2 Implement sub shells by implementing "(" and ")"
-4.3 Implement running commands in the background by supporting "&" and "wait"
+
+    ```
+    4.1 Implement lists of commands, sperated by ";"
+    4.2 Implement sub shells by implementing "(" and ")"
+    4.3 Implement running commands in the background by supporting "&" and "wait"
+    ```
 
 ## JOS
 
