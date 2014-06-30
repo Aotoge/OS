@@ -112,7 +112,8 @@ A OS for the labs assgnments. Only contains pieces of skeleton code.
 #### Progress
   * Lab 1 : C, Assembly, Tools, and Bootstrapping
     * Grade: 50/50
-  * Lab 2 : Memory Management (no)
+  * Lab 2 : Memory Management
+    * Grade: 70/70
 
 
 

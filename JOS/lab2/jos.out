@@ -1,0 +1,88 @@
+*** Now run 'gdb'.
+***
+Could not open option rom 'sgabios.bin': No such file or directory
+6828 decimal is 15254 octal!
+Physical memory: 66556K available, base = 640K, extended = 65532K
+Total Pages: 16639
+Debug info of pages....
+&pages[0] = f011a000
+&pages[npages-1] = f013a7f0
+check_page_free_list(1) ok
+check_page_alloc() succeeded!
+check_page() succeeded!
+Check Pages Array
+n = 33 pages
+Check Physical Memory Mapping
+Check Kernel Stack Mapping
+NPDENTRIES = 1024
+pgdir[960] = 1007
+pgdir[961] = 4007
+pgdir[962] = 5007
+pgdir[963] = 6007
+pgdir[964] = 7007
+pgdir[965] = 8007
+pgdir[966] = 9007
+pgdir[967] = a007
+pgdir[968] = b007
+pgdir[969] = c007
+pgdir[970] = d007
+pgdir[971] = e007
+pgdir[972] = f007
+pgdir[973] = 10007
+pgdir[974] = 11007
+pgdir[975] = 12007
+pgdir[976] = 13007
+pgdir[977] = 14007
+pgdir[978] = 15007
+pgdir[979] = 16007
+pgdir[980] = 17007
+pgdir[981] = 18007
+pgdir[982] = 19007
+pgdir[983] = 1a007
+pgdir[984] = 1b007
+pgdir[985] = 1c007
+pgdir[986] = 1d007
+pgdir[987] = 1e007
+pgdir[988] = 1f007
+pgdir[989] = 20007
+pgdir[990] = 21007
+pgdir[991] = 22007
+pgdir[992] = 23007
+pgdir[993] = 24007
+pgdir[994] = 25007
+pgdir[995] = 26007
+pgdir[996] = 27007
+pgdir[997] = 28007
+pgdir[998] = 29007
+pgdir[999] = 2a007
+pgdir[1000] = 2b007
+pgdir[1001] = 2c007
+pgdir[1002] = 2d007
+pgdir[1003] = 2e007
+pgdir[1004] = 2f007
+pgdir[1005] = 30007
+pgdir[1006] = 31007
+pgdir[1007] = 32007
+pgdir[1008] = 33007
+pgdir[1009] = 34007
+pgdir[1010] = 35007
+pgdir[1011] = 36007
+pgdir[1012] = 37007
+pgdir[1013] = 38007
+pgdir[1014] = 39007
+pgdir[1015] = 3a007
+pgdir[1016] = 3b007
+pgdir[1017] = 3c007
+pgdir[1018] = 3d007
+pgdir[1019] = 3e007
+pgdir[1020] = 3f007
+pgdir[1021] = 40007
+pgdir[1022] = 41007
+pgdir[1023] = 42007
+check_kern_pgdir() succeeded!
+check_page_free_list(0) ok
+check_page_installed_pgdir() succeeded!
+Welcome to the JOS kernel monitor!
+Type 'help' for a list of commands.
+
+QEMU: Terminated via GDBstub
