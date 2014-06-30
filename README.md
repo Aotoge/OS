@@ -24,7 +24,7 @@ multiprocessor using ANSI C.
   * Lec4: Lazy page allocation (no)
   * Lec5: xv6 CPU alarm (no)
 
-#### Shell-Exercise
+#### Shell Exercise
 check inclass_sh.c for solution.
 1. Executing simple commands
 
