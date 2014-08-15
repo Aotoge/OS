@@ -141,11 +141,12 @@ sys_alarm(void) {
   }
   proc->alarmticks = ticks;
   proc->alarmhandler = handler;
+  proc->alarm_handler_running = 0;
   return 0;
 }
 
 int
-sys_handler_ret(void) {
+sys_restore_caller_saved_reg(void) {
   struct trapframe *tf = proc->tf;
   if (tf->esp >= KERNBASE) {
     return -1;
@@ -164,6 +165,8 @@ sys_handler_ret(void) {
   tf->eip = *((uint*)tf->esp);
 
   tf->esp += 4;
+
+  proc->alarm_handler_running = 0;
   return 0;
 }
 

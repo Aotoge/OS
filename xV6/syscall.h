@@ -22,4 +22,4 @@
 #define SYS_close  21
 #define SYS_halt   22
 #define SYS_alarm  23
-#define SYS_handler_ret 24
+#define SYS_restore_caller_saved_reg 24

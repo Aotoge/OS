@@ -21,6 +21,9 @@ tvinit(void)
 {
   int i;
 
+  // My-Note-Begin
+  // SETGATE(gate, =1 trap | =0 interrupt, Code Segment Seletector, Offset of the handler, priviledge)
+  // My-Note-End
   // init all entries of IDT to interrupt gate
   // segoment selector points ot hte kernel code segment
   // offset is the vectors[i] (interrupt handler)
@@ -29,7 +32,7 @@ tvinit(void)
     SETGATE(idt[i], 0, SEG_KCODE<<3, vectors[i], 0);
 
   // set the T_SYSCALL entry to trap gate
-  // segoment selector points ot hte kernel code segment
+  // segoment selector points ot the kernel code segment
   // offset is the vectors[i]
   // priviledge is 3, so user can call it
   SETGATE(idt[T_SYSCALL], 1, SEG_KCODE<<3, vectors[T_SYSCALL], DPL_USER);
@@ -70,7 +73,8 @@ trap(struct trapframe *tf)
     // My-Note-Begin
     // Should I loop through all the process?
     // My-Note-End
-    if (proc && ((tf->cs & 3) == 3) && proc->alarmhandler) {
+    if (proc && ((tf->cs & 3) == 3) && proc->alarmhandler
+        && !proc->alarm_handler_running) {
       ++(proc->alarmtick_cnt);
       // My-Note-Begin
       // Basic Impl, doesn't save caller register
@@ -96,15 +100,19 @@ trap(struct trapframe *tf)
           // return address of the interrupt
           *((uint*)(tf->esp - 4))  = tf->eip;
 
-          // save caller-saved register
+          // save caller-saved register on user stack
           *((uint*)(tf->esp - 8))  = tf->eax;
           *((uint*)(tf->esp - 12))  = tf->ecx;
           *((uint*)(tf->esp - 16)) = tf->edx;
 
-          // install following code on the stack
-          // movl $SYS_handler_ret, %eax
+          // install following code on the user stack
+          // -------
+          // movl $SYS_restore_caller_saved_reg, %eax
           // int $T_SYSCALL
           // ret
+          // -------
+          // the installed code will call a system call which
+          // will help restore the caller saved register
           *((uint*)(tf->esp - 20)) = 0xc340cd00;
           *((uint*)(tf->esp - 24)) = 0x000018b8;
 
@@ -120,6 +128,7 @@ trap(struct trapframe *tf)
           tf->eip = (uint)proc->alarmhandler;
 
           proc->tf = tf;
+          proc->alarm_handler_running = 1;
         }
       }
     }

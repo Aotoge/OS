@@ -198,7 +198,7 @@ switchuvm(struct proc *p)
   cpu->gdt[SEG_TSS].s = 0;
   // ss0 and esp0 are used for stack switch in a system trap
   cpu->ts.ss0 = SEG_KDATA << 3; // ss0 = kernel data segment
-  cpu->ts.esp0 = (uint)proc->kstack + KSTACKSIZE; // stack bottom
+  cpu->ts.esp0 = (uint)proc->kstack + KSTACKSIZE; // stack top
   // load the task register
   ltr(SEG_TSS << 3);
   if(p->pgdir == 0)

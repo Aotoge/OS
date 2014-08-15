@@ -100,7 +100,7 @@ extern int sys_write(void);
 extern int sys_uptime(void);
 extern int sys_halt(void);
 extern int sys_alarm(void);
-extern int sys_handler_ret(void);
+extern int sys_restore_caller_saved_reg(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -126,7 +126,7 @@ static int (*syscalls[])(void) = {
 [SYS_close]   sys_close,
 [SYS_halt]    sys_halt,
 [SYS_alarm]   sys_alarm,
-[SYS_handler_ret] sys_handler_ret,
+[SYS_restore_caller_saved_reg] sys_restore_caller_saved_reg,
 };
 
 void
@@ -137,7 +137,6 @@ syscall(void)
   num = proc->tf->eax;
   if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
     proc->tf->eax = syscalls[num]();
-    // cprintf("%s->%d\n", proc->name, proc->tf->eax);
   } else {
     cprintf("%d %s: unknown sys call %d\n",
             proc->pid, proc->name, num);
