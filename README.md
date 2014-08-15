@@ -36,7 +36,11 @@ multiprocessor using ANSI C.
         * verify fork() and exit() work even if some sbrk() address have no memory allocated for them
         * Correctly handle faults on the invalid page below the stack
         * Make sure that kernel use of not-yet-allocated allocated user address works
-  * Lec5: xv6 CPU alarm (no)
+  * Lec5: xv6 CPU alarm (ok)
+    * baisc part (ok)
+    * Save and restore the caller-saved user registers around the call to handler (ok)
+    * Prevent reentrant calls to the handler (ok)
+
 
 #### Shell Exercise
 check inclass_sh.c for solution.
