@@ -36,7 +36,7 @@ multiprocessor using ANSI C.
         * verify fork() and exit() work even if some sbrk() address have no memory allocated for them
         * Correctly handle faults on the invalid page below the stack
         * Make sure that kernel use of not-yet-allocated allocated user address works
-  * Lec5: xv6 CPU alarm (ok)
+  * [Lec5: xv6 CPU alarm (ok)](#xv6-cpu-alram)
     * baisc part (ok)
     * Save and restore the caller-saved user registers around the call to handler (ok)
     * Prevent reentrant calls to the handler (ok)
@@ -180,6 +180,82 @@ check inclass_sh.c for solution.
       return 0;
     }
     ```
+
+### xv6 CPU alarm
+
+1. Added code in trap.c
+
+   ```c
+    if (proc->alarmtick_cnt == proc->alarmticks) {
+      proc->alarmtick_cnt = 0;
+      // we have to check whether tf->esp is valid or not because
+      // we do write operations of the area tf->esp points to.
+      if (tf->esp < KERNBASE) {
+        // return address of the interrupt
+        *((uint*)(tf->esp - 4))  = tf->eip;
+
+        // save caller-saved register on user stack
+        *((uint*)(tf->esp - 8))  = tf->eax;
+        *((uint*)(tf->esp - 12))  = tf->ecx;
+        *((uint*)(tf->esp - 16)) = tf->edx;
+
+        // use the user stack to do some tricky things
+        // install following code on the user stack
+        // -------
+        // movl $SYS_restore_caller_saved_reg, %eax
+        // int $T_SYSCALL
+        // ret           ; actually we can ommit the ret instruction.
+        // -------
+        // the installed code will call a system call which
+        // will help restore the caller saved register
+        *((uint*)(tf->esp - 20)) = 0xc340cd00;
+        *((uint*)(tf->esp - 24)) = 0x000018b8;
+
+        // set the return address of handler to the start
+        // of the above code
+        *((uint*)(tf->esp - 28)) = tf->esp - 24;
+
+        // set the user stack pointer to return address of the handler
+        tf->esp = tf->esp - 28;
+
+        // when trap return, it returns to the
+        // alarmhandler
+        tf->eip = (uint)proc->alarmhandler;
+
+        proc->tf = tf;
+        proc->alarm_handler_running = 1;
+      }
+    }
+  ```
+
+2. Added code in sysproc.c
+
+  ```c
+  // the new syscall for restore caller saved registers
+  int sys_restore_caller_saved_reg(void) {
+    struct trapframe *tf = proc->tf;
+    if (tf->esp >= KERNBASE) {
+      return -1;
+    }
+
+    tf->esp = tf->esp + 8;
+    tf->edx = *((uint*)tf->esp);
+
+    tf->esp = tf->esp + 4;
+    tf->ecx = *((uint*)tf->esp);
+
+    tf->esp = tf->esp + 4;
+    tf->eax = *((uint*)tf->esp);
+
+    tf->esp = tf->esp + 4;
+    tf->eip = *((uint*)tf->esp);
+
+    tf->esp += 4;
+
+    proc->alarm_handler_running = 0;
+    return 0;
+  }
+  ```
 
 ## JOS
 
