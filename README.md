@@ -40,7 +40,7 @@ multiprocessor using ANSI C.
     * baisc part (ok)
     * Save and restore the caller-saved user registers around the call to handler (ok)
     * Prevent reentrant calls to the handler (ok)
-  * [Lec6: Multiprocessors and locking] (ok)
+  * Lec6: Multiprocessors and locking (ok)
 
 #### Shell Exercise
 check inclass_sh.c for solution.

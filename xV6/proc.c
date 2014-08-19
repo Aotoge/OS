@@ -296,6 +296,7 @@ scheduler(void)
 
 // Enter scheduler.  Must hold only ptable.lock
 // and have changed proc->state.
+// switch to cpu->scheduler
 void
 sched(void)
 {
