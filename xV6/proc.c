@@ -212,6 +212,8 @@ exit(void)
 
 // Wait for a child process to exit and return its pid.
 // Return -1 if this process has no children.
+// Note: wait functions only wait for a child each time is called.
+// Parent process only reap the direct children.
 int
 wait(void)
 {
@@ -272,6 +274,9 @@ scheduler(void)
 
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
+
+    // Note: After acquire the spinlock, the interrupt is disable
+    // inside the following loop, no interrupt will b
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
         continue;
@@ -282,7 +287,11 @@ scheduler(void)
       proc = p;
       switchuvm(p);
       p->state = RUNNING;
+
+      // Note: swtch may return to line 322
       swtch(&cpu->scheduler, proc->context);
+
+      // Note: switch to kernel page table, now in the scheduler thread
       switchkvm();
 
       // Process is done running for now.
@@ -296,7 +305,6 @@ scheduler(void)
 
 // Enter scheduler.  Must hold only ptable.lock
 // and have changed proc->state.
-// switch to cpu->scheduler
 void
 sched(void)
 {
@@ -311,6 +319,7 @@ sched(void)
   if(readeflags()&FL_IF)
     panic("sched interruptible");
   intena = cpu->intena;
+  // Note: swtch will return to line 293
   swtch(&proc->context, cpu->scheduler);
   cpu->intena = intena;
 }

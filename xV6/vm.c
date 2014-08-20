@@ -191,9 +191,12 @@ void
 switchuvm(struct proc *p)
 {
   pushcli();
+  // Note:
   // set up an entry for TSS in the GDT
   // this entry points to the cput->ts structure
   //        Format of SEG16   type     base     limit             DPL
+  // set up the task state descriptor points to the current cpu
+  // task state memory region
   cpu->gdt[SEG_TSS] = SEG16(STS_T32A, &cpu->ts, sizeof(cpu->ts)-1, 0);
   cpu->gdt[SEG_TSS].s = 0;
   // ss0 and esp0 are used for stack switch in a system trap

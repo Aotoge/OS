@@ -33,8 +33,7 @@ acquire(struct spinlock *lk)
   // The xchg is atomic.
   // It also serializes, so that reads after acquire are not
   // reordered before it.
-
-  // xchg <=> swap(lk->locked, 1), return old lk->locked
+  // Note: xchg <=> swap(lk->locked, 1), return old lk->locked
   while(xchg(&lk->locked, 1) != 0)
     ;
 
