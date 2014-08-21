@@ -44,6 +44,8 @@ multiprocessor using ANSI C.
     * OK
   * [Lec7: User-level threads](#user-level-threads)
     * basic part (ok)
+  * [Lec8: Barriers](#barriers)
+    * OK
 
 #### Shell Exercise
 check inclass_sh.c for solution.
@@ -351,6 +353,49 @@ check inclass_sh.c for solution.
     ret
   ```
 
+### Barriers
+
+  ```c
+    #include <stdlib.h>
+    #include <unistd.h>
+    #include <stdio.h>
+    #include <assert.h>
+    #include <pthread.h>
+
+
+    static int nthread = 1;
+    static int round = 0;
+
+    struct barrier {
+      pthread_mutex_t barrier_mutex;
+      pthread_cond_t barrier_cond;
+      int nthread;      // Number of threads that have reached this round of the barrier
+      int round;     // Barrier round
+    } bstate;
+
+    static void
+    barrier_init(void)
+    {
+      assert(pthread_mutex_init(&bstate.barrier_mutex, NULL) == 0);
+      assert(pthread_cond_init(&bstate.barrier_cond, NULL) == 0);
+      bstate.nthread = 0;
+    }
+
+    static void
+    barrier()
+    {
+      pthread_mutex_lock(&bstate.barrier_mutex);
+      bstate.nthread++;
+      if (bstate.nthread == nthread) {
+        pthread_cond_broadcast(&bstate.barrier_cond);
+        bstate.nthread = 0;
+        bstate.round++;
+      } else {
+        pthread_cond_wait(&bstate.barrier_cond, &bstate.barrier_mutex);
+      }
+      pthread_mutex_unlock(&bstate.barrier_mutex);
+    }
+  ```
 
 ## JOS
 
