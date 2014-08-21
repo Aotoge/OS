@@ -212,7 +212,7 @@ exit(void)
 
 // Wait for a child process to exit and return its pid.
 // Return -1 if this process has no children.
-// Note: wait functions only wait for a child each time is called.
+// Note: wait functions only wait for a child each time it is called.
 // Parent process only reap the direct children.
 int
 wait(void)
