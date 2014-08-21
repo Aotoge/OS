@@ -73,7 +73,10 @@ thread_create(void (*func)())
   t->sp -= 4;                              // space for return address
   * (int *) (t->sp) = (int)func;           // push return address on stack
   t->sp -= 32;                             // space for registers that thread_switch will push
+
+  // Note: init sp in the thread stack frame
   *(int*)(t->sp + 12) = (t->sp + 32);
+
   t->state = RUNNABLE;
 }
 

@@ -37,10 +37,13 @@ multiprocessor using ANSI C.
         * Correctly handle faults on the invalid page below the stack
         * Make sure that kernel use of not-yet-allocated allocated user address works
   * [Lec5: xv6 CPU alarm](#xv6-cpu-alarm)
-    * baisc part (ok)
+    * basic part (ok)
     * Save and restore the caller-saved user registers around the call to handler (ok)
     * Prevent reentrant calls to the handler (ok)
-  * Lec6: Multiprocessors and locking (ok)
+  * [Lec6: Threads and Locking](#threads-and-locking)
+    * OK
+  * [Lec7: User-level threads](#user-level-threads)
+    * basic part (ok)
 
 #### Shell Exercise
 check inclass_sh.c for solution.
@@ -256,6 +259,98 @@ check inclass_sh.c for solution.
     return 0;
   }
   ```
+
+### Threads and Locking
+
+1. Use per-bucket lock and Lock cirtical region in put method.
+
+  ```c
+  static
+  void put(int key, int value)
+  {
+    pthread_mutex_lock(_locks + (key % NBUCKET));
+    struct entry *n, **p;
+    for (p = &table[key%NBUCKET], n = table[key % NBUCKET]; n != 0; p = &n->next, n = n->next) {
+      if (n->key > key) {
+        insert(key, value, p, n);
+        goto done;
+      }
+    }
+    insert(key, value, p, n);
+   done:
+    pthread_mutex_unlock(_locks + (key % NBUCKET));
+    return;
+  }
+  ```
+
+2. Each thread only looks up its responsible keys.
+
+  ```c
+  t0 = now();
+  for (i = 0; i < b; ++i) {
+    struct entry *e = get(keys[b * n + i]);
+    if (e == 0) ++k;
+  }
+  t1 = now();
+  ```
+
+### User-level threads
+
+1. Basic Part
+
+  ```c
+  // Modified thread_create
+  void
+  thread_create(void (*func)())
+  {
+    thread_p t;
+
+    for (t = all_thread; t < all_thread + MAX_THREAD; t++) {
+      if (t->state == FREE) break;
+    }
+    t->sp = (int) (t->stack + STACK_SIZE);   // set sp to the top of the stack
+    t->sp -= 4;                              // space for return address
+    * (int *) (t->sp) = (int)func;           // push return address on stack
+    t->sp -= 32;                             // space for registers that thread_switch will push
+
+    // Note: init sp in the thread stack frame
+    *(int*)(t->sp + 12) = (t->sp + 32);
+
+    t->state = RUNNABLE;
+  }
+  ```
+
+  ```assembly
+    ; Code in uthread_switch
+      .text
+
+    .globl thread_switch
+
+    thread_switch:
+
+    ; store current thread context
+    pushal
+
+    ; current_thread->sp = esp
+    movl current_thread, %eax
+    movl %esp, (%eax)
+
+    ; esp = next_thread->sp
+    movl next_thread, %eax
+    movl (%eax), %esp
+
+    ; current_thread = next_thread
+    movl %eax, current_thread
+
+    ; next_thread = 0
+    movl $0x0, next_thread
+
+    ; resotre next thread context
+    popal
+
+    ret
+  ```
+
 
 ## JOS
 
