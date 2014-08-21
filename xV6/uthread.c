@@ -56,8 +56,9 @@ thread_schedule(void)
   if (current_thread != next_thread) {         /* switch threads?  */
     next_thread->state = RUNNING;
     thread_switch();
-  } else
+  } else {
     next_thread = 0;
+  }
 }
 
 void
@@ -72,6 +73,7 @@ thread_create(void (*func)())
   t->sp -= 4;                              // space for return address
   * (int *) (t->sp) = (int)func;           // push return address on stack
   t->sp -= 32;                             // space for registers that thread_switch will push
+  *(int*)(t->sp + 12) = (t->sp + 32);
   t->state = RUNNABLE;
 }
 
