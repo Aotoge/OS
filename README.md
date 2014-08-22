@@ -410,5 +410,6 @@ A OS for the labs assgnments. Only contains pieces of skeleton code.
     * Grade: 70/70
 
 
-
-
+## Others
+1. Compare the memory layout of JOS and xV6.
+2.

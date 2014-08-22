@@ -276,9 +276,9 @@ page_init(void)
 		}
 	}
 
+	// boot_alloc(0) return the start address of the free block
 	struct PageInfo *tail = &pages[i-1];
-	for (i = ROUNDUP(PADDR(pages + npages), PGSIZE) / PGSIZE;
-		   i < npages; ++i) {
+	for (i = ROUNDUP(PADDR(boot_alloc(0)), PGSIZE) / PGSIZE; i < npages; ++i) {
 		pages[i].pp_ref = 0;
 		pages[i].pp_link = 0;
 		tail->pp_link = &pages[i];

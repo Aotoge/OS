@@ -154,6 +154,7 @@ mem_init(void)
 	//////////////////////////////////////////////////////////////////////
 	// Make 'envs' point to an array of size 'NENV' of 'struct Env'.
 	// LAB 3: Your code here.
+	envs = boot_alloc(sizeof(struct Env) * NENV);
 
 	//////////////////////////////////////////////////////////////////////
 	// Now that we've allocated the initial kernel data structures, we set
@@ -277,6 +278,7 @@ page_init(void)
 	}
 
 	// 2)
+	// base memory is 640k => npages_basemen * PGSIZE = 640k
 	// [PGSIZE, npages_basemen * PGSIZE) are free
 	page_free_list = 0;
 	for (i = 1; i < npages_basemem; ++i) {
@@ -289,14 +291,23 @@ page_init(void)
 		}
 	}
 
+	// struct PageInfo *tail = &pages[i-1];
+	// for (i = ROUNDUP(PADDR(pages + npages), PGSIZE) / PGSIZE;
+	// 	   i < npages; ++i) {
+	// 	pages[i].pp_ref = 0;
+	// 	pages[i].pp_link = 0;
+	// 	tail->pp_link = &pages[i];
+	// 	tail = &pages[i];
+	// }
 	struct PageInfo *tail = &pages[i-1];
-	for (i = ROUNDUP(PADDR(pages + npages), PGSIZE) / PGSIZE;
-		   i < npages; ++i) {
+	// boot_alloc(0) return the start address of the free block
+	for (i = ROUNDUP(PADDR(boot_alloc(0)), PGSIZE) / PGSIZE; i < npages; ++i) {
 		pages[i].pp_ref = 0;
 		pages[i].pp_link = 0;
 		tail->pp_link = &pages[i];
 		tail = &pages[i];
 	}
+
 
 	cprintf("Debug info of pages....\n");
 	cprintf("&pages[0] = %x\n", &pages[0]);
