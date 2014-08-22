@@ -187,7 +187,9 @@ mem_init(void)
 	//    - the new image at UENVS  -- kernel R, user R
 	//    - envs itself -- kernel RW, user NONE
 	// LAB 3: Your code here.
-
+	// Map [UENVS, UENVS + size) => Pysical [PADDR(envs) ~)
+	boot_map_region(kern_pgdir, UENVS, sizeof(struct Env) * NENV,
+									PADDR(envs), PTE_U | PTE_P);
 	//////////////////////////////////////////////////////////////////////
 	// Use the physical memory that 'bootstack' refers to as the kernel
 	// stack.  The kernel stack grows down from virtual address KSTACKTOP.
@@ -291,14 +293,7 @@ page_init(void)
 		}
 	}
 
-	// struct PageInfo *tail = &pages[i-1];
-	// for (i = ROUNDUP(PADDR(pages + npages), PGSIZE) / PGSIZE;
-	// 	   i < npages; ++i) {
-	// 	pages[i].pp_ref = 0;
-	// 	pages[i].pp_link = 0;
-	// 	tail->pp_link = &pages[i];
-	// 	tail = &pages[i];
-	// }
+	// 3) mark other free pages
 	struct PageInfo *tail = &pages[i-1];
 	// boot_alloc(0) return the start address of the free block
 	for (i = ROUNDUP(PADDR(boot_alloc(0)), PGSIZE) / PGSIZE; i < npages; ++i) {
@@ -307,7 +302,6 @@ page_init(void)
 		tail->pp_link = &pages[i];
 		tail = &pages[i];
 	}
-
 
 	cprintf("Debug info of pages....\n");
 	cprintf("&pages[0] = %x\n", &pages[0]);
