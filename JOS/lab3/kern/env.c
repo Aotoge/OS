@@ -177,6 +177,7 @@ env_setup_vm(struct Env *e)
 	//
 	// Hint:
 	//    - The VA space of all envs is identical above UTOP
+	//      Note: so what we do here is to setup the mapping above UTOP
 	//	(except at UVPT, which we've set below).
 	//	See inc/memlayout.h for permissions and layout.
 	//	Can you use kern_pgdir as a template?  Hint: Yes.
@@ -190,7 +191,7 @@ env_setup_vm(struct Env *e)
 	//    - The functions in kern/pmap.h are handy.
 
 	// LAB 3: Your code here.
-
+	e->env_pgdir = (pde_t*)page2kva(p);
 	// UVPT maps the env's own page table read-only.
 	// Permissions: kernel R, user R
 	e->env_pgdir[PDX(UVPT)] = PADDR(e->env_pgdir) | PTE_P | PTE_U;

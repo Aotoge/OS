@@ -141,6 +141,26 @@ mem_init(void)
 	// following line.)
 
 	// Permissions: kernel R, user R
+
+	// Note: so this mapping
+	// Map:
+	// [UVPT, UVPT + 4KB) => Page Table that kern_pgidr[0] points to
+	// [UVPT + 4KB, UVPT + 8KB) => Page Table that kern_pgidr[1] points to
+	// .
+	// .
+	// .
+
+	// In other words,
+	// [UVPT, UVPT + 4KB) stores the content of page table 0 <-> kern_pgidr[0]
+	// [UVPT + 4KB, UVPT + 8KB) stores the content of page table 1
+	// .
+	// .
+	// .
+
+	// So this mapping enables user code read the content of the page tables.
+
+	// 这句话的意思是，[UVPT, UVPT + 4MB)的内存映射由page table kern_pgdir来管理。
+	// page table directory 作为了 page table
 	kern_pgdir[PDX(UVPT)] = PADDR(kern_pgdir) | PTE_U | PTE_P;
 
 	//////////////////////////////////////////////////////////////////////
@@ -178,8 +198,9 @@ mem_init(void)
 	//      (ie. perm = PTE_U | PTE_P)
 	//    - pages itself -- kernel RW, user NONE
 	// Your code goes here:
-	// Map [UPAGES, UPAGES + PTSIZE) => Pysical [pages, pages + npages)
+	// Map [UPAGES, UPAGES + PTSIZE) => Pysical [pages, pages + PTSIZE)
 	boot_map_region(kern_pgdir, UPAGES, PTSIZE, PADDR(pages), PTE_U | PTE_P);
+
 	//////////////////////////////////////////////////////////////////////
 	// Map the 'envs' array read-only by the user at linear address UENVS
 	// (ie. perm = PTE_U | PTE_P).
@@ -385,6 +406,8 @@ pgdir_walk(pde_t *pgdir, const void *va, int create)
 	pde_t *pde;
 	pte_t *pgtab;
 
+	// pde stores a pointer to the page directory entry
+	// so *pde is the content of the entry
 	pde = &pgdir[PDX(va)];
 	if (*pde & PTE_P) {
 		// PTE_ADDR(*pde) extract the upper 20 bits in the page dir entry,
@@ -413,9 +436,11 @@ pgdir_walk(pde_t *pgdir, const void *va, int create)
 	return &pgtab[PTX(va)]; // return the virtual address of page table entry
 }
 
-//
 // Map [va, va+size) of virtual address space to physical [pa, pa+size)
-// in the page table rooted at pgdir.  Size is a multiple of PGSIZE.
+// in the page table rooted at pgdir.
+// 这里的映射是连续的，也就是说连续的虚拟内存地址对应连续的物理内存地址
+//
+// Size is a multiple of PGSIZE.
 // Use permission bits perm|PTE_P for the entries.
 //
 // This function is only intended to set up the ``static'' mappings
