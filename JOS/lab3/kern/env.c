@@ -24,7 +24,7 @@ static struct Env *env_free_list;	// Free environment list
 // Set up global descriptor table (GDT) with separate segments for
 // kernel mode and user mode.  Segments serve many purposes on the x86.
 // We don't use any of their memory-mapping capabilities, but we need
-// them to switch privilege levels. 
+// them to switch privilege levels.
 //
 // The kernel and user segments are identical except for the DPL.
 // To load the SS register, the CPL must equal the DPL.  Thus,
@@ -115,8 +115,17 @@ void
 env_init(void)
 {
 	// Set up envs array
-	// LAB 3: Your code here.
-
+	int i = 0;
+	for (i = 0; i < NENV; ++i) {
+		memset(envs + i, 0, sizeof(envs[i]));
+		envs[i].env_id = 0;
+		envs[i].env_link = NULL;
+		if (i == 0) {
+			env_free_list = envs[0];
+		} else {
+			envs[i-1].env_link = env[i];
+		}
+	}
 	// Per-CPU part of the initialization
 	env_init_percpu();
 }
@@ -128,6 +137,7 @@ env_init_percpu(void)
 	lgdt(&gdt_pd);
 	// The kernel never uses GS or FS, so we leave those set to
 	// the user data segment.
+	// Note: ? 3
 	asm volatile("movw %%ax,%%gs" :: "a" (GD_UD|3));
 	asm volatile("movw %%ax,%%fs" :: "a" (GD_UD|3));
 	// The kernel does use ES, DS, and SS.  We'll change between
@@ -136,6 +146,7 @@ env_init_percpu(void)
 	asm volatile("movw %%ax,%%ds" :: "a" (GD_KD));
 	asm volatile("movw %%ax,%%ss" :: "a" (GD_KD));
 	// Load the kernel text segment into CS.
+	// Note: f means forward jump, 1 means jump to lable 1:
 	asm volatile("ljmp %0,$1f\n 1:\n" :: "i" (GD_KT));
 	// For good measure, clear the local descriptor table (LDT),
 	// since we don't use it.
