@@ -379,7 +379,7 @@ load_icode(struct Env *e, uint8_t *binary, size_t size)
 	lcr3(PADDR(kern_pgdir));
 
 	// Modified env's trapframe
-	// What about cs, ss, esp ????
+	// other files in trap frame is set in env_alloc.
 	e->env_tf.tf_eip = ((struct Elf*)binary)->e_entry;
 
 	// Now map one page for the program's initial stack
