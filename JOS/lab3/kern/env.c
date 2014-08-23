@@ -353,11 +353,39 @@ load_icode(struct Env *e, uint8_t *binary, size_t size)
 	//  What?  (See env_run() and env_pop_tf() below.)
 
 	// LAB 3: Your code here.
+	// Get the beginning and end of program header table
+	struct Proghdr *ph =
+		(struct Proghdr *)(binary + ((struct Elf*)binary)->e_phoff);
+	struct Proghdr *ph_end =
+		(struct Proghdr *)(binary + ((struct Elf*)binary)->e_phnum);
+
+	// switch to env's pgdir
+	lcr3(PADDR(e->env_pgdir));
+
+	for (; ph < ph_end; ++ph) {
+		if (ph->p_type != ELF_PROG_LOAD) {
+			continue;
+		}
+		// allocate memory for this binary
+		region_alloc(e, (void*)ph->p_va, ph->p_memsz);
+		// Load binary image into memory
+		memcpy((void*)ph->p_va, (void*)(binary + ph->p_offset), ph->p_filesz);
+		// Init .bss
+		memset((void*)(ph->p_va + ph->p_filesz), 0, ph->p_memsz - ph->p_filesz);
+
+	}
+
+	// switch back to kern's pgdir
+	lcr3(PADDR(kern_pgdir));
+
+	// Modified env's trapframe
+	// What about cs, ss, esp ????
+	e->env_tf.tf_eip = ((struct Elf*)binary)->e_entry;
 
 	// Now map one page for the program's initial stack
 	// at virtual address USTACKTOP - PGSIZE.
-
 	// LAB 3: Your code here.
+	region_alloc(e, (void*)(USTACKTOP - PGSIZE), PGSIZE);
 }
 
 //
