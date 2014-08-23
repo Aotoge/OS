@@ -199,7 +199,13 @@ mem_init(void)
 	//    - pages itself -- kernel RW, user NONE
 	// Your code goes here:
 	// Map [UPAGES, UPAGES + PTSIZE) => Pysical [pages, pages + PTSIZE)
-	boot_map_region(kern_pgdir, UPAGES, PTSIZE, PADDR(pages), PTE_U | PTE_P);
+	// boot_map_region(kern_pgdir, UPAGES, PTSIZE, PADDR(pages), PTE_U | PTE_P);
+
+	// 关于size应该是PTSIZE?还是sizeof(struct PageInfo) * npages ?
+	// 根据下面check_kern_pgdir可以看出应该是 sizeof(struct PageInfo) * npages
+	// 不是memlayout中所指的PTSIZE
+	boot_map_region(kern_pgdir, UPAGES, sizeof(struct PageInfo) * npages,
+									PADDR(pages), PTE_U | PTE_P);
 
 	//////////////////////////////////////////////////////////////////////
 	// Map the 'envs' array read-only by the user at linear address UENVS
@@ -209,8 +215,11 @@ mem_init(void)
 	//    - envs itself -- kernel RW, user NONE
 	// LAB 3: Your code here.
 	// Map [UENVS, UENVS + size) => Pysical [PADDR(envs) ~)
+	// 根据下面check_kern_pgdir可以看出应该是 sizeof(struct Env) * NENV
+	// 不是memlayout中所指的PTSIZE
 	boot_map_region(kern_pgdir, UENVS, sizeof(struct Env) * NENV,
 									PADDR(envs), PTE_U | PTE_P);
+
 	//////////////////////////////////////////////////////////////////////
 	// Use the physical memory that 'bootstack' refers to as the kernel
 	// stack.  The kernel stack grows down from virtual address KSTACKTOP.

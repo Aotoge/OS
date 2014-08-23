@@ -121,9 +121,9 @@ env_init(void)
 		envs[i].env_id = 0;
 		envs[i].env_link = NULL;
 		if (i == 0) {
-			env_free_list = envs[0];
+			env_free_list = &envs[0];
 		} else {
-			envs[i-1].env_link = env[i];
+			envs[i-1].env_link = &envs[i];
 		}
 	}
 	// Per-CPU part of the initialization
