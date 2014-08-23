@@ -357,7 +357,7 @@ load_icode(struct Env *e, uint8_t *binary, size_t size)
 	struct Proghdr *ph =
 		(struct Proghdr *)(binary + ((struct Elf*)binary)->e_phoff);
 	struct Proghdr *ph_end =
-		(struct Proghdr *)(binary + ((struct Elf*)binary)->e_phnum);
+		(struct Proghdr *)(ph + ((struct Elf*)binary)->e_phnum);
 
 	// switch to env's pgdir
 	lcr3(PADDR(e->env_pgdir));
@@ -520,6 +520,14 @@ env_run(struct Env *e)
 	//	e->env_tf to sensible values.
 
 	// LAB 3: Your code here.
+	if (curenv && curenv->env_status == ENV_RUNNING) {
+		curenv->env_status = ENV_RUNNABLE;
+	}
+	curenv = e;
+	curenv->env_status = ENV_RUNNING;
+	++curenv->env_runs;
+	lcr3(PADDR(e->env_pgdir));
+	env_pop_tf(&e->env_tf);
 
 	panic("env_run not yet implemented");
 }
