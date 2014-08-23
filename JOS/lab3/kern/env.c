@@ -163,6 +163,8 @@ env_init_percpu(void)
 // Returns 0 on success, < 0 on error.  Errors include:
 //	-E_NO_MEM if page directory or table could not be allocated.
 //
+// 这里所做的就是建立给予环境（或者说进程）的内核映射。
+// 每个进程都会有自己独立的page tabls，但是每个进程对于内核的映射部分都是一样的
 static int
 env_setup_vm(struct Env *e)
 {
@@ -191,7 +193,13 @@ env_setup_vm(struct Env *e)
 	//    - The functions in kern/pmap.h are handy.
 
 	// LAB 3: Your code here.
+	++p->pp_ref;
 	e->env_pgdir = (pde_t*)page2kva(p);
+
+	for (i = 0; i < NPDENTRIES; ++i) {
+		e->env_pgdir[i] = kern_pgdir[i];
+	}
+
 	// UVPT maps the env's own page table read-only.
 	// Permissions: kernel R, user R
 	e->env_pgdir[PDX(UVPT)] = PADDR(e->env_pgdir) | PTE_P | PTE_U;
