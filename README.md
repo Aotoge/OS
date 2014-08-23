@@ -408,6 +408,10 @@ A OS for the labs assgnments. Only contains pieces of skeleton code.
     * Grade: 50/50
   * Lab 2 : Memory Management
     * Grade: 70/70
+  * Lab 3 : User Environments
+    * Part A: User Environments and Exception Handling
+      * exe1 (ok)
+      * exe2 (ok)
 
 
 ## Others
