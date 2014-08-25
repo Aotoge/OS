@@ -3,10 +3,14 @@ This repo contains my notes, exercie solutions as well as lab solutions for the 
 Course. In this file, I will record my progress and the notes for the course and
 solutions.
 
+## TODO
+1. add notes for lab1,2 as well as other lec-exe.
+
 ## Overview
 
 1. [xv6](#xv6)
-2. [JOS](#JOS)
+2. [JOS](#jos)
+
 
 ## xv6
 
@@ -806,7 +810,3 @@ ivector_table:
   .long machine_check_fault
   .long simd_fault
 ```
-
-## Others
-1. Compare the memory layout of JOS and xV6.
-2.
