@@ -418,7 +418,7 @@ A OS for the labs assgnments. Only contains pieces of skeleton code.
       * Grade: 30/30
         * [Exe1](#lab3-exe1)
         * [Exe2](#lab3-exe2)
-        * [Exe3](#lab3-exe3)
+        * [Exe4](#lab3-exe4)
 
 ### Lab3 Exe1
 
