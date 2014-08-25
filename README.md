@@ -411,7 +411,41 @@ A OS for the labs assgnments. Only contains pieces of skeleton code.
   * Lab 3 : User Environments
     * Part A: User Environments and Exception Handling
       * Grade: 30/30
+        * [Exe1](lab3-exe1)
+        * [Exe2](lab3-exe2)
 
+
+### Lab3 Exe1
+
+  ```c
+  // modified mem_init() in kern/pmap.c to allocate and map envs array
+  // Allocate memory for envs
+  envs = boot_alloc(sizeof(struct Env) * NENV);
+  // Memory mapping
+  boot_map_region(kern_pgdir, UENVS, sizeof(struct Env) * NENV,
+                  PADDR(envs), PTE_U | PTE_P);
+  ```
+
+### Lab3 Exe2
+
+  ```c
+  void env_init(void) {
+    // Set up envs array
+    int i = 0;
+    for (i = 0; i < NENV; ++i) {
+      memset(envs + i, 0, sizeof(envs[i]));
+      envs[i].env_id = 0;
+      envs[i].env_link = NULL;
+      if (i == 0) {
+        env_free_list = &envs[0];
+      } else {
+        envs[i-1].env_link = &envs[i];
+      }
+    }
+    // Per-CPU part of the initialization
+    env_init_percpu();
+  }
+  ```
 
 ## Others
 1. Compare the memory layout of JOS and xV6.
