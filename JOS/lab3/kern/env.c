@@ -354,7 +354,6 @@ load_icode(struct Env *e, uint8_t *binary, size_t size)
 	//  to make sure that the environment starts executing there.
 	//  What?  (See env_run() and env_pop_tf() below.)
 
-	// LAB 3: Your code here.
 	// Get the beginning and end of program header table
 	struct Proghdr *ph =
 		(struct Proghdr *)(binary + ((struct Elf*)binary)->e_phoff);
@@ -386,7 +385,6 @@ load_icode(struct Env *e, uint8_t *binary, size_t size)
 
 	// Now map one page for the program's initial stack
 	// at virtual address USTACKTOP - PGSIZE.
-	// LAB 3: Your code here.
 	region_alloc(e, (void*)(USTACKTOP - PGSIZE), PGSIZE);
 }
 
@@ -400,7 +398,6 @@ load_icode(struct Env *e, uint8_t *binary, size_t size)
 void
 env_create(uint8_t *binary, size_t size, enum EnvType type)
 {
-	// LAB 3: Your code here.
 	struct Env *new_env = NULL;
 	if (env_alloc(&new_env, 0)) {
 		panic("cannot alloc env");
@@ -530,7 +527,5 @@ env_run(struct Env *e)
 	++curenv->env_runs;
 	lcr3(PADDR(e->env_pgdir));
 	env_pop_tf(&e->env_tf);
-
-	panic("env_run not yet implemented");
 }
 
