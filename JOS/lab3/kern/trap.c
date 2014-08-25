@@ -70,6 +70,12 @@ trap_init(void)
 	for (i = 0; i <= T_SIMDERR; ++i) {
 		SETGATE(idt[i], 0, GD_KT, ivector_table[i], 0);
 	}
+	// T_BRKPT is generated using software int.
+	// in other words, user invoke the "int 3",
+	// so the processor compare the DPL of the gate with
+	// the CPL.
+	SETGATE(idt[T_BRKPT], 0, GD_KT, ivector_table[T_BRKPT], 3);
+
 	// Per-CPU setup
 	trap_init_percpu();
 }
@@ -145,8 +151,16 @@ print_regs(struct PushRegs *regs)
 static void
 trap_dispatch(struct Trapframe *tf)
 {
-	// Handle processor exceptions.
-	// LAB 3: Your code here.
+	cprintf("Trapno:%d\n", tf->tf_trapno);
+	switch (tf->tf_trapno) {
+		case T_BRKPT:
+			monitor(tf);
+			break;
+
+		case T_PGFLT:
+			page_fault_handler(tf);
+			break;
+	}
 
 	// Unexpected trap: The user process or the kernel has a bug.
 	print_trapframe(tf);

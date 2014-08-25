@@ -84,24 +84,24 @@ check_page_free_list(0) ok
 check_page_installed_pgdir() succeeded!
 [00000000] new env 00001000
 Incoming TRAP frame at 0xefffffbc
+Trapno:13
 TRAP frame at 0xf01a1000
   edi  0x00000000
   esi  0x00000000
-  ebp  0xeebfdfd0
+  ebp  0xeebfde60
   oesp 0xefffffdc
   ebx  0x00000000
-  edx  0x00000000
-  ecx  0x00000000
+  edx  0xeebfde88
+  ecx  0x0000001f
   eax  0x00000000
   es   0x----0023
   ds   0x----0023
-  trap 0x0000000e Page Fault
-  cr2  0x00000000
-  err  0x00000006 [user, write, not-present]
-  eip  0x00800037
+  trap 0x0000000d General Protection
+  err  0x00000182
+  eip  0x00800c90
   cs   0x----001b
-  flag 0x00000046
-  esp  0xeebfdfd0
+  flag 0x00000092
+  esp  0xeebfde54
   ss   0x----0023
 [00001000] free env 00001000
 Destroyed the only environment - nothing more to do!
