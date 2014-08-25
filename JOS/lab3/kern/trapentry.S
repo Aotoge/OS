@@ -4,22 +4,6 @@
 #include <inc/memlayout.h>
 #include <inc/trap.h>
 
-
-
-###################################################################
-# exceptions/interrupts
-###################################################################
-
-/* TRAPHANDLER defines a globally-visible function for handling a trap.
- * It pushes a trap number onto the stack, then jumps to _alltraps.
- * Use TRAPHANDLER for traps where the CPU automatically pushes an error code.
- *
- * You shouldn't call a TRAPHANDLER function from C, but you may
- * need to _declare_ one in C (for instance, to get a function pointer
- * during IDT setup).  You can declare the function with
- *   void NAME();
- * where NAME is the argument passed to TRAPHANDLER.
- */
 #define TRAPHANDLER(name, num)						\
 	.globl name;		/* define global symbol for 'name' */	\
 	.type name, @function;	/* symbol type is function */		\
@@ -28,28 +12,20 @@
 	pushl $(num);							\
 	jmp _alltraps
 
-/* Use TRAPHANDLER_NOEC for traps where the CPU doesn't push an error code.
- * It pushes a 0 in place of the error code, so the trap frame has the same
- * format in either case.
- */
-#define TRAPHANDLER_NOEC(name, num)					\
-	.globl name;							\
-	.type name, @function;						\
+#define TRAPHANDLER_NOEC(name, num)		   \
+	.globl name;						   \
+	.type name, @function;				   \
 	.align 2;							\
 	name:								\
 	pushl $0;							\
-	pushl $(num);							\
+	pushl $(num);						\
 	jmp _alltraps
 
-.text
-
-/*
- * Lab 3: Your code here for generating entry points for the different traps.
- */
 
 /*
  * 0 ~ 7, 16, 18, 19 no error code
  */
+.text
 TRAPHANDLER_NOEC(divide_fault, T_DIVIDE);
 TRAPHANDLER_NOEC(debug_exception, T_DEBUG);
 TRAPHANDLER_NOEC(nmi_interrupt, T_NMI);
@@ -76,14 +52,12 @@ TRAPHANDLER(align_check_fault, T_ALIGN);
 /*
  * System Reserved
  */
-TRAPHANDLER_NOEC(int_9, T_COPROC);
-TRAPHANDLER_NOEC(int_15, T_RES);
+TRAPHANDLER_NOEC(reserved_9, T_COPROC);
+TRAPHANDLER_NOEC(reserved_15, T_RES);
 
-/*
- * Lab 3: Your code here for _alltraps
- */
 
- _alltraps:
+.text
+_alltraps:
  	# setup the remaining part of the trap frame
  	pushl %ds
  	pushl %es
@@ -107,3 +81,35 @@ TRAPHANDLER_NOEC(int_15, T_RES);
  	# ignore the trap number and 0 padding
  	addl $0x08, %esp
  	iret
+
+.data
+.global ivector_table
+ivector_table:
+	# 0 ~ 7
+	.long divide_fault
+	.long debug_exception
+	.long nmi_interrupt
+	.long breakpoint_trap
+	.long overflow_trap
+	.long bounds_check_fault
+	.long invalid_opcode_fault
+	.long device_not_available_fault
+	# 8
+	.long double_fault_abort
+	# 9
+	.long reserved_9
+	# 10 ~ 14
+	.long invalid_tss_fault
+	.long segment_not_present_fault
+	.long stack_exception_fault
+	.long general_protection_fault
+	.long page_fault
+	# 15
+	.long reserved_15
+	# 16
+	.long floating_point_error_fault
+	# 17
+	.long align_check_fault
+	# 18 ~ 19
+	.long machine_check_fault
+	.long simd_fault

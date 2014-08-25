@@ -1,12 +1,12 @@
-*** Now run 'gdb'.
-***
++ ld obj/kern/kernel
++ mk obj/kern/kernel.img
 Could not open option rom 'sgabios.bin': No such file or directory
 6828 decimal is 15254 octal!
 Physical memory: 66556K available, base = 640K, extended = 65532K
 Total Pages: 16639
 Debug info of pages....
-&pages[0] = f017f000
-&pages[npages-1] = f019f7f0
+&pages[0] = f0180000
+&pages[npages-1] = f01a07f0
 check_page_free_list(1) ok
 check_page_alloc() succeeded!
 check_page() succeeded!
@@ -82,8 +82,24 @@ pgdir[1023] = 43007
 check_kern_pgdir() succeeded!
 check_page_free_list(0) ok
 check_page_installed_pgdir() succeeded!
-kernel panic at kern/env.c:472: env_run not yet implemented
-Welcome to the JOS kernel monitor!
-Type 'help' for a list of commands.
+[00000000] new env 00001000
+EAX=00000000 EBX=00000000 ECX=00000000 EDX=00000000
+ESI=00000000 EDI=00000000 EBP=eebfdfd0 ESP=eebfdfb8
+EIP=0080003a EFL=00000096 [--S-AP-] CPL=3 II=0 A20=1 SMM=0 HLT=0
+ES =0023 00000000 ffffffff 00cff300 DPL=3 DS   [-WA]
+CS =001b 00000000 ffffffff 00cffa00 DPL=3 CS32 [-R-]
+SS =0023 00000000 ffffffff 00cff300 DPL=3 DS   [-WA]
+DS =0023 00000000 ffffffff 00cff300 DPL=3 DS   [-WA]
+FS =0023 00000000 ffffffff 00cff300 DPL=3 DS   [-WA]
+GS =0023 00000000 ffffffff 00cff300 DPL=3 DS   [-WA]
+LDT=0000 00000000 00000000 00008200 DPL=0 LDT
+TR =0028 f017e7a0 00000068 00408900 DPL=0 TSS32-avl
+GDT=     f011c320 0000002f
+IDT=     f017dfa0 000007ff
+CR0=80050033 CR2=00000000 CR3=00044000 CR4=00000000
+DR0=00000000 DR1=00000000 DR2=00000000 DR3=00000000 
+DR6=ffff0ff0 DR7=00000400
+EFER=0000000000000000
+Triple fault.  Halting for inspection via QEMU monitor.
 
 QEMU: Terminated via GDBstub
