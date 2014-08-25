@@ -47,9 +47,63 @@
  * Lab 3: Your code here for generating entry points for the different traps.
  */
 
+/*
+ * 0 ~ 7, 16, 18, 19 no error code
+ */
+TRAPHANDLER_NOEC(divide_fault, T_DIVIDE);
+TRAPHANDLER_NOEC(debug_exception, T_DEBUG);
+TRAPHANDLER_NOEC(nmi_interrupt, T_NMI);
+TRAPHANDLER_NOEC(breakpoint_trap, T_BRKPT);
+TRAPHANDLER_NOEC(overflow_trap, T_OFLOW);
+TRAPHANDLER_NOEC(bounds_check_fault, T_BOUND);
+TRAPHANDLER_NOEC(invalid_opcode_fault, T_ILLOP);
+TRAPHANDLER_NOEC(device_not_available_fault, T_DEVICE);
+TRAPHANDLER_NOEC(floating_point_error_fault, T_FPERR);
+TRAPHANDLER_NOEC(machine_check_fault, T_MCHK);
+TRAPHANDLER_NOEC(simd_fault, T_SIMDERR);
 
+/*
+ * 8, 10 ~ 14, 17 with error code
+ */
+TRAPHANDLER(double_fault_abort, T_DBLFLT);
+TRAPHANDLER(invalid_tss_fault, T_TSS);
+TRAPHANDLER(segment_not_present_fault, T_SEGNP);
+TRAPHANDLER(stack_exception_fault, T_STACK);
+TRAPHANDLER(general_protection_fault, T_GPFLT);
+TRAPHANDLER(page_fault, T_PGFLT);
+TRAPHANDLER(align_check_fault, T_ALIGN);
+
+/*
+ * System Reserved
+ */
+TRAPHANDLER_NOEC(int_9, T_COPROC);
+TRAPHANDLER_NOEC(int_15, T_RES);
 
 /*
  * Lab 3: Your code here for _alltraps
  */
 
+ _alltraps:
+ 	# setup the remaining part of the trap frame
+ 	pushl %ds
+ 	pushl %es
+ 	pushal
+
+ 	# Load GD_KD to ds and es
+ 	xor %ax, %ax
+ 	movw $GD_KD, %ax
+ 	movw %ax, %ds
+ 	movw %ax, %es
+
+ 	# Arugment passing and call trap
+ 	pushl %esp
+ 	call trap
+
+ 	# resotre
+ 	addl $0x04, %esp
+ 	popal
+ 	popl %es
+ 	popl %ds
+ 	# ignore the trap number and 0 padding
+ 	addl $0x08, %esp
+ 	iret
