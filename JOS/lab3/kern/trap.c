@@ -64,10 +64,12 @@ void
 trap_init(void)
 {
 	extern struct Segdesc gdt[];
-
+	extern long ivector_table[];
 	// LAB 3: Your code here.
-  // SETGATE(idt[T_DIVIDE], 0, GD_KT, divide_fault, 0);
-
+	int i;
+	for (i = 0; i <= T_SIMDERR; ++i) {
+		SETGATE(idt[i], 0, GD_KT, ivector_table[i], 0);
+	}
 	// Per-CPU setup
 	trap_init_percpu();
 }
