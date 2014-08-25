@@ -137,7 +137,9 @@ env_init_percpu(void)
 	lgdt(&gdt_pd);
 	// The kernel never uses GS or FS, so we leave those set to
 	// the user data segment.
-	// Note: ? 3
+	// Note:
+	// The low 2 bits of each segment register contains the
+	// Requestor Privilege Level (RPL); 3 means user mode.  When
 	asm volatile("movw %%ax,%%gs" :: "a" (GD_UD|3));
 	asm volatile("movw %%ax,%%fs" :: "a" (GD_UD|3));
 	// The kernel does use ES, DS, and SS.  We'll change between
