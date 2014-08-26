@@ -423,6 +423,9 @@ A OS for the labs assgnments. Only contains pieces of skeleton code.
         * [Exe1](#lab3-exe1)
         * [Exe2](#lab3-exe2)
         * [Exe4](#lab3-exe4)
+        * [Exe5](#lab3-exe5)
+        * [Exe6](#lab3-exe6)
+        * [Exe7](#lab3-ex7)
 
 ### Lab3 Exe1
 
@@ -809,6 +812,252 @@ ivector_table:
   # 18 ~ 19
   .long machine_check_fault
   .long simd_fault
+```
+
+### Lab3 Exe5
+
+```c
+// in kern/trap.c
+static void
+trap_dispatch(struct Trapframe *tf) {
+
+  switch (tf->tf_trapno) {
+    case T_PGFLT:
+      page_fault_handler(tf);
+      break;
+  }
+
+  // Unexpected trap: The user process or the kernel has a bug.
+  print_trapframe(tf);
+  if (tf->tf_cs == GD_KT)
+    panic("unhandled trap in kernel");
+  else {
+    env_destroy(curenv);
+    return;
+  }
+}
+
+### Lab3 Exe6
+
+```c
+// in kern/trap.c
+static void
+trap_dispatch(struct Trapframe *tf) {
+  switch (tf->tf_trapno) {
+    case T_BRKPT:
+      monitor(tf);
+      break;
+
+    case T_PGFLT:
+      page_fault_handler(tf);
+      break;
+  }
+
+  // Unexpected trap: The user process or the kernel has a bug.
+  print_trapframe(tf);
+  if (tf->tf_cs == GD_KT)
+    panic("unhandled trap in kernel");
+  else {
+    env_destroy(curenv);
+    return;
+  }
+}
+
+// in kern/monitor.c
+static struct Command commands[] = {
+  { "help", "Display this list of commands", mon_help },
+  { "kerninfo", "Display information about the kernel", mon_kerninfo },
+  { "continue", "Return to the user program unti it reach a break point", mon_continue},
+};
+
+static int __exit = 0;
+
+int mon_continue(int argc, char **argv, struct Trapframe *tf) {
+  __exit = 1;
+  return 0;
+}
+
+void
+monitor(struct Trapframe *tf)
+{
+  char *buf;
+
+  cprintf("Welcome to the JOS kernel monitor!\n");
+  cprintf("Type 'help' for a list of commands.\n");
+
+  if (tf != NULL)
+    print_trapframe(tf);
+
+  __exit = 0;
+  while (!__exit) {
+    buf = readline("K> ");
+    if (buf != NULL)
+      if (runcmd(buf, tf) < 0)
+        break;
+  }
+}
+```
+
+### Lab3 Exe7
+
+```c
+// in kern/trapentry.S
+/*
+ * System Call
+ */
+TRAPHANDLER_NOEC(syscall_trap, T_SYSCALL);
+
+.data
+.global ivector_table
+ivector_table:
+  # 0 ~ 7
+  .long divide_fault
+  .long debug_exception
+  .long nmi_interrupt
+  .long breakpoint_trap
+  .long overflow_trap
+  .long bounds_check_fault
+  .long invalid_opcode_fault
+  .long device_not_available_fault
+  # 8
+  .long double_fault_abort
+  # 9
+  .long reserved_9
+  # 10 ~ 14
+  .long invalid_tss_fault
+  .long segment_not_present_fault
+  .long stack_exception_fault
+  .long general_protection_fault
+  .long page_fault
+  # 15
+  .long reserved_15
+  # 16
+  .long floating_point_error_fault
+  # 17
+  .long align_check_fault
+  # 18 ~ 19
+  .long machine_check_fault
+  .long simd_fault
+  # 20 ~ 47
+  .long 20
+  .long 21
+  .long 22
+  .long 23
+  .long 24
+  .long 25
+  .long 26
+  .long 27
+  .long 28
+  .long 29
+  .long 30
+  .long 31
+  .long 32
+  .long 33
+  .long 34
+  .long 35
+  .long 36
+  .long 37
+  .long 38
+  .long 39
+  .long 40
+  .long 41
+  .long 42
+  .long 43
+  .long 44
+  .long 45
+  .long 46
+  .long 47
+  # 48
+  .long syscall_trap
+
+// in kern/trap.c
+void
+trap_init(void)
+{
+  extern struct Segdesc gdt[];
+  extern long ivector_table[];
+  // LAB 3: Your code here.
+  int i;
+  for (i = 0; i <= T_SIMDERR; ++i) {
+    SETGATE(idt[i], 0, GD_KT, ivector_table[i], 0);
+  }
+
+  // T_BRKPT is generated using software int.
+  // in other words, user invoke the "int 3",
+  // so the processor compare the DPL of the gate with
+  // the CPL.
+  SETGATE(idt[T_BRKPT], 0, GD_KT, ivector_table[T_BRKPT], 3);
+
+  // Setting system call, the reason setting DPL as 3 is same
+  // as above
+  SETGATE(idt[T_SYSCALL], 0, GD_KT, ivector_table[T_SYSCALL], 3);
+
+  // Per-CPU setup
+  trap_init_percpu();
+}
+
+static void
+trap_dispatch(struct Trapframe *tf)
+{
+  switch (tf->tf_trapno) {
+    case T_BRKPT:
+      monitor(tf);
+      break;
+
+    case T_PGFLT:
+      page_fault_handler(tf);
+      break;
+
+    case T_SYSCALL:
+      syscall(tf->tf_regs.reg_eax,
+              tf->tf_regs.reg_edx,
+              tf->tf_regs.reg_ecx,
+              tf->tf_regs.reg_ebx,
+              tf->tf_regs.reg_edi,
+              tf->tf_regs.reg_esi);
+
+      // Save the return value in %eax
+      asm volatile("movl %%eax, %0\n" : "=m"(tf->tf_regs.reg_eax) ::);
+      return;
+  }
+```
+
+### Lab3 Exe8
+
+```c
+// in lib/libmain.c
+
+#include <inc/lib.h>
+extern void umain(int argc, char **argv);
+const volatile struct Env *thisenv;
+const char *binaryname = "<unknown>";
+
+void
+libmain(int argc, char **argv) {
+  // set thisenv to point at our Env structure in envs[].
+  int i;
+  envid_t current_id = sys_getenvid();
+  for (i = 0; i < NENV; ++i) {
+    if (envs[i].env_id == current_id) {
+    // if (envs[i].env_status == ENV_RUNNING) {
+      thisenv = envs + i;
+      break;
+    }
+  }
+
+  // cprintf("ID Get from sys: %d\n", current_id);
+  // cprintf("ID Get by loop: %d\n", thisenv->env_id);
+
+  // save the name of the program so that panic() can use it
+  if (argc > 0)
+    binaryname = argv[0];
+
+  // call user main routine
+  umain(argc, argv);
+
+  // exit gracefully
+  exit();
+}
 ```
 
 
