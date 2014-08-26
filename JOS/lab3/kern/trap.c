@@ -70,11 +70,16 @@ trap_init(void)
 	for (i = 0; i <= T_SIMDERR; ++i) {
 		SETGATE(idt[i], 0, GD_KT, ivector_table[i], 0);
 	}
+
 	// T_BRKPT is generated using software int.
 	// in other words, user invoke the "int 3",
 	// so the processor compare the DPL of the gate with
 	// the CPL.
 	SETGATE(idt[T_BRKPT], 0, GD_KT, ivector_table[T_BRKPT], 3);
+
+	// Setting system call, the reason setting DPL as 3 is same
+	// as above
+	SETGATE(idt[T_SYSCALL], 0, GD_KT, ivector_table[T_SYSCALL], 3);
 
 	// Per-CPU setup
 	trap_init_percpu();
@@ -159,6 +164,16 @@ trap_dispatch(struct Trapframe *tf)
 		case T_PGFLT:
 			page_fault_handler(tf);
 			break;
+
+		case T_SYSCALL:
+			syscall(tf->tf_regs.reg_eax,
+							tf->tf_regs.reg_edx,
+							tf->tf_regs.reg_ecx,
+							tf->tf_regs.reg_ebx,
+							tf->tf_regs.reg_edi,
+							tf->tf_regs.reg_esi);
+			// should we return ?
+			return;
 	}
 
 	// Unexpected trap: The user process or the kernel has a bug.

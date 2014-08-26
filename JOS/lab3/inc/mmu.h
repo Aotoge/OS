@@ -111,18 +111,18 @@
 #define FL_IOPL_1	0x00001000	//   IOPL == 1
 #define FL_IOPL_2	0x00002000	//   IOPL == 2
 #define FL_IOPL_3	0x00003000	//   IOPL == 3
-#define FL_NT		0x00004000	// Nested Task
-#define FL_RF		0x00010000	// Resume Flag
-#define FL_VM		0x00020000	// Virtual 8086 mode
-#define FL_AC		0x00040000	// Alignment Check
+#define FL_NT			0x00004000	// Nested Task
+#define FL_RF			0x00010000	// Resume Flag
+#define FL_VM			0x00020000	// Virtual 8086 mode
+#define FL_AC			0x00040000	// Alignment Check
 #define FL_VIF		0x00080000	// Virtual Interrupt Flag
 #define FL_VIP		0x00100000	// Virtual Interrupt Pending
-#define FL_ID		0x00200000	// ID flag
+#define FL_ID			0x00200000	// ID flag
 
 // Page fault error codes
 #define FEC_PR		0x1	// Page fault caused by protection violation
 #define FEC_WR		0x2	// Page fault caused by a write
-#define FEC_U		0x4	// Page fault occured while in user mode
+#define FEC_U			0x4	// Page fault occured while in user mode
 
 
 /*

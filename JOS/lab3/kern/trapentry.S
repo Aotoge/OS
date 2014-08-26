@@ -55,6 +55,10 @@ TRAPHANDLER(align_check_fault, T_ALIGN);
 TRAPHANDLER_NOEC(reserved_9, T_COPROC);
 TRAPHANDLER_NOEC(reserved_15, T_RES);
 
+/*
+ * System Call
+ */
+TRAPHANDLER_NOEC(syscall_trap, T_SYSCALL);
 
 .text
 _alltraps:
@@ -113,3 +117,34 @@ ivector_table:
 	# 18 ~ 19
 	.long machine_check_fault
 	.long simd_fault
+	# 20 ~ 47
+	.long 20
+	.long 21
+	.long 22
+	.long 23
+	.long 24
+	.long 25
+	.long 26
+	.long 27
+	.long 28
+	.long 29
+	.long 30
+	.long 31
+	.long 32
+	.long 33
+	.long 34
+	.long 35
+	.long 36
+	.long 37
+	.long 38
+	.long 39
+	.long 40
+	.long 41
+	.long 42
+	.long 43
+	.long 44
+	.long 45
+	.long 46
+	.long 47
+	# 48
+	.long syscall_trap
