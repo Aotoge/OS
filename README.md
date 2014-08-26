@@ -810,3 +810,7 @@ ivector_table:
   .long machine_check_fault
   .long simd_fault
 ```
+
+
+### Others
+1. i386 manual page 86 about TF and RF

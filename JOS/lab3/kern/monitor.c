@@ -25,9 +25,12 @@ struct Command {
 static struct Command commands[] = {
 	{ "help", "Display this list of commands", mon_help },
 	{ "kerninfo", "Display information about the kernel", mon_kerninfo },
+	{ "continue", "Return to the user program unti it reach a break point", mon_continue},
 };
+
 #define NCOMMANDS (sizeof(commands)/sizeof(commands[0]))
 
+static int __exit = 0;
 /***** Implementations of basic kernel monitor commands *****/
 
 int
@@ -82,6 +85,10 @@ mon_backtrace(int argc, char **argv, struct Trapframe *tf)
 }
 
 
+int mon_continue(int argc, char **argv, struct Trapframe *tf) {
+	__exit = 1;
+	return 0;
+}
 
 /***** Kernel monitor command interpreter *****/
 
@@ -138,7 +145,8 @@ monitor(struct Trapframe *tf)
 	if (tf != NULL)
 		print_trapframe(tf);
 
-	while (1) {
+	__exit = 0;
+	while (!__exit) {
 		buf = readline("K> ");
 		if (buf != NULL)
 			if (runcmd(buf, tf) < 0)

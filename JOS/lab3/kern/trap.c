@@ -151,7 +151,6 @@ print_regs(struct PushRegs *regs)
 static void
 trap_dispatch(struct Trapframe *tf)
 {
-	cprintf("Trapno:%d\n", tf->tf_trapno);
 	switch (tf->tf_trapno) {
 		case T_BRKPT:
 			monitor(tf);
