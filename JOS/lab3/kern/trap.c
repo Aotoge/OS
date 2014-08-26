@@ -172,7 +172,8 @@ trap_dispatch(struct Trapframe *tf)
 							tf->tf_regs.reg_ebx,
 							tf->tf_regs.reg_edi,
 							tf->tf_regs.reg_esi);
-			// should we return ?
+			tf->tf_regs.reg_eax;
+			asm volatile("movl %%eax, %0\n" : "=m"(tf->tf_regs.reg_eax) ::);
 			return;
 	}
 
