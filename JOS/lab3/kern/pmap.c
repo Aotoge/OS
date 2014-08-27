@@ -616,35 +616,37 @@ static uintptr_t user_mem_check_addr;
 int
 user_mem_check(struct Env *env, const void *va, size_t len, int perm)
 {
-	// LAB 3: Your code here.
+  // step 1 : check below ULIM
+  uintptr_t va_beg = (uintptr_t)va;
+  uintptr_t va_end = va_beg + len;
+  if (va_beg >= ULIM || va_end >= ULIM) {
+    user_mem_check_addr = (va_beg >= ULIM) ? va_beg : ULIM;
+    return -E_FAULT;
+  }
 
-	// check below ULIM
-	uintptr_t va_beg = (uintptr_t)va;
-	uintptr_t va_end = va_beg + len;
-	if (va_beg >= ULIM || va_end >= ULIM) {
-		user_mem_check_addr = (va_beg >= ULIM) ? va_beg : ULIM;
-		return -E_FAULT;
-	}
+  // step 2 : check present & permission
+  uintptr_t va_beg2 = ROUNDDOWN(va_beg, PGSIZE);
+  uintptr_t va_end2 = ROUNDUP(va_end, PGSIZE);
+  while (va_beg2 < va_end2) {
 
-	// check
-	uintptr_t va_beg2 = ROUNDDOWN(va_beg, PGSIZE);
-	uintptr_t va_end2 = ROUNDUP(va_end, PGSIZE);
-	while (va_beg2 < va_end2) {
-		if (!(env->env_pgdir[PDX(va_beg2)] & PTE_P)) {
-			user_mem_check_addr = (va_beg2 > va_beg) ? va_beg2 : va_beg;
-			return -E_FAULT;
-		}
+    // check page table is present ?
+    if (!(env->env_pgdir[PDX(va_beg2)] & PTE_P)) {
+      user_mem_check_addr = (va_beg2 > va_beg) ? va_beg2 : va_beg;
+      return -E_FAULT;
+    }
 
-		// get current page table kernel va
-		uint32_t* pt_kva = KADDR(PTE_ADDR(env->env_pgdir[PDX(va_beg2)]));
-		if (!((pt_kva[PTX(va_beg2)] & perm) == perm)) {
-			user_mem_check_addr = (va_beg2 > va_beg) ? va_beg2 : va_beg;
-			return -E_FAULT;
-		}
+    // get current page table kernel va
+    uint32_t* pt_kva = KADDR(PTE_ADDR(env->env_pgdir[PDX(va_beg2)]));
 
-		va_beg2 += PGSIZE;
-	}
-	return 0;
+    // check page is present & permissions
+    if (!((pt_kva[PTX(va_beg2)] & perm) == perm)) {
+      user_mem_check_addr = (va_beg2 > va_beg) ? va_beg2 : va_beg;
+      return -E_FAULT;
+    }
+
+    va_beg2 += PGSIZE;
+  }
+  return 0;
 }
 
 //

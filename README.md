@@ -418,15 +418,19 @@ A OS for the labs assgnments. Only contains pieces of skeleton code.
   * Lab 2 : Memory Management
     * Grade: 70/70
   * Lab 3 : User Environments
-    * Part A: User Environments and Exception Handling
-      * Grade: 30/30
-        * [Exe1](#lab3-exe1)
-        * [Exe2](#lab3-exe2)
-        * [Exe4](#lab3-exe4)
-        * [Exe5](#lab3-exe5)
-        * [Exe6](#lab3-exe6)
-        * [Exe7](#lab3-exe7)
-        * [Exe8](#lab3-exe8)
+    * Grade: 80/80
+      * Part A: User Environments and Exception Handling
+        * Grade: 30/30
+          * [Exe1](#lab3-exe1)
+          * [Exe2](#lab3-exe2)
+          * [Exe4](#lab3-exe4)
+          * [Exe5](#lab3-exe5)
+      * Part B: Page Faults, Breakpoints Exceptions, and System Calls
+        * Grade: 50/50
+          * [Exe6](#lab3-exe6)
+          * [Exe7](#lab3-exe7)
+          * [Exe8](#lab3-exe8)
+          * [Exe9](#lab3-exe9)
 
 ### Lab3 Exe1
 
@@ -1064,14 +1068,253 @@ libmain(int argc, char **argv) {
 ### Lab3 Exe9
 
 ```c
-/*
-why backtrace cause a kern page fault?
-when backtracing to the last stack frame, ebp = 0xeebfdff0.
-And USTACKTOP = 0xeebfe000.
-so when try to fecth the user arg <-> *((unsigned *)ebp + 4)
-(unsigned *)ebp + 4 = 0xeebfe000, this part is not mapped, so it cause a page fault.
-And backtrace is execute in kernel mode, so cause a kern page fault.
-*/
+// in kern/trap.c
+void
+page_fault_handler(struct Trapframe *tf)
+{
+  uint32_t fault_va;
+
+  // Read processor's CR2 register to find the faulting address
+  fault_va = rcr2();
+
+  // Handle kernel-mode page faults.
+  if (!(tf->tf_cs & 0x11)) {
+    panic("Kernel Page Fault.");
+  }
+
+  // We've already handled kernel-mode exceptions, so if we get here,
+  // the page fault happened in user mode.
+
+  // Destroy the environment that caused the fault.
+  cprintf("[%08x] user fault va %08x ip %08x\n",
+    curenv->env_id, fault_va, tf->tf_eip);
+  print_trapframe(tf);
+  env_destroy(curenv);
+}
+
+// in kern/pamp.c
+// Check that an environment is allowed to access the range of memory
+// [va, va+len) with permissions 'perm | PTE_P'.
+// Normally 'perm' will contain PTE_U at least, but this is not required.
+// 'va' and 'len' need not be page-aligned; you must test every page that
+// contains any of that range.  You will test either 'len/PGSIZE',
+// 'len/PGSIZE + 1', or 'len/PGSIZE + 2' pages.
+//
+// A user program can access a virtual address if (1) the address is below
+// ULIM, and (2) the page table gives it permission.  These are exactly
+// the tests you should implement here.
+//
+// If there is an error, set the 'user_mem_check_addr' variable to the first
+// erroneous virtual address.
+//
+// Returns 0 if the user program can access this range of addresses,
+// and -E_FAULT otherwise.
+//
+int
+user_mem_check(struct Env *env, const void *va, size_t len, int perm)
+{
+  // step 1 : check below ULIM
+  uintptr_t va_beg = (uintptr_t)va;
+  uintptr_t va_end = va_beg + len;
+  if (va_beg >= ULIM || va_end >= ULIM) {
+    user_mem_check_addr = (va_beg >= ULIM) ? va_beg : ULIM;
+    return -E_FAULT;
+  }
+
+  // step 2 : check present & permission
+  uintptr_t va_beg2 = ROUNDDOWN(va_beg, PGSIZE);
+  uintptr_t va_end2 = ROUNDUP(va_end, PGSIZE);
+  while (va_beg2 < va_end2) {
+
+    // check page table is present ?
+    if (!(env->env_pgdir[PDX(va_beg2)] & PTE_P)) {
+      user_mem_check_addr = (va_beg2 > va_beg) ? va_beg2 : va_beg;
+      return -E_FAULT;
+    }
+
+    // get current page table kernel va
+    uint32_t* pt_kva = KADDR(PTE_ADDR(env->env_pgdir[PDX(va_beg2)]));
+
+    // check page is present & permissions
+    if (!((pt_kva[PTX(va_beg2)] & perm) == perm)) {
+      user_mem_check_addr = (va_beg2 > va_beg) ? va_beg2 : va_beg;
+      return -E_FAULT;
+    }
+
+    va_beg2 += PGSIZE;
+  }
+  return 0;
+}
+
+// in kern/syscall.c
+// Print a string to the system console.
+// The string is exactly 'len' characters long.
+// Destroys the environment on memory errors.
+static void
+sys_cputs(const char *s, size_t len)
+{
+  // Check that the user has permission to read memory [s, s+len).
+  // Destroy the environment if not.
+  user_mem_assert(curenv, s, len, PTE_P | PTE_U);
+
+  // Print the string supplied by the user.
+  cprintf("%.*s", len, s);
+}
+
+// in kern/kdebug.c
+// debuginfo_eip(addr, info)
+//
+//  Fill in the 'info' structure with information about the specified
+//  instruction address, 'addr'.  Returns 0 if information was found, and
+//  negative if not.  But even if it returns negative it has stored some
+//  information into '*info'.
+//
+int
+debuginfo_eip(uintptr_t addr, struct Eipdebuginfo *info)
+{
+  const struct Stab *stabs, *stab_end;
+  const char *stabstr, *stabstr_end;
+  int lfile, rfile, lfun, rfun, lline, rline;
+
+  // Initialize *info
+  info->eip_file = "<unknown>";
+  info->eip_line = 0;
+  info->eip_fn_name = "<unknown>";
+  info->eip_fn_namelen = 9;
+  info->eip_fn_addr = addr;
+  info->eip_fn_narg = 0;
+
+  // Find the relevant set of stabs
+  if (addr >= ULIM) {
+    stabs = __STAB_BEGIN__;
+    stab_end = __STAB_END__;
+    stabstr = __STABSTR_BEGIN__;
+    stabstr_end = __STABSTR_END__;
+  } else {
+    // The user-application linker script, user/user.ld,
+    // puts information about the application's stabs (equivalent
+    // to __STAB_BEGIN__, __STAB_END__, __STABSTR_BEGIN__, and
+    // __STABSTR_END__) in a structure located at virtual address
+    // USTABDATA.
+    const struct UserStabData *usd = (const struct UserStabData *) USTABDATA;
+
+    /* -------------- Belongs to this Exe9 ------------ */
+    // Make sure this memory is valid.
+    // Return -1 if it is not.  Hint: Call user_mem_check.
+    if (user_mem_check(curenv, (const void *)usd,
+        sizeof(struct UserStabData), PTE_U | PTE_P) < 0) {
+      return -1;
+    }
+    /* -------------- Belongs to this Exe9 ------------ */
+
+    stabs = usd->stabs;
+    stab_end = usd->stab_end;
+    stabstr = usd->stabstr;
+    stabstr_end = usd->stabstr_end;
+
+    /* -------------- Belongs to this Exe9 ------------ */
+    // Make sure the STABS and string table memory is valid.
+    if (user_mem_check(curenv, (const void *)stabs,
+        (uintptr_t)stab_end  - (uintptr_t)stabs, PTE_U | PTE_P) < 0) {
+      return -1;
+    }
+
+    if (user_mem_check(curenv, (const void *)stabstr,
+        (uintptr_t)stabstr_end - (uintptr_t)stabstr, PTE_U | PTE_P) < 0) {
+      return -1;
+    }
+    /* -------------- Belongs to this Exe9 ------------ */
+  }
+
+  // String table validity checks
+  if (stabstr_end <= stabstr || stabstr_end[-1] != 0)
+    return -1;
+
+  // Now we find the right stabs that define the function containing
+  // 'eip'.  First, we find the basic source file containing 'eip'.
+  // Then, we look in that source file for the function.  Then we look
+  // for the line number.
+
+  // Search the entire set of stabs for the source file (type N_SO).
+  lfile = 0;
+  rfile = (stab_end - stabs) - 1;
+  stab_binsearch(stabs, &lfile, &rfile, N_SO, addr);
+  if (lfile == 0)
+    return -1;
+
+  // Search within that file's stabs for the function definition
+  // (N_FUN).
+  lfun = lfile;
+  rfun = rfile;
+  stab_binsearch(stabs, &lfun, &rfun, N_FUN, addr);
+
+  if (lfun <= rfun) {
+    // stabs[lfun] points to the function name
+    // in the string table, but check bounds just in case.
+    if (stabs[lfun].n_strx < stabstr_end - stabstr)
+      info->eip_fn_name = stabstr + stabs[lfun].n_strx;
+    info->eip_fn_addr = stabs[lfun].n_value;
+    addr -= info->eip_fn_addr;
+    // Search within the function definition for the line number.
+    lline = lfun;
+    rline = rfun;
+  } else {
+    // Couldn't find function stab!  Maybe we're in an assembly
+    // file.  Search the whole file for the line number.
+    info->eip_fn_addr = addr;
+    lline = lfile;
+    rline = rfile;
+  }
+  // Ignore stuff after the colon.
+  info->eip_fn_namelen = strfind(info->eip_fn_name, ':') - info->eip_fn_name;
+
+
+  // Search within [lline, rline] for the line number stab.
+  // If found, set info->eip_line to the right line number.
+  // If not found, return -1.
+  //
+  // Hint:
+  //  There's a particular stabs type used for line numbers.
+  //  Look at the STABS documentation and <inc/stab.h> to find
+  //  which one.
+  // Your code here.
+  stab_binsearch(stabs, &lline, &rline, N_SLINE, addr);
+  if (lline > rline) {
+    return -1;
+  }
+  info->eip_line = stabs[lline].n_desc;
+  // Search backwards from the line number for the relevant filename
+  // stab.
+  // We can't just use the "lfile" stab because inlined functions
+  // can interpolate code from a different file!
+  // Such included source files use the N_SOL stab type.
+  while (lline >= lfile
+         && stabs[lline].n_type != N_SOL
+         && (stabs[lline].n_type != N_SO || !stabs[lline].n_value))
+    lline--;
+  if (lline >= lfile && stabs[lline].n_strx < stabstr_end - stabstr)
+    info->eip_file = stabstr + stabs[lline].n_strx;
+
+
+  // Set eip_fn_narg to the number of arguments taken by the function,
+  // or 0 if there was no containing function.
+  if (lfun < rfun)
+    for (lline = lfun + 1;
+         lline < rfun && stabs[lline].n_type == N_PSYM;
+         lline++)
+      info->eip_fn_narg++;
+
+  return 0;
+}
+
+
+// Question about Why backtrace cause a kernel page fualt ?
+// When backtracing to the last stack frame, ebp = 0xeebfdff0.
+// and we also know that USTACKTOP = 0xeebfe000.
+// When try to fecth the user arg <-> *((unsigned *)ebp + 4) (unsigned *)ebp + 4 = 0xeebfe000,
+// this part is not mapped, so it cause a page fault.
+// Besides, backtrace is execute in kernel mode.
+// Therefore cause a kernel page fault
 ```
 
 ### Others
