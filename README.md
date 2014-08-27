@@ -425,7 +425,8 @@ A OS for the labs assgnments. Only contains pieces of skeleton code.
         * [Exe4](#lab3-exe4)
         * [Exe5](#lab3-exe5)
         * [Exe6](#lab3-exe6)
-        * [Exe7](#lab3-ex7)
+        * [Exe7](#lab3-exe7)
+        * [Exe8](#lab3-exe8)
 
 ### Lab3 Exe1
 
@@ -1060,6 +1061,18 @@ libmain(int argc, char **argv) {
 }
 ```
 
+### Lab3 Exe9
+
+```c
+/*
+why backtrace cause a kern page fault?
+when backtracing to the last stack frame, ebp = 0xeebfdff0.
+And USTACKTOP = 0xeebfe000.
+so when try to fecth the user arg <-> *((unsigned *)ebp + 4)
+(unsigned *)ebp + 4 = 0xeebfe000, this part is not mapped, so it cause a page fault.
+And backtrace is execute in kernel mode, so cause a kern page fault.
+*/
+```
 
 ### Others
 1. i386 manual page 86 about TF and RF

@@ -25,7 +25,8 @@ struct Command {
 static struct Command commands[] = {
 	{ "help", "Display this list of commands", mon_help },
 	{ "kerninfo", "Display information about the kernel", mon_kerninfo },
-	{ "continue", "Return to the user program unti it reach a break point", mon_continue},
+	{ "backtrace", "backtrace", mon_backtrace},
+	{ "continue", "Return to the user program unti it reach a break point", mon_continue}
 };
 
 #define NCOMMANDS (sizeof(commands)/sizeof(commands[0]))
@@ -79,6 +80,7 @@ mon_backtrace(int argc, char **argv, struct Trapframe *tf)
 			      info.eip_line,
 			      info.eip_fn_namelen, info.eip_fn_name,
 			      (char*)eip - (char*)info.eip_fn_addr);
+
 		ebp = *(unsigned*)ebp;
 	}
 	return 0;
