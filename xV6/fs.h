@@ -43,6 +43,8 @@ struct dinode {
 #define BPB           (BSIZE*8)
 
 // Block containing bit for block b
+// boot sector, super block, at least one inode block and at least
+// one bitmap block, so + 3.
 #define BBLOCK(b, ninodes) (b/BPB + (ninodes)/IPB + 3)
 
 // Directory is a file containing a sequence of dirent structures.

@@ -58,9 +58,15 @@ balloc(uint dev)
 
   bp = 0;
   readsb(dev, &sb);
+  // BPB = 512 * 8, means using a block can hold 512 * 8 bits.
+  // and each bit can be used to reprenset the status of a block.
   for(b = 0; b < sb.size; b += BPB){
+    // read a bitmap block
     bp = bread(dev, BBLOCK(b, sb.ninodes));
+    // b + bi = block id in the disk
     for(bi = 0; bi < BPB && b + bi < sb.size; bi++){
+      // generate bit mask
+      // 0x01, 0x02, 0x04 0x08, 0x10, 0x20, 0x40, 0x80
       m = 1 << (bi % 8);
       if((bp->data[bi/8] & m) == 0){  // Is block free?
         bp->data[bi/8] |= m;  // Mark block in use.
