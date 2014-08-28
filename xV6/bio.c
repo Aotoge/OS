@@ -4,7 +4,7 @@
 // cached copies of disk block contents.  Caching disk blocks
 // in memory reduces the number of disk reads and also provides
 // a synchronization point for disk blocks used by multiple processes.
-// 
+//
 // Interface:
 // * To get a buffer for a particular disk block, call bread.
 // * After changing buffer data, call bwrite to write it to disk.
@@ -12,10 +12,10 @@
 // * Do not use the buffer after calling brelse.
 // * Only one process at a time can use a buffer,
 //     so do not keep them longer than necessary.
-// 
+//
 // The implementation uses three state flags internally:
 // * B_BUSY: the block has been returned from bread
-//     and has not been passed back to brelse.  
+//     and has not been passed back to brelse.
 // * B_VALID: the buffer data has been read from the disk.
 // * B_DIRTY: the buffer data has been modified
 //     and needs to be written to disk.
@@ -46,6 +46,9 @@ binit(void)
   // Create linked list of buffers
   bcache.head.prev = &bcache.head;
   bcache.head.next = &bcache.head;
+  // Invariant: Always insert a node in the fron end (same as the LRU)
+  // head.next points to the newly inserted node
+  // head.prev points to the first inserted node
   for(b = bcache.buf; b < bcache.buf+NBUF; b++){
     b->next = bcache.head.next;
     b->prev = &bcache.head;
@@ -67,14 +70,17 @@ bget(uint dev, uint sector)
 
  loop:
   // Is the sector already cached?
+  // Note: Restart, think carefully about the goto statment!
   for(b = bcache.head.next; b != &bcache.head; b = b->next){
     if(b->dev == dev && b->sector == sector){
+      // find the block and it is not used by other threads
       if(!(b->flags & B_BUSY)){
         b->flags |= B_BUSY;
         release(&bcache.lock);
         return b;
       }
       sleep(b, &bcache.lock);
+      // Note: Restart
       goto loop;
     }
   }
@@ -84,6 +90,7 @@ bget(uint dev, uint sector)
     if((b->flags & B_BUSY) == 0 && (b->flags & B_DIRTY) == 0){
       b->dev = dev;
       b->sector = sector;
+      // Set B_BUSY as well as clearing B_VALID and B_DIRTY
       b->flags = B_BUSY;
       release(&bcache.lock);
       return b;
@@ -97,8 +104,10 @@ struct buf*
 bread(uint dev, uint sector)
 {
   struct buf *b;
-
+  // get a buffer for the given sector
   b = bget(dev, sector);
+  // if the buffer doesn't contain the sector content,
+  // read it from the disk.
   if(!(b->flags & B_VALID))
     iderw(b);
   return b;
@@ -126,6 +135,8 @@ brelse(struct buf *b)
 
   b->next->prev = b->prev;
   b->prev->next = b->next;
+
+  // insert in the front of the linked list
   b->next = bcache.head.next;
   b->prev = &bcache.head;
   bcache.head.next->prev = b;
