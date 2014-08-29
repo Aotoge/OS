@@ -34,7 +34,7 @@ readsb(int dev, struct superblock *sb)
   brelse(bp);
 }
 
-// Zero a block.
+// Zero a block (on the cache)
 static void
 bzero(int dev, int bno)
 {
@@ -49,6 +49,8 @@ bzero(int dev, int bno)
 // Blocks. 
 
 // Allocate a zeroed disk block.
+// by setting its corresponding bit in bitmap to 1
+// and also zero the block on the cache
 static uint
 balloc(uint dev)
 {
@@ -63,7 +65,7 @@ balloc(uint dev)
   for(b = 0; b < sb.size; b += BPB){
     // read a bitmap block
     bp = bread(dev, BBLOCK(b, sb.ninodes));
-    // b + bi = block id in the disk
+    // b + bi = sector id in the disk
     for(bi = 0; bi < BPB && b + bi < sb.size; bi++){
       // generate bit mask
       // 0x01, 0x02, 0x04 0x08, 0x10, 0x20, 0x40, 0x80
@@ -81,7 +83,8 @@ balloc(uint dev)
   panic("balloc: out of blocks");
 }
 
-// Free a disk block.
+// Free a disk block, by setting its corresponding bit in bitmap
+// to 0
 static void
 bfree(int dev, uint b)
 {
@@ -217,15 +220,22 @@ iupdate(struct inode *ip)
 {
   struct buf *bp;
   struct dinode *dip;
-
+  
+  // read the data from disk to buffer cache
   bp = bread(ip->dev, IBLOCK(ip->inum));
   dip = (struct dinode*)bp->data + ip->inum%IPB;
+
+  // copy the in-memory inode to buffer cached inode
   dip->type = ip->type;
   dip->major = ip->major;
   dip->minor = ip->minor;
   dip->nlink = ip->nlink;
   dip->size = ip->size;
+
+  // indirect part ?
   memmove(dip->addrs, ip->addrs, sizeof(ip->addrs));
+  
+
   log_write(bp);
   brelse(bp);
 }
@@ -369,6 +379,11 @@ iunlockput(struct inode *ip)
 
 // Return the disk block address of the nth block in inode ip.
 // If there is no such block, bmap allocates one.
+//
+// In other words, given ip and bn,
+// return the content of ip->addrs[bn], which is the sector number
+// (aka. address). If ip->adrs[bn] = 0, then call balloc to allocate
+// a new one for it.
 static uint
 bmap(struct inode *ip, uint bn)
 {
@@ -411,6 +426,9 @@ bmap(struct inode *ip, uint bn)
 // to it (no directory entries referring to it)
 // and has no in-memory reference to it (is
 // not an open file or current directory).
+//
+// What this function do is , in other words,
+// for_each(ip->addrs, bfree)
 static void
 itrunc(struct inode *ip)
 {
@@ -459,22 +477,35 @@ readi(struct inode *ip, char *dst, uint off, uint n)
 {
   uint tot, m;
   struct buf *bp;
-
+  
+  // for device r
   if(ip->type == T_DEV){
     if(ip->major < 0 || ip->major >= NDEV || !devsw[ip->major].read)
       return -1;
     return devsw[ip->major].read(ip, dst, n);
   }
-
+  
+  // for disk file r
   if(off > ip->size || off + n < off)
     return -1;
+
+  // update n
   if(off + n > ip->size)
     n = ip->size - off;
 
-  for(tot=0; tot<n; tot+=m, off+=m, dst+=m){
+  // tot : total of current read
+  for(tot=0; tot<n; tot += m, off += m, dst += m){
+    // bmap return the sector number
     bp = bread(ip->dev, bmap(ip, off/BSIZE));
-    m = min(n - tot, BSIZE - off%BSIZE);
-    memmove(dst, bp->data + off%BSIZE, m);
+
+    // 
+    m = min(n - tot, BSIZE - off % BSIZE);
+
+    // move read data to dst
+    // (bp->data + off % BSIZE) is the start address of
+    // data corresponding to the current offset
+    memmove(dst, bp->data + off % BSIZE, m);
+
     brelse(bp);
   }
   return n;
@@ -500,17 +531,23 @@ writei(struct inode *ip, char *src, uint off, uint n)
     return -1;
 
   for(tot=0; tot<n; tot+=m, off+=m, src+=m){
+    // bamp will allocat new block
     bp = bread(ip->dev, bmap(ip, off/BSIZE));
+
     m = min(n - tot, BSIZE - off%BSIZE);
+
+    // memmove: only update the cache ?
     memmove(bp->data + off%BSIZE, src, m);
+
     log_write(bp);
     brelse(bp);
   }
 
-  if(n > 0 && off > ip->size){
+  if (n > 0 && off > ip->size){
     ip->size = off;
     iupdate(ip);
   }
+
   return n;
 }
 

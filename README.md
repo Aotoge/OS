@@ -1333,6 +1333,17 @@ bread(uint dev, uint sector);
 // and return the block number
 uint
 balloc(uint dev);
+
+// Free a disk block, by setting its corresponding bit in bitmap
+// to 0
+void
+bfree(int dev, uint b);
+
+// return the content of ip->addrs[bn], which is the sector number
+// (aka. address). If ip->adrs[bn] = 0, then call balloc to allocate
+// a new one for it.
+int
+bmap(struct inode *ip, int bn);
 ```
 
 2. Call graph
