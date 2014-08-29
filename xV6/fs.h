@@ -30,13 +30,19 @@ struct dinode {
   short minor;          // Minor device number (T_DEV only)
   short nlink;          // Number of links to inode in file system
   uint size;            // Size of file (bytes)
-  uint addrs[NDIRECT+1];   // Data block addresses
+
+  // the entry is the block number (aka. sector number)
+  // it is not the acutally address
+  uint addrs[NDIRECT+1];  // Data block addresses
 };
 
 // Inodes per block.
 #define IPB           (BSIZE / sizeof(struct dinode))
 
 // Block containing inode i
+// boot secotr --> block 0
+// super block --> block 1
+// so + 2
 #define IBLOCK(i)     ((i) / IPB + 2)
 
 // Bitmap bits per block

@@ -1319,3 +1319,22 @@ debuginfo_eip(uintptr_t addr, struct Eipdebuginfo *info)
 
 ### Others
 1. i386 manual page 86 about TF and RF
+
+
+### Scratch for Chapter 6 : File System
+
+1. A outline of data struct & functions related to FS.
+```c
+// Return a B_BUSY buf with the contents of the indicated disk sector
+struct buf*
+bread(uint dev, uint sector);
+
+// Allocate a zeroed disk block (on the buffer cache)
+// and return the block number
+uint
+balloc(uint dev);
+```
+
+2. Call graph
+
+

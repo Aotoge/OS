@@ -164,7 +164,10 @@ bfree(int dev, uint b)
 
 struct {
   struct spinlock lock;
-  struct inode inode[NINODE];
+
+  // in memory copy of inode on disk,
+  // served as a cache for indoe
+  struct inode inode[NINODE]; 
 } icache;
 
 void
@@ -189,13 +192,18 @@ ialloc(uint dev, short type)
   readsb(dev, &sb);
 
   for(inum = 1; inum < sb.ninodes; inum++){
+    // read the block that contains the inode inum.
     bp = bread(dev, IBLOCK(inum));
+    // read inum's data from the block bp
     dip = (struct dinode*)bp->data + inum%IPB;
+
     if(dip->type == 0){  // a free inode
       memset(dip, 0, sizeof(*dip));
       dip->type = type;
       log_write(bp);   // mark it allocated on the disk
       brelse(bp);
+      // given dev and inum
+      // return the in-memory indoe buffer
       return iget(dev, inum);
     }
     brelse(bp);
@@ -330,9 +338,11 @@ iput(struct inode *ip)
       panic("iput busy");
     ip->flags |= I_BUSY;
     release(&icache.lock);
+
     itrunc(ip);
     ip->type = 0;
     iupdate(ip);
+
     acquire(&icache.lock);
     ip->flags = 0;
     wakeup(ip);
@@ -364,19 +374,26 @@ bmap(struct inode *ip, uint bn)
 {
   uint addr, *a;
   struct buf *bp;
-
+  
+  // case 1: direct
   if(bn < NDIRECT){
     if((addr = ip->addrs[bn]) == 0)
       ip->addrs[bn] = addr = balloc(ip->dev);
     return addr;
   }
+  
+  // case 2: indirect
   bn -= NDIRECT;
-
   if(bn < NINDIRECT){
     // Load indirect block, allocating if necessary.
     if((addr = ip->addrs[NDIRECT]) == 0)
+      // allocate a block for indirect lookup
       ip->addrs[NDIRECT] = addr = balloc(ip->dev);
+
+    // reads in direct into ip->addrs[NDIRECT]
     bp = bread(ip->dev, addr);
+
+    // indirect lookup
     a = (uint*)bp->data;
     if((addr = a[bn]) == 0){
       a[bn] = addr = balloc(ip->dev);
