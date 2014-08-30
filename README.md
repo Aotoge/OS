@@ -1341,6 +1341,20 @@ struct inode {
   uint addrs[NDIRECT+1];
 };
 
+// for the lowest layer: there is buffer cache for secotr (aka. block)
+struct {
+  struct spinlock lock;
+  struct buf buf[NBUF]; // a struct for sector
+  struct buf head;
+} bcache;
+
+// for the inodes layer: there is buffer cache for inode
+struct {
+  struct spinlock lock;
+  struct inode inode[NINODE];
+} icache;
+
+
 // Return a B_BUSY buf with the contents of the indicated disk sector
 struct buf*
 bread(uint dev, uint sector);
@@ -1362,10 +1376,46 @@ int
 bmap(struct inode *ip, int bn);
 ```
 
+// Lock the given inode
+// Reads the inode from disk if necessary
+void
+ilock(struct inode *ip);
+
+// Find the inode with number inum on device
+// return the in-memory copy.
+// Doesn't lock the inode and does not read it from disk.
+struct inode*
+iget(uint dev, uint inum);
+
 // read data from inode given inode, offset and size
 int
 readi(struct inode *ip, char *dst, uint off, uint n)
 
 2. Call graph
+
+```c
+// call graph for inode operations
+ip = iget(dev, inum);
+ilock(ip);
+...
+iunlock(ip); // or iunlockput(ip)
+iput(ip);
+```
+
+3. Abstraction os FS on xV6
+
+                ------------------
+System calls    | File Descriptors
+                ------------------
+Pathnames       | Recursive lookup
+                ------------------
+Directories     | Directory inodes
+                ------------------
+Files           | Inodes and block allocator
+                ------------------
+Transactions    | Logging
+                ------------------
+Blocks          | Buffer cache
+                ------------------
 
 

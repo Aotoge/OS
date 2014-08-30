@@ -599,6 +599,8 @@ dirlink(struct inode *dp, char *name, uint inum)
 
   // Check that name is not present.
   if((ip = dirlookup(dp, name, 0)) != 0){
+    // dirlookup if found will call iget to return, which will increase
+    // the count, so we need ip to release
     iput(ip);
     return -1;
   }
@@ -607,12 +609,15 @@ dirlink(struct inode *dp, char *name, uint inum)
   for(off = 0; off < dp->size; off += sizeof(de)){
     if(readi(dp, (char*)&de, off, sizeof(de)) != sizeof(de))
       panic("dirlink read");
+
+    // inoe number = 0 -> indicate it is a empty ?
     if(de.inum == 0)
       break;
   }
 
   strncpy(de.name, name, DIRSIZ);
   de.inum = inum;
+
   if(writei(dp, (char*)&de, off, sizeof(de)) != sizeof(de))
     panic("dirlink");
   
@@ -634,66 +639,93 @@ dirlink(struct inode *dp, char *name, uint inum)
 //   skipelem("a", name) = "", setting name = "a"
 //   skipelem("", name) = skipelem("////", name) = 0
 //
+// skipelem("/name1/name2/name3", name)
+// skip the topest part of the path, that is "/name1/"
+// and set name = "name1". return a pointer to the next part,
+// that is "name2/name3"
 static char*
 skipelem(char *path, char *name)
 {
   char *s;
   int len;
-
+  
+  // skip the leading slash
   while(*path == '/')
     path++;
   if(*path == 0)
     return 0;
   s = path;
+
+  // get the first part of the path,
+  // also skipping leading slash
   while(*path != '/' && *path != 0)
     path++;
   len = path - s;
-  if(len >= DIRSIZ)
+  if(len >= DIRSIZ) {
     memmove(name, s, DIRSIZ);
-  else {
+  } else {
     memmove(name, s, len);
     name[len] = 0;
   }
+  
+  // return a pointer points to the start of the second part,
+  // also skipping leading slash
   while(*path == '/')
     path++;
   return path;
 }
 
 // Look up and return the inode for a path name.
-// If parent != 0, return the inode for the parent and copy the final
+// If nameiparent != 0, return the inode for the parent and copy the final
 // path element into name, which must have room for DIRSIZ bytes.
 static struct inode*
 namex(char *path, int nameiparent, char *name)
 {
+  // for exampe path = "/name1/name2"
   struct inode *ip, *next;
 
-  if(*path == '/')
+  if(*path == '/') {
     ip = iget(ROOTDEV, ROOTINO);
-  else
-    ip = idup(proc->cwd);
+  } else {
+    ip = idup(proc->cwd);     // increase the ref-count of inode
+  }
 
+  // first loop: name = name1, path = name2, ip = "/name1/name2"
+  // second loop: name = name2, path = "", ip "name2"
   while((path = skipelem(path, name)) != 0){
     ilock(ip);
+
     if(ip->type != T_DIR){
       iunlockput(ip);
       return 0;
     }
+    
     if(nameiparent && *path == '\0'){
+      // path before skipelem is "last1"
+      // path after skipelem is ""
+      // current ip points to last1
+      // and name is "last1"
+      //
       // Stop one level early.
       iunlock(ip);
       return ip;
     }
+    
+    // next = "name2"
     if((next = dirlookup(ip, name, 0)) == 0){
       iunlockput(ip);
       return 0;
     }
+
     iunlockput(ip);
     ip = next;
   }
+
   if(nameiparent){
     iput(ip);
     return 0;
   }
+
   return ip;
 }
 

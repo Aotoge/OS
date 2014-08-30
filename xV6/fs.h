@@ -56,10 +56,15 @@ struct dinode {
 // Directory is a file containing a sequence of dirent structures.
 #define DIRSIZ 14
 
+// A directory is "special" kind of file, which content is struct dirent.
+// In other words, the block the inode points to contains struct dirent.
+//
+//
 // A directory is implemented internally much like a file. It has
 // node type T_DIR and its data is a sequence of directory entries.
 // Each entry is a struct dirent.
 struct dirent {
+  // if inum is 0, dirent is free
   ushort inum;          // inode number
   char name[DIRSIZ];
 };
