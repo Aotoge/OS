@@ -562,7 +562,12 @@ namecmp(const char *s, const char *t)
 
 // Look for a directory entry in a directory.
 // If found, set *poff to byte offset of entry.
-// return the indoe of the found directory
+//
+// Look for file (directory is also a file) which name is *name in the directory
+// which is represented by inode dp.
+// Looking is performing by look through the content of the inode which
+// is an array of struct dirent. 
+// If found set the poff and return the inode pointer of the file
 struct inode*
 dirlookup(struct inode *dp, char *name, uint *poff)
 {
@@ -585,11 +590,13 @@ dirlookup(struct inode *dp, char *name, uint *poff)
       return iget(dp->dev, inum);
     }
   }
-
   return 0;
 }
 
 // Write a new directory entry (name, inum) into the directory dp.
+//
+// given a file whose name is name and its inode number is inum,
+// add this file to the directory pointed by dp.
 int
 dirlink(struct inode *dp, char *name, uint inum)
 {
@@ -618,6 +625,7 @@ dirlink(struct inode *dp, char *name, uint inum)
   strncpy(de.name, name, DIRSIZ);
   de.inum = inum;
 
+  // write to the entry of directory
   if(writei(dp, (char*)&de, off, sizeof(de)) != sizeof(de))
     panic("dirlink");
   
@@ -681,7 +689,6 @@ skipelem(char *path, char *name)
 static struct inode*
 namex(char *path, int nameiparent, char *name)
 {
-  // for exampe path = "/name1/name2"
   struct inode *ip, *next;
 
   if(*path == '/') {
@@ -690,45 +697,65 @@ namex(char *path, int nameiparent, char *name)
     ip = idup(proc->cwd);     // increase the ref-count of inode
   }
 
-  // first loop: name = name1, path = name2, ip = "/name1/name2"
-  // second loop: name = name2, path = "", ip "name2"
-  while((path = skipelem(path, name)) != 0){
-    ilock(ip);
 
+  // considering this exampe path = "./name1/name2", nameiparent = 0
+  // before first iteration: path = "./name1/name2", ip -> "./" (aka current directory)
+  while((path = skipelem(path, name)) != 0){
+    // first-iteration:
+    // after skipelem
+    // path = "name2", name = "name1"
+    
+    // second-iteration:
+    // after skipelem
+    // path = "", name = "name2"
+
+    ilock(ip);
+  
+    // if current inode is directory, if not loopup failed.
     if(ip->type != T_DIR){
       iunlockput(ip);
       return 0;
     }
     
     if(nameiparent && *path == '\0'){
-      // path before skipelem is "last1"
-      // path after skipelem is ""
-      // current ip points to last1
-      // and name is "last1"
-      //
-      // Stop one level early.
+      // if nameiparent is set
+      // ip points to the parent directory of the file
+      // ./name1/name2
+      // so return the inode pointer of the parent directory
       iunlock(ip);
       return ip;
     }
     
-    // next = "name2"
-    if((next = dirlookup(ip, name, 0)) == 0){
+    // first-iteration:
+    // lookup name = "name1" in ip -> "./"
+    // if found, next -> "./name1"
+
+    // second-iteration:
+    // lookup name = "name2" in ip -> "./name1"
+    // if found, next -> "./name1/name2
+    if((next = dirlookup(ip, name, 0)) == 0) {
       iunlockput(ip);
       return 0;
     }
 
     iunlockput(ip);
+
     ip = next;
   }
-
-  if(nameiparent){
+  
+  // this for case such as "./name1", so return "./"
+  if (nameiparent) {
     iput(ip);
     return 0;
   }
-
+  
+  // finally, we get the inode pointer points to the file
+  // corresponding to path "./name1/name2"
   return ip;
 }
 
+// given a path to a file, return its
+// corresponding inode pointer
 struct inode*
 namei(char *path)
 {
@@ -736,6 +763,8 @@ namei(char *path)
   return namex(path, 0, name);
 }
 
+// given a path to a file, return
+// a inode pointer to its direct parent
 struct inode*
 nameiparent(char *path, char *name)
 {

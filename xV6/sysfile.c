@@ -112,6 +112,9 @@ sys_fstat(void)
 }
 
 // Create the path new as a link to the same inode as old.
+// 
+// given new = "new_path", old = "old_path"
+// make "new_path" also link to the inode of the "old_path"
 int
 sys_link(void)
 {
@@ -120,6 +123,8 @@ sys_link(void)
 
   if(argstr(0, &old) < 0 || argstr(1, &new) < 0)
     return -1;
+
+  // get the inode linked by old
   if((ip = namei(old)) == 0)
     return -1;
 

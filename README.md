@@ -1417,5 +1417,3 @@ Transactions    | Logging
                 ------------------
 Blocks          | Buffer cache
                 ------------------
-
-
