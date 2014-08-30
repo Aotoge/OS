@@ -1324,7 +1324,23 @@ debuginfo_eip(uintptr_t addr, struct Eipdebuginfo *info)
 ### Scratch for Chapter 6 : File System
 
 1. A outline of data struct & functions related to FS.
+
 ```c
+
+struct inode {
+  uint dev;
+  uint inum;
+  int ref;
+  int flags;
+
+  short type;
+  short major;
+  short minor;
+  short nlink;
+  uint size;
+  uint addrs[NDIRECT+1];
+};
+
 // Return a B_BUSY buf with the contents of the indicated disk sector
 struct buf*
 bread(uint dev, uint sector);
@@ -1345,6 +1361,10 @@ bfree(int dev, uint b);
 int
 bmap(struct inode *ip, int bn);
 ```
+
+// read data from inode given inode, offset and size
+int
+readi(struct inode *ip, char *dst, uint off, uint n)
 
 2. Call graph
 
