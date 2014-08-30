@@ -1391,6 +1391,23 @@ iget(uint dev, uint inum);
 int
 readi(struct inode *ip, char *dst, uint off, uint n)
 
+
+
+// in file.c
+// A global file table share among all kernel threads
+struct {
+  struct splink lock;
+  struct file file[NFILE];
+} ftable;
+
+// allocate a file structure
+struct file*
+filealloc(void);
+
+// inc ref count of f
+struct file*
+filedup(structfile *f);
+
 2. Call graph
 
 ```c
@@ -1417,3 +1434,6 @@ Transactions    | Logging
                 ------------------
 Blocks          | Buffer cache
                 ------------------
+
+100. ??? when to call iupate(ip)
+if the dinoe part of inode is changed ?

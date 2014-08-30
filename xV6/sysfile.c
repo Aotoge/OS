@@ -111,7 +111,7 @@ sys_fstat(void)
   return filestat(f, st);
 }
 
-// Create the path new as a link to the same inode as old.
+// Creat a new name for an existing inode
 // 
 // given new = "new_path", old = "old_path"
 // make "new_path" also link to the inode of the "old_path"
@@ -121,30 +121,36 @@ sys_link(void)
   char name[DIRSIZ], *new, *old;
   struct inode *dp, *ip;
 
-  if(argstr(0, &old) < 0 || argstr(1, &new) < 0)
+  if (argstr(0, &old) < 0 || argstr(1, &new) < 0)
     return -1;
 
   // get the inode linked by old
-  if((ip = namei(old)) == 0)
+  if ((ip = namei(old)) == 0)
     return -1;
 
   begin_trans();
 
   ilock(ip);
-  if(ip->type == T_DIR){
+
+  // we cannot create a new link to a directory ?
+  if (ip->type == T_DIR) {
     iunlockput(ip);
     commit_trans();
     return -1;
   }
 
   ip->nlink++;
+  
+  // when to call iupdate(ip) ?
+  // if the dinode part of inode is changed ?
   iupdate(ip);
   iunlock(ip);
 
-  if((dp = nameiparent(new, name)) == 0)
+  if ((dp = nameiparent(new, name)) == 0)
     goto bad;
+
   ilock(dp);
-  if(dp->dev != ip->dev || dirlink(dp, name, ip->inum) < 0){
+  if (dp->dev != ip->dev || dirlink(dp, name, ip->inum) < 0) {
     iunlockput(dp);
     goto bad;
   }
@@ -236,6 +242,7 @@ bad:
   return -1;
 }
 
+// create a new name for a new inode, the inode returned is locked.
 static struct inode*
 create(char *path, short type, short major, short minor)
 {
@@ -243,11 +250,11 @@ create(char *path, short type, short major, short minor)
   struct inode *ip, *dp;
   char name[DIRSIZ];
 
-  if((dp = nameiparent(path, name)) == 0)
-    return 0;
+  if ((dp = nameiparent(path, name)) == 0) return 0;
+
   ilock(dp);
 
-  if((ip = dirlookup(dp, name, &off)) != 0){
+  if ((ip = dirlookup(dp, name, &off)) != 0) {
     iunlockput(dp);
     ilock(ip);
     if(type == T_FILE && ip->type == T_FILE)
@@ -256,7 +263,7 @@ create(char *path, short type, short major, short minor)
     return 0;
   }
 
-  if((ip = ialloc(dp->dev, type)) == 0)
+  if ((ip = ialloc(dp->dev, type)) == 0)
     panic("create: ialloc");
 
   ilock(ip);
@@ -265,19 +272,19 @@ create(char *path, short type, short major, short minor)
   ip->nlink = 1;
   iupdate(ip);
 
-  if(type == T_DIR){  // Create . and .. entries.
+  if (type == T_DIR) {  // Create . and .. entries.
     dp->nlink++;  // for ".."
     iupdate(dp);
+
     // No ip->nlink++ for ".": avoid cyclic ref count.
-    if(dirlink(ip, ".", ip->inum) < 0 || dirlink(ip, "..", dp->inum) < 0)
+    if (dirlink(ip, ".", ip->inum) < 0 || dirlink(ip, "..", dp->inum) < 0)
       panic("create dots");
   }
 
-  if(dirlink(dp, name, ip->inum) < 0)
+  if (dirlink(dp, name, ip->inum) < 0)
     panic("create: dirlink");
 
   iunlockput(dp);
-
   return ip;
 }
 
@@ -289,16 +296,17 @@ sys_open(void)
   struct file *f;
   struct inode *ip;
 
-  if(argstr(0, &path) < 0 || argint(1, &omode) < 0)
+  if (argstr(0, &path) < 0 || argint(1, &omode) < 0)
     return -1;
-  if(omode & O_CREATE){
+
+  if (omode & O_CREATE) {
     begin_trans();
     ip = create(path, T_FILE, 0, 0);
     commit_trans();
-    if(ip == 0)
+    if (ip == 0)
       return -1;
   } else {
-    if((ip = namei(path)) == 0)
+    if ((ip = namei(path)) == 0)
       return -1;
     ilock(ip);
     if(ip->type == T_DIR && omode != O_RDONLY){
@@ -307,12 +315,12 @@ sys_open(void)
     }
   }
 
-  if((f = filealloc()) == 0 || (fd = fdalloc(f)) < 0){
-    if(f)
-      fileclose(f);
+  if ((f = filealloc()) == 0 || (fd = fdalloc(f)) < 0) {
+    if (f) fileclose(f);
     iunlockput(ip);
     return -1;
   }
+
   iunlock(ip);
 
   f->type = FD_INODE;

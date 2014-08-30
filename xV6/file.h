@@ -1,15 +1,30 @@
+// wrapper for struct inode
 struct file {
   enum { FD_NONE, FD_PIPE, FD_INODE } type;
+
+  // number of references to a particular open file
+  // like smart-pointer counting
   int ref; // reference count
+
+  // read/write permission
   char readable;
   char writable;
+
+  // realted to the file type
   struct pipe *pipe;
   struct inode *ip;
+
+  // current offset
   uint off;
 };
 
 
 // in-memory copy of an inode
+//
+// about ref and nlink
+// ref is counting currently how many pointers point to this inode
+// (like the reference count in smart-pointer)
+// nlink is counting how many "files" link against this inode.
 struct inode {
   uint dev;           // Device number
   uint inum;          // Inode number

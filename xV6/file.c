@@ -10,6 +10,9 @@
 #include "spinlock.h"
 
 struct devsw devsw[NDEV];
+
+// All the open files are kept in ftable, share among all process' kernel
+// thread.
 struct {
   struct spinlock lock;
   struct file file[NFILE];
@@ -69,9 +72,9 @@ fileclose(struct file *f)
   f->type = FD_NONE;
   release(&ftable.lock);
   
-  if(ff.type == FD_PIPE)
+  if (ff.type == FD_PIPE) {
     pipeclose(ff.pipe, ff.writable);
-  else if(ff.type == FD_INODE){
+  } else if (ff.type == FD_INODE) {
     begin_trans();
     iput(ff.ip);
     commit_trans();
@@ -96,18 +99,20 @@ int
 fileread(struct file *f, char *addr, int n)
 {
   int r;
+  if (f->readable == 0) return -1;
 
-  if(f->readable == 0)
-    return -1;
-  if(f->type == FD_PIPE)
-    return piperead(f->pipe, addr, n);
-  if(f->type == FD_INODE){
+  if (f->type == FD_PIPE) return piperead(f->pipe, addr, n);
+
+  if (f->type == FD_INODE) {
     ilock(f->ip);
-    if((r = readi(f->ip, addr, f->off, n)) > 0)
+    // read from f->ip "+" f->off to addr
+    if ((r = readi(f->ip, addr, f->off, n)) > 0) {
       f->off += r;
+    }
     iunlock(f->ip);
     return r;
   }
+
   panic("fileread");
 }
 
@@ -118,11 +123,11 @@ filewrite(struct file *f, char *addr, int n)
 {
   int r;
 
-  if(f->writable == 0)
-    return -1;
-  if(f->type == FD_PIPE)
-    return pipewrite(f->pipe, addr, n);
-  if(f->type == FD_INODE){
+  if (f->writable == 0) return -1;
+
+  if (f->type == FD_PIPE) return pipewrite(f->pipe, addr, n);
+
+  if (f->type == FD_INODE) {
     // write a few blocks at a time to avoid exceeding
     // the maximum log transaction size, including
     // i-node, indirect block, allocation blocks,
@@ -143,10 +148,10 @@ filewrite(struct file *f, char *addr, int n)
       iunlock(f->ip);
       commit_trans();
 
-      if(r < 0)
-        break;
-      if(r != n1)
-        panic("short filewrite");
+      if (r < 0) break;
+
+      if (r != n1) panic("short filewrite");
+
       i += r;
     }
     return i == n ? n : -1;

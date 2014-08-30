@@ -232,10 +232,8 @@ iupdate(struct inode *ip)
   dip->nlink = ip->nlink;
   dip->size = ip->size;
 
-  // indirect part ?
   memmove(dip->addrs, ip->addrs, sizeof(ip->addrs));
   
-
   log_write(bp);
   brelse(bp);
 }
