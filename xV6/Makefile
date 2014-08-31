@@ -51,11 +51,10 @@ TOOLPREFIX := $(shell if i386-jos-elf-objdump -i 2>&1 | grep '^elf32-i386$$' >/d
 endif
 
 # If the makefile can't find QEMU, specify its path here
-#QEMU =
 
 # Try to infer the correct QEMU
 ifndef QEMU
-QEMU = $(shell if which qemu > /dev/null; \
+QEMU = $(shell if which qemu /dev/null; \
 	then echo qemu; exit; \
 	else \
 	qemu=/Applications/Q.app/Contents/MacOS/i386-softmmu.app/Contents/MacOS/i386-softmmu; \
