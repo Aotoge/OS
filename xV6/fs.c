@@ -62,15 +62,15 @@ balloc(uint dev)
   readsb(dev, &sb);
   // BPB = 512 * 8, means using a block can hold 512 * 8 bits.
   // and each bit can be used to reprenset the status of a block.
-  for(b = 0; b < sb.size; b += BPB){
+  for (b = 0; b < sb.size; b += BPB) {
     // read a bitmap block
     bp = bread(dev, BBLOCK(b, sb.ninodes));
     // b + bi = sector id in the disk
-    for(bi = 0; bi < BPB && b + bi < sb.size; bi++){
+    for (bi = 0; bi < BPB && b + bi < sb.size; bi++) {
       // generate bit mask
       // 0x01, 0x02, 0x04 0x08, 0x10, 0x20, 0x40, 0x80
       m = 1 << (bi % 8);
-      if((bp->data[bi/8] & m) == 0){  // Is block free?
+      if ((bp->data[bi/8] & m) == 0){  // Is block free?
         bp->data[bi/8] |= m;  // Mark block in use.
         log_write(bp);
         brelse(bp);
@@ -86,8 +86,7 @@ balloc(uint dev)
 // Free a disk block, by setting its corresponding bit in bitmap
 // to 0
 static void
-bfree(int dev, uint b)
-{
+bfree(int dev, uint b) {
   struct buf *bp;
   struct superblock sb;
   int bi, m;
@@ -383,39 +382,74 @@ iunlockput(struct inode *ip)
 // (aka. address). If ip->adrs[bn] = 0, then call balloc to allocate
 // a new one for it.
 static uint
-bmap(struct inode *ip, uint bn)
-{
+bmap(struct inode *ip, uint bn) {
   uint addr, *a;
   struct buf *bp;
   
-  // case 1: direct
-  if(bn < NDIRECT){
-    if((addr = ip->addrs[bn]) == 0)
+  // case 1: direct: bn in [0,11)
+  if (bn < NDIRECT) {
+    if ((addr = ip->addrs[bn]) == 0) {
       ip->addrs[bn] = addr = balloc(ip->dev);
+    }
     return addr;
-  }
+  } 
   
-  // case 2: indirect
+  // case 2: singled-linked: original bn in [11, 139)
   bn -= NDIRECT;
-  if(bn < NINDIRECT){
-    // Load indirect block, allocating if necessary.
-    if((addr = ip->addrs[NDIRECT]) == 0)
-      // allocate a block for indirect lookup
-      ip->addrs[NDIRECT] = addr = balloc(ip->dev);
+  if (bn < NINDIRECT) {
+    // if the single-linked lookup talbe doesn't exist
+    // allocate it
+    if (0 == (addr = ip->addrs[SINGLE_LINKED_INDIRECT_TABLE])) {
+      ip->addrs[SINGLE_LINKED_INDIRECT_TABLE] = addr = balloc(ip->dev);
+    }
 
-    // reads in direct into ip->addrs[NDIRECT]
+    // read the single-linked lookup talbe
     bp = bread(ip->dev, addr);
+    a = (uint*)bp->data;
 
     // indirect lookup
-    a = (uint*)bp->data;
-    if((addr = a[bn]) == 0){
+    if (0 == (addr = a[bn])) {
+      // if doesn't exit, allocate one
       a[bn] = addr = balloc(ip->dev);
       log_write(bp);
     }
+
+    //clean up
     brelse(bp);
     return addr;
   }
 
+  // case 3: double-linked: original bn in [139, 16523)
+  bn -= NINDIRECT;
+  if (bn < NDINDIRECT) {
+    if (0 == (addr = ip->addrs[DOUBLE_LINKED_INDIRECT_TABLE])) {
+      ip->addrs[DOUBLE_LINKED_INDIRECT_TABLE] = addr = balloc(ip->dev);
+    }
+
+    bp = bread(ip->dev, addr);
+    a = (uint*)bp->data;
+    
+    // first-level indirect lookup
+    uint idx1 = bn / NINDIRECT;
+    if (0 == (addr = a[idx1])) {
+      a[idx1] = addr = balloc(ip->dev);
+      log_write(bp);
+    }
+    brelse(bp);
+  
+    // second-level indirect lookup
+    struct buf* bp2;
+    uint idx2 = bn % NINDIRECT; 
+    bp2 = bread(ip->dev, addr);
+    a = (uint*)bp2->data;
+    if (0 == (addr = a[idx2])) {
+      a[idx2] = addr = balloc(ip->dev);
+      log_write(bp2);
+    }
+    brelse(bp2);
+
+    return addr;
+  }
   panic("bmap: out of range");
 }
 
@@ -430,27 +464,52 @@ bmap(struct inode *ip, uint bn)
 static void
 itrunc(struct inode *ip)
 {
-  int i, j;
-  struct buf *bp;
-  uint *a;
-
-  for(i = 0; i < NDIRECT; i++){
-    if(ip->addrs[i]){
+  int i, j, k;
+  struct buf *bp, *bp2;
+  uint *a, *b;
+  
+  // free direct block
+  for (i = 0; i < NDIRECT; i++){
+    if (ip->addrs[i]) {
       bfree(ip->dev, ip->addrs[i]);
       ip->addrs[i] = 0;
     }
   }
   
-  if(ip->addrs[NDIRECT]){
-    bp = bread(ip->dev, ip->addrs[NDIRECT]);
+  // free single-linked indirect block
+  if (ip->addrs[SINGLE_LINKED_INDIRECT_TABLE]) {
+    bp = bread(ip->dev, ip->addrs[SINGLE_LINKED_INDIRECT_TABLE]);
     a = (uint*)bp->data;
-    for(j = 0; j < NINDIRECT; j++){
-      if(a[j])
+    for (j = 0; j < NINDIRECT; ++j) {
+      if (a[j]) {
         bfree(ip->dev, a[j]);
+      }
     }
     brelse(bp);
-    bfree(ip->dev, ip->addrs[NDIRECT]);
-    ip->addrs[NDIRECT] = 0;
+    bfree(ip->dev, ip->addrs[SINGLE_LINKED_INDIRECT_TABLE]);
+    ip->addrs[SINGLE_LINKED_INDIRECT_TABLE] = 0;
+  }
+  
+  // free double-linked indirect block
+  if (ip->addrs[DOUBLE_LINKED_INDIRECT_TABLE]) {
+    bp = bread(ip->dev, ip->addrs[DOUBLE_LINKED_INDIRECT_TABLE]);
+    a = (uint*)bp->data;
+    for (j = 0; j < NINDIRECT; ++j) {
+      if (a[j]) {
+        bp2 = bread(ip->dev, a[j]);
+        b = (uint*)bp2->data;
+        for (k = 0; k < NINDIRECT; ++k) {
+          if (b[k]) {
+            bfree(ip->dev, b[k]);
+          }
+        }
+        brelse(bp2);
+        bfree(ip->dev, a[j]);
+      }
+    }
+    brelse(bp);
+    bfree(ip->dev, ip->addrs[DOUBLE_LINKED_INDIRECT_TABLE]);
+    ip->addrs[DOUBLE_LINKED_INDIRECT_TABLE] = 0;
   }
 
   ip->size = 0;
@@ -477,8 +536,8 @@ readi(struct inode *ip, char *dst, uint off, uint n)
   struct buf *bp;
   
   // for device r
-  if(ip->type == T_DEV){
-    if(ip->major < 0 || ip->major >= NDEV || !devsw[ip->major].read)
+  if (ip->type == T_DEV) {
+    if (ip->major < 0 || ip->major >= NDEV || !devsw[ip->major].read)
       return -1;
     return devsw[ip->major].read(ip, dst, n);
   }
@@ -492,7 +551,7 @@ readi(struct inode *ip, char *dst, uint off, uint n)
     n = ip->size - off;
 
   // tot : total of current read
-  for(tot=0; tot<n; tot += m, off += m, dst += m){
+  for ( tot = 0; tot < n; tot += m, off += m, dst += m){
     // bmap return the sector number
     bp = bread(ip->dev, bmap(ip, off/BSIZE));
 
@@ -529,7 +588,7 @@ writei(struct inode *ip, char *src, uint off, uint n)
     return -1;
 
   for(tot=0; tot<n; tot+=m, off+=m, src+=m){
-    // bamp will allocat new block
+    // bmap will allocat new block
     bp = bread(ip->dev, bmap(ip, off/BSIZE));
 
     m = min(n - tot, BSIZE - off%BSIZE);

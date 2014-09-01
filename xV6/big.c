@@ -17,13 +17,15 @@ main()
 
   sectors = 0;
   while(1){
+
     *(int*)buf = sectors;
     int cc = write(fd, buf, sizeof(buf));
-    if(cc <= 0)
-      break;
+
+    if(cc <= 0) break;
     sectors++;
-	if (sectors % 100 == 0)
-		printf(2, ".");
+    // printf(2, "current sector: %d\n", sectors);
+	  if (sectors % 100 == 0)
+      printf(2, ".");
   }
 
   printf(1, "\nwrote %d sectors\n", sectors);
@@ -46,6 +48,6 @@ main()
       exit();
     }
   }
-
+  printf(2, "big file read/write correct.\n");
   exit();
 }

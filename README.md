@@ -1371,7 +1371,10 @@ bfree(int dev, uint b);
 
 // return the content of ip->addrs[bn], which is the sector number
 // (aka. address). If ip->adrs[bn] = 0, then call balloc to allocate
-// a new one for it.
+// a new one for it. we can bn (aka. the index of the address array)
+// the "logical block" of a file.
+//
+// bmap maps a inode's logical block (aka. bn) to on disk physics block (sector number)
 int
 bmap(struct inode *ip, int bn);
 ```
@@ -1391,8 +1394,6 @@ iget(uint dev, uint inum);
 int
 readi(struct inode *ip, char *dst, uint off, uint n)
 
-
-
 // in file.c
 // A global file table share among all kernel threads
 struct {
@@ -1410,6 +1411,7 @@ filedup(structfile *f);
 
 2. Call graph
 
+<1>
 ```c
 // call graph for inode operations
 ip = iget(dev, inum);
@@ -1417,6 +1419,27 @@ ilock(ip);
 ...
 iunlock(ip); // or iunlockput(ip)
 iput(ip);
+```
+
+<2> 
+
+```c
+readi();
+bmap();
+bread();
+```
+
+<3> 
+
+```c
+// ----- write call graph -------
+write()
+sys_write()
+filewrite()
+writei()
+  -> bread -> bmap
+  -> iupdate
+// ----- read call graph -------
 ```
 
 3. Abstraction os FS on xV6
@@ -1435,5 +1458,8 @@ Transactions    | Logging
 Blocks          | Buffer cache
                 ------------------
 
-100. ??? when to call iupate(ip)
-if the dinoe part of inode is changed ?
+4. "Logical Block" vs "Physics Block"
+<1> bn is the "logical block", aka. the index of address array
+<2> sector, the argument passed to bread, is called the physics block.
+
+100. ??? when to call iupate(ip) only if the dinoe part of inode is changed ?

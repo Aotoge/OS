@@ -19,9 +19,45 @@ struct superblock {
   uint nlog;         // Number of log blocks
 };
 
-#define NDIRECT 12
+// struct of block layout of dinode
+/*
+      -----------------
+        type  | major
+      -----------------
+        minor | nlink
+      -----------------
+            size
+      -----------------  --- start of direct block ---
+          addrs[0]
+      -----------------
+            .
+            .
+            .
+      -----------------   
+          addrs[11]
+      ----------------- --- start of single-linked direct block ---
+          addrs[12]
+      ----------------- --- start of double-linked direct block ---
+          addrs[13]
+      -----------------
+*/
+
+
+// number of direct block
+#define NDIRECT 11
+
+// number of single-linked indirect blocks: 128
 #define NINDIRECT (BSIZE / sizeof(uint))
-#define MAXFILE (NDIRECT + NINDIRECT)
+
+// number of double-linked indirect blocks: 128 * 128
+#define NDINDIRECT ((NINDIRECT) * (NINDIRECT))
+
+// max file size in the size of block: direct blocks + single/double-linked
+// direct blocks
+#define MAXFILE (NDIRECT + NINDIRECT + NDINDIRECT)
+
+#define SINGLE_LINKED_INDIRECT_TABLE  (NDIRECT)
+#define DOUBLE_LINKED_INDIRECT_TABLE  (NDIRECT + 1)
 
 // On-disk inode structure
 struct dinode {
@@ -33,7 +69,7 @@ struct dinode {
 
   // the entry is the block number (aka. sector number)
   // it is not the acutally address
-  uint addrs[NDIRECT+1];  // Data block addresses
+  uint addrs[NDIRECT+2];  // Data block addresses
 };
 
 // Inodes per block.
@@ -48,7 +84,7 @@ struct dinode {
 // Bitmap bits per block
 #define BPB           (BSIZE*8)
 
-// Block containing bit for block b
+// calculate the Block number containing the bit for block b
 // boot sector, super block, at least one inode block and at least
 // one bitmap block, so + 3.
 #define BBLOCK(b, ninodes) (b/BPB + (ninodes)/IPB + 3)
