@@ -87,6 +87,9 @@ bget(uint dev, uint sector)
 
   // Not cached; recycle some non-busy and clean buffer.
   for(b = bcache.head.prev; b != &bcache.head; b = b->prev){
+    // if this block is not busy (aka. no other thread holds it)
+    // and if the block is not dirty (aka. is not modified or alredy up-to-date)
+    // recycle it
     if((b->flags & B_BUSY) == 0 && (b->flags & B_DIRTY) == 0){
       b->dev = dev;
       b->sector = sector;

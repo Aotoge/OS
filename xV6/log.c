@@ -33,8 +33,23 @@
 
 // Contents of the header block, used for both the on-disk header block
 // and to keep track in memory of logged sector #s before commit.
+
+
+// on-disk layout of log
+// ----------
+// header         (1 block)
+// ----------
+// data_block[0]
+// ----------
+// .
+// .
+// .
+// ----------
+// data_block[n]
+// ----------
+
 struct logheader {
-  int n;   
+  int n;                        // number of sectors
   int sector[LOGSIZE];
 };
 
@@ -46,6 +61,7 @@ struct log {
   int dev;
   struct logheader lh;
 };
+
 struct log log;
 
 static void recover_from_log(void);
@@ -170,13 +186,21 @@ log_write(struct buf *b)
     if (log.lh.sector[i] == b->sector)   // log absorbtion?
       break;
   }
+
   log.lh.sector[i] = b->sector;
+  
+  // why log.start+i+1? see on-disk layout of log
   struct buf *lbuf = bread(b->dev, log.start+i+1);
+
+  // append the write data to log data block
   memmove(lbuf->data, b->data, BSIZE);
   bwrite(lbuf);
+
   brelse(lbuf);
   if (i == log.lh.n)
     log.lh.n++;
+
+  // in bget()
   b->flags |= B_DIRTY; // XXX prevent eviction
 }
 

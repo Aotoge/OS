@@ -1409,9 +1409,15 @@ filealloc(void);
 struct file*
 filedup(structfile *f);
 
-2. Call graph
+2. Call graph and Interface
 
-<1>
+<0> block cache (aka. sector buffer) read/write
+```c
+bread()
+bwrite()
+```
+
+<1> inode operation
 ```c
 // call graph for inode operations
 ip = iget(dev, inum);
@@ -1421,15 +1427,13 @@ iunlock(ip); // or iunlockput(ip)
 iput(ip);
 ```
 
-<2> 
-
+<2> read/write the data inode points to (aka. read/write file)
 ```c
-readi();
-bmap();
-bread();
+readi()
+writei()
 ```
 
-<3> 
+<3> file read/write system call
 
 ```c
 // ----- write call graph -------
@@ -1439,11 +1443,15 @@ filewrite()
 writei()
   -> bread -> bmap
   -> iupdate
-// ----- read call graph -------
+// ----- read calll graph -------
 ```
+
+<4> Logging
+
 
 3. Abstraction os FS on xV6
 
+```
                 ------------------
 System calls    | File Descriptors
                 ------------------
@@ -1457,9 +1465,15 @@ Transactions    | Logging
                 ------------------
 Blocks          | Buffer cache
                 ------------------
+```
 
 4. "Logical Block" vs "Physics Block"
 <1> bn is the "logical block", aka. the index of address array
 <2> sector, the argument passed to bread, is called the physics block.
+
+5. from the bio.c
+
+we know that each block (sector) as well as the buffer cache belongs to
+at most one kernel thread a operation (etc. read/write)
 
 100. ??? when to call iupate(ip) only if the dinoe part of inode is changed ?
