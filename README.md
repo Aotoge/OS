@@ -55,7 +55,11 @@ multiprocessor using ANSI C.
     * basic part (ok)
   * [Lec8: Barriers](#barriers)
     * OK
-
+  * [Lec9: Big Files]
+    * OK
+  * [Lec10: xv6 log]
+    * Basic OK
+    * Challenge (NO)
 #### Shell Exercise
 check inclass_sh.c for solution.
 

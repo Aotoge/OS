@@ -91,11 +91,12 @@ install_trans(void)
   int tail;
 
   for (tail = 0; tail < log.lh.n; tail++) {
-    struct buf *lbuf = bread(log.dev, log.start+tail+1); // read log block
+    // modified for in-class: logging
+    // struct buf *lbuf = bread(log.dev, log.start+tail+1); // read log block
     struct buf *dbuf = bread(log.dev, log.lh.sector[tail]); // read dst
-    memmove(dbuf->data, lbuf->data, BSIZE);  // copy block to dst
+    // memmove(dbuf->data, lbuf->data, BSIZE);  // copy block to dst
     bwrite(dbuf);  // write dst to disk
-    brelse(lbuf); 
+   //  brelse(lbuf); 
     brelse(dbuf);
   }
 }
