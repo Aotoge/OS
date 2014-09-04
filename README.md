@@ -1321,137 +1321,40 @@ debuginfo_eip(uintptr_t addr, struct Eipdebuginfo *info)
 1. i386 manual page 86 about TF and RF
 
 
-### Scratch for Chapter 6 : File System
+### Scratch Note for Chapter 6 : File System
 
-1. A outline of data struct & functions related to FS.
-
-```c
-
-struct inode {
-  uint dev;
-  uint inum;
-  int ref;
-  int flags;
-
-  short type;
-  short major;
-  short minor;
-  short nlink;
-  uint size;
-  uint addrs[NDIRECT+1];
-};
-
-// for the lowest layer: there is buffer cache for secotr (aka. block)
-struct {
-  struct spinlock lock;
-  struct buf buf[NBUF]; // a struct for sector
-  struct buf head;
-} bcache;
-
-// for the inodes layer: there is buffer cache for inode
-struct {
-  struct spinlock lock;
-  struct inode inode[NINODE];
-} icache;
-
-
-// Return a B_BUSY buf with the contents of the indicated disk sector
-struct buf*
-bread(uint dev, uint sector);
-
-// Allocate a zeroed disk block (on the buffer cache)
-// and return the block number
-uint
-balloc(uint dev);
-
-// Free a disk block, by setting its corresponding bit in bitmap
-// to 0
-void
-bfree(int dev, uint b);
-
-// return the content of ip->addrs[bn], which is the sector number
-// (aka. address). If ip->adrs[bn] = 0, then call balloc to allocate
-// a new one for it. we can bn (aka. the index of the address array)
-// the "logical block" of a file.
-//
-// bmap maps a inode's logical block (aka. bn) to on disk physics block (sector number)
-int
-bmap(struct inode *ip, int bn);
-```
-
-// Lock the given inode
-// Reads the inode from disk if necessary
-void
-ilock(struct inode *ip);
-
-// Find the inode with number inum on device
-// return the in-memory copy.
-// Doesn't lock the inode and does not read it from disk.
-struct inode*
-iget(uint dev, uint inum);
-
-// read data from inode given inode, offset and size
-int
-readi(struct inode *ip, char *dst, uint off, uint n)
-
-// in file.c
-// A global file table share among all kernel threads
-struct {
-  struct splink lock;
-  struct file file[NFILE];
-} ftable;
-
-// allocate a file structure
-struct file*
-filealloc(void);
-
-// inc ref count of f
-struct file*
-filedup(structfile *f);
-
-2. Call graph and Interface
-
-<0> block cache (aka. sector buffer) read/write
-```c
-bread()
-bwrite()
-```
-
-<1> inode operation
-```c
-// call graph for inode operations
-ip = iget(dev, inum);
-ilock(ip);
-...
-iunlock(ip); // or iunlockput(ip)
-iput(ip);
-```
-
-<2> read/write the data inode points to (aka. read/write file)
-```c
-readi()
-writei()
-```
-
-<3> file read/write system call
-
-```c
-// ----- write call graph -------
-write()
-sys_write()
-filewrite()
-writei()
-  -> bread -> bmap
-  -> iupdate
-// ----- read calll graph -------
-```
-
-<4> Logging
-
-
-3. Abstraction os FS on xV6
+0. Overview
 
 ```
+// Important notes:
+1. Each sector holds a integer number of inodes, a inode will not cross two
+   sector.
+
+// -----------------------------------------------------------------------------
+// Disk Format
+// -----------------------------------------------------------------------------
+Format: | boot | super | inodes | bit map |  data  | log |
+Sector:    0       1     2 - x    x+1 - y   y + 1    Z
+the number of inodes is set in mkfs.c.
+
+// -----------------------------------------------------------------------------
+// On-Disk Layout for Log
+// -----------------------------------------------------------------------------
+// ----------
+// header         (1 block)
+// ----------
+// data_block[0]
+// ----------
+// .
+// .
+// .
+// ----------
+// data_block[n]
+// ----------
+
+// -----------------------------------------------------------------------------
+// File System Layers
+// -----------------------------------------------------------------------------
                 ------------------
 System calls    | File Descriptors
                 ------------------
@@ -1465,15 +1368,251 @@ Transactions    | Logging
                 ------------------
 Blocks          | Buffer cache
                 ------------------
-```
 
-4. "Logical Block" vs "Physics Block"
+// in-memory    |   map & caching |  on-disk
+// buffer block < --------------- > sector
+// inode        < --------------- > on disk inode
+
+// "Logical Block" vs "Physics Block"
 <1> bn is the "logical block", aka. the index of address array
 <2> sector, the argument passed to bread, is called the physics block.
+```
 
-5. from the bio.c
+1. Important Data Structure
 
-we know that each block (sector) as well as the buffer cache belongs to
-at most one kernel thread a operation (etc. read/write)
+```c
 
-100. ??? when to call iupate(ip) only if the dinoe part of inode is changed ?
+// for the lowest layer: there is buffer cache for secotr (aka. block)
+struct {
+  struct spinlock lock;
+  struct buf buf[NBUF]; // a struct for sector
+  struct buf head;
+} bcache;
+
+// in-memory struct of inode
+struct inode {
+  uint dev;
+  uint inum;
+  // in-memory refernece: counts how many pointers are point to this
+  // in-memory indoe
+  // JUST think like a smart pointer' s refernece counter
+  int ref;          
+  int flags;
+  
+  // this part is same is on-disk inode
+  short type;
+  short major;
+  short minor;
+  short nlink;
+  uint size;
+  uint addrs[NDIRECT+1];
+};
+
+
+// for the inodes layer: there is buffer cache for inode
+struct {
+  struct spinlock lock;
+  struct inode inode[NINODE];
+} icache;
+
+struct logheader {
+  int n;                        // number of sectors
+  int sector[LOGSIZE];          // store the dst sector number
+};
+
+struct log {
+  struct spinlock lock;
+  int start;
+  int size;
+  int busy; // a transaction is active
+  int dev;
+  struct logheader lh;
+};
+
+```
+
+1. Function Interface
+
+```c
+// -----------------------------------------------------------------------------
+// Buffer Cache Level (aka. sector level, in file bio.c)
+// -----------------------------------------------------------------------------
+// Important notes:
+// 1. each buffer (aka. sector) in any time can be owned by at most
+// one kernel thread.
+
+// return a buffer that corresponding to the on-disk sector.
+// And the returned buffer is locked (aka. buffer->flags & B_BUSY is set)
+// after using it we have to call brelse to relsese the buffer.
+// so bread and brelse are used in pair.
+struct buf*
+bread(uint dev, uint sector);
+  -> bget
+  -> sleep
+  -> iderw
+
+// write buffer to disk, buffer should be locked. (aka. B_BUSY)
+void
+bwrite(struct buf *b);
+  -> iderw
+
+// release a B_BUSY buffer (aka. unlock the buffer)
+// also put it in the front of the LRU list
+void
+brelse(struct buf *b);
+  -> wakeup
+
+
+// -----------------------------------------------------------------------------
+// Files Level One: on-disk block operations by manipulating bitmap
+// -----------------------------------------------------------------------------
+
+// allocated a zeroed disk block and set its bitmap bit, return its sector number
+uint
+balloc(uint dev);
+
+// clear bit map bit
+void bfree(int dev, uint b);
+
+// -----------------------------------------------------------------------------
+// Files Level Two: Inode Meta Data & address array Operations
+// In this level, on operation on the file raw content (aka. the no operations
+// on the sector the address array points to)
+// -----------------------------------------------------------------------------
+// Important Note:
+// What is inode: A on-disk data structure used to presnete a file.
+// inode is a unnamed file.
+// It contains file's meta data and a array of address (aka. sector numbers)
+// which point to the actual sector holding the file content.
+
+// Given inode nubmer return its in-memory copy (cache).
+// If already cahced increase ref.
+// !!!! It will not lock the inode and will not load it from
+// disk. It just SIMPLEY return a pointer to the cache slot.
+struct inode*
+iget(uint dev, uint inum);
+
+// Lock the given inode as well as reloading the content from disk
+// if necessary
+void ilock(struct inode *ip);
+  -> sleep
+  -> bread
+
+// unlock
+void iunlock(struct inode *ip);
+  -> wakeup
+
+// drop a reference, 
+void iput(struct inode *p);
+
+// update the ondisk inode (update its meta data & address array)
+// by copying the in-memory inode
+iupdate(struct inode *ip);
+  -> bread
+  -> log_write
+
+// Truncate inode:
+// use bfree to free (aka. clear bitmap bit) all the blocks the adress
+// array points to and also update ip
+itrunc(struct inode *ip)
+  -> bfree
+  -> iupdate
+
+// allocate a zero type inode.
+struct inode*
+ialloc(uint dev, short type);
+  -> bread
+  -> log_write
+  -> iget
+
+// Increment reference cout
+struct inode*
+idup(struct inode *ip);
+
+// bmap: Map(ip, bn(aka. logical sector number)) -> on disk sector number
+// !!!!!! the direct and indirect lookup is perfomred here
+uint
+bmap(struct inode *ip, uint bn)
+
+// -----------------------------------------------------------------------------
+// Files Level Three: read/write the raw content of inode (file)
+// (aka. r/w the block the address array points to)
+// -----------------------------------------------------------------------------
+int
+readi(struct inode *ip, char *dst, uint off, uint n);
+  -> bmap
+writei(struct inode *ip, char *src, uint off, uint n);
+  -> bmap
+
+// -----------------------------------------------------------------------------
+// Directory Level
+// -----------------------------------------------------------------------------
+// Important note: directory is also a file
+// so it has its inode and its content is a sequence of struct dirent.
+// a directory "names" inode file.
+
+// given a path to a file, return its
+// corresponding inode pointer
+struct inode*
+namei(char *path)
+  -> namex(path, 0, name)
+
+// given a path to a file, return a inode pointer to its direct parent
+struct inode*
+nameiparent(char *path, char *name)
+  -> namex(path, 1, name)
+
+// Write a new directory (name, inum)
+// This function "names" a indoe file.
+int dirlink(struct inode *dp, char *name, uint inum)
+
+// Copy the next path element from path into name.
+// Return a pointer to the element following the copied one.
+// The returned path has no leading slashes,
+// so the caller can check *path=='\0' to see if the name is the last one.
+// If no name to remove, return 0.
+//
+// Examples:
+//   skipelem("a/bb/c", name) = "bb/c", setting name = "a"
+//   skipelem("///a//bb", name) = "bb", setting name = "a"
+//   skipelem("a", name) = "", setting name = "a"
+//   skipelem("", name) = skipelem("////", name) = 0
+//
+// skipelem("/name1/name2/name3", name)
+// skip the topest part of the path, that is "/name1/"
+// and set name = "name1". return a pointer to the next part,
+// that is "name2/name3"
+char*
+skipelem(char *path, char *name);
+
+// Look up and return the inode for a path name.
+// If nameiparent != 0, return the inode for the parent and copy the final
+// path element into name, which must have room for DIRSIZ bytes.
+struct inode*
+namex(char *path, int nameiparent, char *name)
+
+// -----------------------------------------------------------------------------
+// Logging Level
+// -----------------------------------------------------------------------------
+// Loggin Flow
+// lock in-memory log
+begin_trans()
+  -> set log.busy
+// copy the bp->data to the log block i and also set the in-memory log header's
+// log.lh.sector[i]
+log_write(bp)
+  -> bread
+  -> bwrite
+commit_trans()
+  // writeh in-memory log header to on-disk log header.
+  // That is update the on-disk log.sector array
+  -> write_head()
+  // copy the data from log block to the block which log header sector array
+  // points to. (do the acutal write)
+  -> install_trans()
+      -> bread
+      -> bwrite
+  -> set lh->n = 0
+  // update head, indicate write finish
+  -> write_head()
+```

@@ -5,6 +5,9 @@
 #include "fs.h"
 #include "buf.h"
 
+#include "mmu.h"
+#include "proc.h"
+
 // Simple logging. Each system call that might write the file system
 // should be surrounded with begin_trans() and commit_trans() calls.
 //
@@ -50,7 +53,7 @@
 
 struct logheader {
   int n;                        // number of sectors
-  int sector[LOGSIZE];
+  int sector[LOGSIZE];          // store the dst sector number
 };
 
 struct log {
@@ -132,6 +135,7 @@ static void
 recover_from_log(void)
 {
   read_head();      
+  cprintf("recovery: n=%d but ignoring\n", log.lh.n);
   install_trans(); // if committed, copy from log to disk
   log.lh.n = 0;
   write_head(); // clear the log
@@ -153,7 +157,21 @@ commit_trans(void)
 {
   if (log.lh.n > 0) {
     write_head();    // Write header to disk -- the real commit
+    
+    /* // --------- buggy code --------- */
+    /* if (proc->pid > 1) { */
+      /* log.lh.sector[0] = 0; */
+    /* } */
+    /* // --------- buggy code --------- */
+
     install_trans(); // Now install writes to home locations
+
+    /* // --------- buggy code --------- */
+    /* if (proc->pid > 1) { */
+      /* panic("commit_trans mimicking crash"); */
+    /* } */
+    /* // --------- buggy code --------- */
+    
     log.lh.n = 0; 
     write_head();    // Erase the transaction from the log
   }
@@ -186,7 +204,7 @@ log_write(struct buf *b)
     if (log.lh.sector[i] == b->sector)   // log absorbtion?
       break;
   }
-
+  cprintf("log_wtrite setctor:%d\n", b->sector);
   log.lh.sector[i] = b->sector;
   
   // why log.start+i+1? see on-disk layout of log

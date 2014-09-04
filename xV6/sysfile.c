@@ -262,7 +262,7 @@ create(char *path, short type, short major, short minor)
     iunlockput(ip);
     return 0;
   }
-
+  cprintf("ialloc:\n");
   if ((ip = ialloc(dp->dev, type)) == 0)
     panic("create: ialloc");
 
@@ -270,6 +270,8 @@ create(char *path, short type, short major, short minor)
   ip->major = major;
   ip->minor = minor;
   ip->nlink = 1;
+
+  cprintf("iupdate:\n");
   iupdate(ip);
 
   if (type == T_DIR) {  // Create . and .. entries.
@@ -281,6 +283,7 @@ create(char *path, short type, short major, short minor)
       panic("create dots");
   }
 
+  cprintf("dirlink:\n");
   if (dirlink(dp, name, ip->inum) < 0)
     panic("create: dirlink");
 
@@ -300,6 +303,7 @@ sys_open(void)
     return -1;
 
   if (omode & O_CREATE) {
+    cprintf("create new file:%s\n", path);
     begin_trans();
     ip = create(path, T_FILE, 0, 0);
     commit_trans();

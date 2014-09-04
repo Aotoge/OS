@@ -300,7 +300,8 @@ ilock(struct inode *ip)
     sleep(ip, &icache.lock);
   ip->flags |= I_BUSY;
   release(&icache.lock);
-
+  
+  // reads the inode from disk if necessary
   if(!(ip->flags & I_VALID)){
     bp = bread(ip->dev, IBLOCK(ip->inum));
     dip = (struct dinode*)bp->data + ip->inum%IPB;
