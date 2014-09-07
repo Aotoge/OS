@@ -1620,3 +1620,7 @@ commit_trans()
   // update head, indicate write finish
   -> write_head()
 ```
+
+### Scratch Note for Lab4
+1. Difference between link address and load address.
+

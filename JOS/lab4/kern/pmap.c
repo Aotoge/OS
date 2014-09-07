@@ -189,7 +189,6 @@ mem_init(void)
 	check_page_free_list(1);
 	check_page_alloc();
 	check_page();
-
 	//////////////////////////////////////////////////////////////////////
 	// Now we set up virtual memory
 
@@ -222,19 +221,6 @@ mem_init(void)
 	boot_map_region(kern_pgdir, UENVS, sizeof(struct Env) * NENV,
 									PADDR(envs), PTE_U | PTE_P);
 
-	//////////////////////////////////////////////////////////////////////
-	// Use the physical memory that 'bootstack' refers to as the kernel
-	// stack.  The kernel stack grows down from virtual address KSTACKTOP.
-	// We consider the entire range from [KSTACKTOP-PTSIZE, KSTACKTOP)
-	// to be the kernel stack, but break this into two pieces:
-	//     * [KSTACKTOP-KSTKSIZE, KSTACKTOP) -- backed by physical memory
-	//     * [KSTACKTOP-PTSIZE, KSTACKTOP-KSTKSIZE) -- not backed; so if
-	//       the kernel overflows its stack, it will fault rather than
-	//       overwrite memory.  Known as a "guard page".
-	//     Permissions: kernel RW, user NONE
-	// Your code goes here:
-	boot_map_region(kern_pgdir, KSTACKTOP - KSTKSIZE,
-						      KSTKSIZE, PADDR(bootstack), PTE_W | PTE_P);
 	//////////////////////////////////////////////////////////////////////
 	// Map all of physical memory at KERNBASE.
 	// Ie.  the VA range [KERNBASE, 2^32) should map to
@@ -296,7 +282,14 @@ mem_init_mp(void)
 	//     Permissions: kernel RW, user NONE
 	//
 	// LAB 4: Your code here:
-
+	uint32_t per_cpu_stack_top = KSTACKTOP;
+	int i = 0;
+	for (; i < NCPU; ++i) {
+		uint32_t per_cpu_stack_bot = per_cpu_stack_top - KSTKSIZE;
+		boot_map_region(kern_pgdir, per_cpu_stack_bot, KSTKSIZE,
+										PADDR((void*)percpu_kstacks[i]), PTE_W | PTE_P);
+		per_cpu_stack_top -= (KSTKSIZE + KSTKGAP);
+	}
 }
 
 // --------------------------------------------------------------
@@ -675,6 +668,7 @@ mmio_map_region(physaddr_t pa, size_t size)
 	//
 	// Your code here:
   void* ret = (void*)base;
+  size = ROUNDUP(size, PGSIZE);
   boot_map_region(kern_pgdir, base, size, pa, PTE_PCD | PTE_PWT);
   base += size;
   return ret;
@@ -916,9 +910,7 @@ check_kern_pgdir(void)
 	pgdir = kern_pgdir;
 
 	// check pages array
-	cprintf("Check Pages Array\n");
 	n = ROUNDUP(npages*sizeof(struct PageInfo), PGSIZE);
-	cprintf("n = %d pages\n", n / PGSIZE);
 	for (i = 0; i < n; i += PGSIZE) {
 		assert(check_va2pa(pgdir, UPAGES + i) == PADDR(pages) + i);
 	}
@@ -929,11 +921,7 @@ check_kern_pgdir(void)
 		assert(check_va2pa(pgdir, UENVS + i) == PADDR(envs) + i);
 
 	// check phys mem
-	cprintf("Check Physical Memory Mapping\n");
 	for (i = 0; i < npages * PGSIZE; i += PGSIZE) {
-		if (check_va2pa(pgdir, KERNBASE + i) != i) {
-			cprintf("i = %x, va2pa = %x\n", i, check_va2pa(pgdir, KERNBASE + i));
-		}
 		assert(check_va2pa(pgdir, KERNBASE + i) == i);
 	}
 
@@ -948,13 +936,7 @@ check_kern_pgdir(void)
 			assert(check_va2pa(pgdir, base + i) == ~0);
 	}
 
-	cprintf("Check Kernel Stack Mapping\n");
-	for (i = 0; i < KSTKSIZE; i += PGSIZE)
-		assert(check_va2pa(pgdir, KSTACKTOP - KSTKSIZE + i) == PADDR(bootstack) + i);
-	assert(check_va2pa(pgdir, KSTACKTOP - PTSIZE) == ~0);
-
 	// check PDE permissions
-	cprintf("NPDENTRIES = %d\n", NPDENTRIES);
 	for (i = 0; i < NPDENTRIES; i++) {
 		switch (i) {
 		case PDX(UVPT):
@@ -966,9 +948,9 @@ check_kern_pgdir(void)
 			break;
 		default:
 			if (i >= PDX(KERNBASE)) {
-				// if (!(pgdir[i] & PTE_P)) {
-					cprintf("pgdir[%d] = %x\n", i, pgdir[i]);
-				// }
+				// // if (!(pgdir[i] & PTE_P)) {
+				// 	cprintf("pgdir[%d] = %x\n", i, pgdir[i]);
+				// // }
 				assert(pgdir[i] & PTE_P);
 				assert(pgdir[i] & PTE_W);
 			} else
