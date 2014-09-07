@@ -18,7 +18,7 @@ delay(void)
 {
 	inb(0x84);
 	inb(0x84);
-	inb(0x84);
+ 	inb(0x84);
 	inb(0x84);
 }
 

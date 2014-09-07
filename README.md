@@ -1508,7 +1508,7 @@ void iunlock(struct inode *ip);
 
 // drop a reference, 
 void iput(struct inode *p);
-
+[]
 // update the ondisk inode (update its meta data & address array)
 // by copying the in-memory inode
 iupdate(struct inode *ip);

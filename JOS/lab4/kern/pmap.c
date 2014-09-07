@@ -342,33 +342,49 @@ page_init(void)
 		pages[i].pp_link = 0;
 	}
 
+	cprintf("npages = %d, npages_basemem = %d\n", npages, npages_basemem);
 	// 2)
+	// !!! physical page 0 is in used !!!
 	// base memory is 640k => npages_basemen * PGSIZE = 640k
 	// [PGSIZE, npages_basemen * PGSIZE) are free
+	extern unsigned char mpentry_start[], mpentry_end[];
+	uint32_t mpcode_sz = ROUNDUP(mpentry_end - mpentry_start, PGSIZE);
+	size_t mp_code_beg = MPENTRY_PADDR / PGSIZE;
+	size_t mp_code_end = mp_code_beg + mpcode_sz / PGSIZE;
+	cprintf("mp_code_beg = %d, mp_code_end = %d\n", mp_code_beg, mp_code_end);
 	page_free_list = 0;
+	struct PageInfo *prev = 0;
 	for (i = 1; i < npages_basemem; ++i) {
+		if (i >= mp_code_beg && i < mp_code_end) {
+			cprintf("Skipp %d\n", i);
+			continue;	
+		}
+
 		pages[i].pp_ref = 0;
 		pages[i].pp_link = 0;
 		if (!page_free_list) {
 			page_free_list = &pages[i];
 		} else {
+			prev->pp_link = &pages[i];
 			pages[i-1].pp_link = &pages[i];
 		}
+		prev = &pages[i];
 	}
 
 	// 3) mark other free pages
 	struct PageInfo *tail = &pages[i-1];
 	// boot_alloc(0) return the start address of the free block
+	cprintf("Oops = %d\n", ROUNDUP(PADDR(boot_alloc(0)), PGSIZE) / PGSIZE);
 	for (i = ROUNDUP(PADDR(boot_alloc(0)), PGSIZE) / PGSIZE; i < npages; ++i) {
 		pages[i].pp_ref = 0;
 		pages[i].pp_link = 0;
 		tail->pp_link = &pages[i];
 		tail = &pages[i];
 	}
-
-	cprintf("Debug info of pages....\n");
-	cprintf("&pages[0] = %x\n", &pages[0]);
-	cprintf("&pages[npages-1] = %x\n", &pages[npages-1]);
+	cprintf("EXTPHYSMEM = %x\n", EXTPHYSMEM);
+	// cprintf("Debug info of pages....\n");
+	// cprintf("&pages[0] = %x\n", &pages[0]);
+	// cprintf("&pages[npages-1] = %x\n", &pages[npages-1]);
 }
 
 //
@@ -793,10 +809,11 @@ check_page_free_list(bool only_low_memory)
 		// (new test for lab 4)
 		assert(page2pa(pp) != MPENTRY_PADDR);
 
-		if (page2pa(pp) < EXTPHYSMEM)
+		if (page2pa(pp) < EXTPHYSMEM) {
 			++nfree_basemem;
-		else
+		} else {
 			++nfree_extmem;
+		}
 	}
 
 	assert(nfree_basemem > 0);

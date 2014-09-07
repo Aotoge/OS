@@ -1,3 +1,4 @@
++ cc kern/init.c
 + ld obj/kern/kernel
 + mk obj/kern/kernel.img
 Could not open option rom 'sgabios.bin': No such file or directory
@@ -5,9 +6,9 @@ Could not open option rom 'sgabios.bin': No such file or directory
 Physical memory: 66556K available, base = 640K, extended = 65532K
 Total Pages: 16639
 Debug info of pages....
-&pages[0] = f0265000
-&pages[npages-1] = f02857f0
-kernel panic on CPU 0 at kern/pmap.c:791: assertion failed: page2pa(pp) != MPENTRY_PADDR
+&pages[0] = f0267000
+&pages[npages-1] = f02877f0
+kernel panic on CPU 0 at kern/pmap.c:809: assertion failed: nfree_extmem > 0
 Welcome to the JOS kernel monitor!
 Type 'help' for a list of commands.
 
