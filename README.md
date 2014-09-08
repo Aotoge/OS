@@ -1622,5 +1622,26 @@ commit_trans()
 ```
 
 ### Scratch Note for Lab4
+0. Flow of SMP
+    --------------------------
+    BP
+    --------------------------
+    i386_init()
+      -> cons_init()
+      -> env_init()
+      -> trap_init()
+        -> trap_init_percpu()
+      -> mp_init()
+      -> lapic_init()
+      -> pic_init()
+      -> boot_aps()
+    --------------------------
+    AP
+    --------------------------
+    mp_main()
+      -> lapic_init()
+      -> env_init_perpcu()
+      -> trap_init_percpu()
+
 1. Difference between link address and load address.
 
