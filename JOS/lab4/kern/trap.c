@@ -123,7 +123,6 @@ trap_init_percpu(void)
 	gdt[(GD_TSS0 >> 3) + cpunum()] =
 		SEG16(STS_T32A, (uint32_t)(&(thiscpu->cpu_ts)), sizeof(struct Taskstate), 0);
 	gdt[(GD_TSS0 >> 3) + cpunum()].sd_s = 0;
-	// ltr(GD_TSS0 + (cpunum() << 3));
 	ltr( ((GD_TSS0 >> 3) + cpunum()) << 3 );
 	// ltr(GD_TSS0);
 	lidt(&idt_pd);
@@ -228,7 +227,6 @@ trap_dispatch(struct Trapframe *tf)
 	// Handle clock interrupts. Don't forget to acknowledge the
 	// interrupt using lapic_eoi() before calling the scheduler!
 	// LAB 4: Your code here.
-
 	// Unexpected trap: The user process or the kernel has a bug.
 	print_trapframe(tf);
 	if (tf->tf_cs == GD_KT)
@@ -255,6 +253,7 @@ trap(struct Trapframe *tf)
 	// sched_yield()
 	if (xchg(&thiscpu->cpu_status, CPU_STARTED) == CPU_HALTED)
 		lock_kernel();
+
 	// Check that interrupts are disabled.  If this assertion
 	// fails, DO NOT be tempted to fix it by inserting a "cli" in
 	// the interrupt path.
@@ -266,7 +265,7 @@ trap(struct Trapframe *tf)
 		// serious kernel work.
 		// LAB 4: Your code here.
 		assert(curenv);
-
+		lock_kernel();
 		// Garbage collect if current enviroment is a zombie
 		if (curenv->env_status == ENV_DYING) {
 			env_free(curenv);
