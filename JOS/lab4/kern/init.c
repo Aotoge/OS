@@ -61,10 +61,7 @@ i386_init(void)
 #else
 	// Touch all you want.
 	// ENV_CREATE(user_primes, ENV_TYPE_USER);
-	ENV_CREATE(user_yield, ENV_TYPE_USER);
-	ENV_CREATE(user_yield, ENV_TYPE_USER);
-	ENV_CREATE(user_yield, ENV_TYPE_USER);
-	// ENV_CREATE(user_yield, ENV_TYPE_USER);
+	ENV_CREATE(user_dumbfork, ENV_TYPE_USER);
 #endif // TEST*
 	cprintf("i366_init()\n");
 	// Schedule and run the first user environment!
@@ -122,9 +119,6 @@ mp_main(void)
 	//
 	// Your code here:
 	lock_kernel();
-	cprintf("CPU %d acquire kernel lock.\n", cpunum());
-	// Remove this after you finish Exercise 4
-	// for (;;);
 	sched_yield();
 }
 

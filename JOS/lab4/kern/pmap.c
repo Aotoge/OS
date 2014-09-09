@@ -597,7 +597,7 @@ page_lookup(pde_t *pgdir, void *va, pte_t **pte_store)
 
 //
 // Unmaps the physical page at virtual address 'va'.
-// If there is no physical page at that address, silently does nothing.
+// If there is no physical page at that address, silently does npgageothing.
 //
 // Details:
 //   - The ref count on the physical page should decrement.

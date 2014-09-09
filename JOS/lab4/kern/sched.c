@@ -45,7 +45,6 @@ sched_yield(void)
 	}
 
 	if (idle) {
-		cprintf("CPU %d find runnable env [%x].\n", cpunum(), idle->env_id);
 		env_run(idle);
 	}
 

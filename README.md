@@ -1644,4 +1644,16 @@ commit_trans()
       -> trap_init_percpu()
 
 1. Difference between link address and load address.
+2. curenv per cpu becuase curenv = thiscpu->cpu_env
 
+### About system call
+
+1. user space interface: lib/syscall.c
+   
+   user space system call
+    -> lib/syscall.c:syscall
+      -> which user INT to jump into kernel space
+
+2. kernel space interface: kern/syscall.c
+   INT jumps into trap
+    -> syscall to dispatch
