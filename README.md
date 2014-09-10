@@ -1643,6 +1643,21 @@ commit_trans()
       -> env_init_perpcu()
       -> trap_init_percpu()
 
+1. Exe11 : question on the difference between faultalloc and faultallocbad
+<1> in faultalloc
+cprintf("%s\n", (char*)0xdeadbeef);
+  -> vcprintf()
+    -> vprintfmt() this function will copy the content to a buffer
+      -> when copying, it will reference 0xdeadbeef which will generate a page fault, then the page fault handler will map the space pointed by 0xdeabeef
+    -> call sys_puts()
+      ->int->sys_cputs()
+        -> user_mem_assert(), since 0xdeadbeef is mapped, so will pass assert
+<2> in faultallocbad
+sys_cputs((char*)0xdeadbeef, 4)
+  ->syscall()
+    --int-> sys_cputs()
+      -> user_mem_assert() this funtion will check that the 0xdeadbeef is not mapped, so termined !
+
 1. Difference between link address and load address.
 2. curenv per cpu becuase curenv = thiscpu->cpu_env
 
