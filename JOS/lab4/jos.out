@@ -1,3 +1,11 @@
+perl: warning: Please check that your locale settings:
+	LANGUAGE = (unset),
+	LC_ALL = (unset),
+	LC_CTYPE = "UTF-8",
+	LANG = "en_US.UTF-8"
+    are supported and installed on your system.
+perl: warning: Falling back to the standard locale ("C").
++ cc kern/init.c
 + ld obj/kern/kernel
 + mk obj/kern/kernel.img
 Could not open option rom 'sgabios.bin': No such file or directory
@@ -24,7 +32,7 @@ Welcome to the JOS kernel monitor!
 Type 'help' for a list of commands.
 TRAP frame at 0xf0289000 from CPU 0
   edi  0x00000000
-  esi  0x00801833
+  esi  0x008012ed
   ebp  0xeebfdf90
   oesp 0xf022dfdc
   ebx  0xeebfdfa4
@@ -35,7 +43,7 @@ TRAP frame at 0xf0289000 from CPU 0
   ds   0x----0023
   trap 0x00000003 Breakpoint
   err  0x00000000
-  eip  0x00800675
+  eip  0x008001d4
   cs   0x----001b
   flag 0x00000092
   esp  0xeebfdf68

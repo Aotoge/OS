@@ -15,7 +15,7 @@ Total Pages: 16639
 npages = 16639, npages_basemem = 160
 mp_code_beg = 7, mp_code_end = 8
 Skipp 7
-Oops = 679
+Oops = 680
 EXTPHYSMEM = 100000
 check_page_free_list(1) ok
 check_page_alloc() succeeded!
@@ -30,11 +30,11 @@ i366_init()
 [00001000] user panic in <unknown> at lib/pgfault.c:32: set_pgfault_handler not implemented
 Welcome to the JOS kernel monitor!
 Type 'help' for a list of commands.
-TRAP frame at 0xf0288000 from CPU 0
+TRAP frame at 0xf0289000 from CPU 0
   edi  0x00000000
   esi  0x008012ed
   ebp  0xeebfdf90
-  oesp 0xf022cfdc
+  oesp 0xf022dfdc
   ebx  0xeebfdfa4
   edx  0xeebfde38
   ecx  0x00000001
