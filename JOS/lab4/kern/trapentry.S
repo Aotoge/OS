@@ -76,6 +76,16 @@ TRAPHANDLER_NOEC(reserved_15, T_RES);
  */
 TRAPHANDLER_NOEC(syscall_trap, T_SYSCALL);
 
+/*
+ * External Interrupt
+ */
+TRAPHANDLER_NOEC(timer_int, IRQ_TIMER + IRQ_OFFSET);
+TRAPHANDLER_NOEC(kbd_int, IRQ_KBD + IRQ_OFFSET);
+TRAPHANDLER_NOEC(serial_int, IRQ_SERIAL + IRQ_OFFSET);
+TRAPHANDLER_NOEC(spurious_int, IRQ_SPURIOUS + IRQ_OFFSET);
+TRAPHANDLER_NOEC(ide_int, IRQ_IDE + IRQ_OFFSET);
+TRAPHANDLER_NOEC(error_int, IRQ_ERROR + IRQ_OFFSET);
+
 .text
 _alltraps:
  	# setup the remaining part of the trap frame
@@ -146,21 +156,38 @@ ivector_table:
 	.long 29
 	.long 30
 	.long 31
-	.long 32
-	.long 33
+
+	# IRQ_TIMER + IRQ_OFFSET
+	.long timer_int
+	
+	# IRQ_KBD + IRQ_OFFSET
+	.long kbd_int
+
 	.long 34
 	.long 35
-	.long 36
+
+	# IRQ_SERIAL + IRQ_OFFSET
+	.long serial_int
+
 	.long 37
 	.long 38
-	.long 39
+
+	# IRQ_SPURIOUS + IRQ_OFFSET
+	.long spurious_int
+
 	.long 40
 	.long 41
 	.long 42
 	.long 43
 	.long 44
 	.long 45
-	.long 46
+
+	# IRQ_IDE + IRQ_OFFSET
+	.long ide_int
 	.long 47
 	# 48
 	.long syscall_trap
+	.long 49
+	.long 50
+	# IRQ_ERROR + IRQ_OFFSET
+	.long error_int

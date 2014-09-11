@@ -67,6 +67,15 @@ static const char *trapname(int trapno)
 }
 
 
+static int idt_idx[] = {
+	IRQ_TIMER,
+	IRQ_KBD,
+	IRQ_SERIAL,
+	IRQ_SPURIOUS,
+	IRQ_IDE,
+	IRQ_ERROR
+};
+
 void
 trap_init(void)
 {
@@ -87,6 +96,11 @@ trap_init(void)
 	// Setting system call, the reason setting DPL as 3 is same
 	// as above
 	SETGATE(idt[T_SYSCALL], 0, GD_KT, ivector_table[T_SYSCALL], 3);
+
+	for (i = 0; i < sizeof(idt_idx) / sizeof(int); ++i) {
+		int idx = idt_idx[i] + IRQ_OFFSET;
+		SETGATE(idt[idx], 0, GD_KT, ivector_table[idx], 0);
+	}
 
 	// Per-CPU setup
 	trap_init_percpu();
@@ -210,6 +224,12 @@ trap_dispatch(struct Trapframe *tf)
 	// Handle clock interrupts. Don't forget to acknowledge the
 	// interrupt using lapic_eoi() before calling the scheduler!
 	// LAB 4: Your code here.
+
+	if (tf->tf_trapno == IRQ_OFFSET + IRQ_TIMER) {
+		lapic_eoi();
+		sched_yield();
+	}
+
 	// Unexpected trap: The user process or the kernel has a bug.
 	print_trapframe(tf);
 	if (tf->tf_cs == GD_KT)
