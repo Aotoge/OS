@@ -554,6 +554,7 @@ page_insert(pde_t *pgdir, struct PageInfo *pp, void *va, int perm)
 	}
 
 	if (*pte & PTE_P) {
+		// when va remap to the same physical page
 		if (PTE_ADDR(*pte) == page2pa(pp)) {
 			*pte = page2pa(pp) | perm | PTE_P;
 		} else {

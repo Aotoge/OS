@@ -54,10 +54,11 @@ sys_env_destroy(envid_t envid)
 
 	if ((r = envid2env(envid, &e, 1)) < 0)
 		return r;
-	if (e == curenv)
+	if (e == curenv) {
 		cprintf("[%08x] exiting gracefully\n", curenv->env_id);
-	else
+	} else {
 		cprintf("[%08x] destroying %08x\n", curenv->env_id, e->env_id);
+	}
 	env_destroy(e);
 	return 0;
 }
@@ -145,50 +146,25 @@ sys_env_set_pgfault_upcall(envid_t envid, void *func)
 	return 0;
 }
 
-// Allocate a page of memory and map it at 'va' with permission
-// 'perm' in the address space of 'envid'.
-// The page's contents are set to 0.
-// If a page is already mapped at 'va', that page is unmapped as a
-// side effect.
-//
-// perm -- PTE_U | PTE_P must be set, PTE_AVAIL | PTE_W may or may not be set,
-//         but no other bits may be set.  See PTE_SYSCALL in inc/mmu.h.
-//
-// Return 0 on success, < 0 on error.  Errors are:
-//	-E_BAD_ENV if environment envid doesn't currently exist,
-//		or the caller doesn't have permission to change envid.
-//	-E_INVAL if va >= UTOP, or va is not page-aligned.
-//	-E_INVAL if perm is inappropriate (see above).
-//	-E_NO_MEM if there's no memory to allocate the new page,
-//		or to allocate any necessary page tables.
-static int
-sys_page_alloc(envid_t envid, void *va, int perm)
-{
-	// Hint: This function is a wrapper around page_alloc() and
-	//   page_insert() from kern/pmap.c.
-	//   Most of the new code you write should be to check the
-	//   parameters for correctness.
-	//   If page_insert() fails, remember to free the page you
-	//   allocated!
-
-	if (((uint32_t)va) >= UTOP) {
-		return -E_INVAL;
-	}
-
+// return 0 means ok, < 0 error
+static int check_perm(int perm) {
 	// 1 means must set
 	// -1 means must not set
 	// 0 means optional
 	static int perm_bit[] = {
-		1,							// PTE_P
-		0,							// PTE_W
-		1,							// PTE_U
+		 1,							// PTE_P
+		 0,							// PTE_W
+		 1,							// PTE_U
 		-1,							// PTE_PWT
 		-1,							// PTE_PCD
 		-1,							// PTE_A
 		-1,							// PTE_D
 		-1,							// PTE_PS
 		-1,							// PTE_G
-		0   						// PTE_AVAIL
+		// PTE_AVAIL part
+		 0,
+		 0,
+		 0 
 	};
 
 	int i;
@@ -209,6 +185,36 @@ sys_page_alloc(envid_t envid, void *va, int perm)
 			default:
 				break;
 		}
+	}
+
+	return 0;
+}
+
+// Allocate a page of memory and map it at 'va' with permission
+// 'perm' in the address space of 'envid'.
+// The page's contents are set to 0.
+// If a page is already mapped at 'va', that page is unmapped as a
+// side effect.
+//
+// perm -- PTE_U | PTE_P must be set, PTE_AVAIL | PTE_W may or may not be set,
+//         but no other bits may be set.  See PTE_SYSCALL in inc/mmu.h.
+//
+// Return 0 on success, < 0 on error.  Errors are:
+//	-E_BAD_ENV if environment envid doesn't currently exist,
+//		or the caller doesn't have permission to change envid.
+//	-E_INVAL if va >= UTOP, or va is not page-aligned.
+//	-E_INVAL if perm is inappropriate (see above).
+//	-E_NO_MEM if there's no memory to allocate the new page,
+//		or to allocate any necessary page tables.
+static int
+sys_page_alloc(envid_t envid, void *va, int perm)
+{
+	if (((uint32_t)va) >= UTOP) {
+		return -E_INVAL;
+	}
+
+	if (check_perm(perm) < 0) {
+		return -E_INVAL;
 	}
 
 	struct PageInfo* new_page = page_alloc(1);
@@ -248,21 +254,14 @@ sys_page_alloc(envid_t envid, void *va, int perm)
 //		address space.
 //	-E_NO_MEM if there's no memory to allocate any necessary page tables.
 
-// Map(src_va) -> dst_va
+
+// Map(dstva) -> physical page at which dstva points to
 static int
 sys_page_map(envid_t srcenvid, void *srcva,
 	     envid_t dstenvid, void *dstva, int perm)
 {
-	// Hint: This function is a wrapper around page_lookup() and
-	//   page_insert() from kern/pmap.c.
-	//   Again, most of the new code you write should be to check the
-	//   parameters for correctness.
-	//   Use the third argument to page_lookup() to
-	//   check the current permissions on the page.
-
 	struct Env* src_e;
 	struct Env* dst_e;
-
 	int err_code = envid2env(srcenvid, &src_e, 1);
 	if (err_code < 0) {
 		return err_code;
@@ -288,51 +287,20 @@ sys_page_map(envid_t srcenvid, void *srcva,
 		return -E_INVAL;
 	}
 
-	// 1 means must set
-	// -1 means must not set
-	// 0 means optional
-	static int perm_bit[] = {
-		1,							// PTE_P
-		0,							// PTE_W
-		1,							// PTE_U
-		-1,							// PTE_PWT
-		-1,							// PTE_PCD
-		-1,							// PTE_A
-		-1,							// PTE_D
-		-1,							// PTE_PS
-		-1,							// PTE_G
-		0   						// PTE_AVAIL
-	};
-
-	int i;
-	for (i = 0; i < sizeof(perm_bit) / sizeof(int); ++i) {
-		switch (perm_bit[i]) {
-			case 1:
-				if (!(perm & (1 << i))) {
-					return -E_INVAL;
-				}
-				break;
-
-			case -1:
-				if (perm & (1 << i)) {
-					return -E_INVAL;
-				}
-				break;
-
-			default:
-				break;
-		}
+	if (check_perm(perm) < 0) {
+		return -E_INVAL;
 	}
 	
+	// the page is not writable but set write permission	
 	if (!(*src_pte & PTE_W) && (perm & PTE_W)) {
 		return -E_INVAL;
 	}
 
+	// map
 	err_code = page_insert(dst_e->env_pgdir, src_page, dstva, perm);
 	if (err_code < 0) {
 		return err_code;
 	}
-
 	return 0;
 }
 
@@ -346,9 +314,6 @@ sys_page_map(envid_t srcenvid, void *srcva,
 static int
 sys_page_unmap(envid_t envid, void *va)
 {
-	// Hint: This function is a wrapper around page_remove().
-
-	// LAB 4: Your code here.
 	struct Env* e;
 	int err_code = envid2env(envid, &e, 1);
 	if (err_code < 0) {

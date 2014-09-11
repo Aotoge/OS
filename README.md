@@ -1660,6 +1660,9 @@ sys_cputs((char*)0xdeadbeef, 4)
 
 1. Difference between link address and load address.
 2. curenv per cpu becuase curenv = thiscpu->cpu_env
+3. sys_exofork() vs fork()
+<1> sys_exofork() only create a new env for child, only setup the kernel part memory mapping (above UTOP) (env_alloc()) and its status is not runnable
+<2> fork prepare any other sutffs for child process to run.
 
 ### About system call
 

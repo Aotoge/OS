@@ -347,7 +347,7 @@ page_fault_handler(struct Trapframe *tf)
 	}
 
 	// check the utrap frame address valid
-	// user_mem_assert(curenv, (void*)utf, sizeof(struct UTrapframe), PTE_U | PTE_P | PTE_W);
+	user_mem_assert(curenv, (void*)utf, sizeof(struct UTrapframe), PTE_U | PTE_P | PTE_W);
 
 	// setup user exception trapframe
 	utf->utf_fault_va = fault_va;

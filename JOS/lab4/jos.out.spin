@@ -4,11 +4,23 @@ Could not open option rom 'sgabios.bin': No such file or directory
 6828 decimal is 15254 octal!
 Physical memory: 66556K available, base = 640K, extended = 65532K
 Total Pages: 16639
-Debug info of pages....
-&pages[0] = f0265000
-&pages[npages-1] = f02857f0
-kernel panic on CPU 0 at kern/pmap.c:791: assertion failed: page2pa(pp) != MPENTRY_PADDR
-Welcome to the JOS kernel monitor!
-Type 'help' for a list of commands.
+npages = 16639, npages_basemem = 160
+mp_code_beg = 7, mp_code_end = 8
+Skipp 7
+Oops = 684
+EXTPHYSMEM = 100000
+check_page_free_list(1) ok
+check_page_alloc() succeeded!
+check_page() succeeded!
+check_kern_pgdir() succeeded!
+check_page_free_list(0) ok
+check_page_installed_pgdir() succeeded!
+SMP: CPU 0 found 1 CPU(s)
+enabled interrupts: 1 2
+[00000000] new env 00001000
+I am the parent.  Forking the child...
+[00001000] new env 00001001
+fork returnI am the parent.  Running the child...
+I am the child.  Spinning...
 
 QEMU: Terminated via GDBstub

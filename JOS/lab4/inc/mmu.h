@@ -65,6 +65,8 @@
 #define PTE_PS		0x080	// Page Size
 #define PTE_G		0x100	// Global
 
+#define PTE_PERMIT_MASK   		((1 << 12) - 1)
+
 // The PTE_AVAIL bits aren't used by the kernel or interpreted by the
 // hardware, so user processes are allowed to set them arbitrarily.
 #define PTE_AVAIL	0xE00	// Available for software use
@@ -77,6 +79,7 @@
 
 // check page aligned
 #define IS_PAGE_ALIGNED(addr)	  ((addr & (PGSIZE - 1)) == 0)
+
 // Control Register flags
 #define CR0_PE		0x00000001	// Protection Enable
 #define CR0_MP		0x00000002	// Monitor coProcessor
