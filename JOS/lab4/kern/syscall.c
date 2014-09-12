@@ -375,7 +375,60 @@ static int
 sys_ipc_try_send(envid_t envid, uint32_t value, void *srcva, unsigned perm)
 {
 	// LAB 4: Your code here.
-	panic("sys_ipc_try_send not implemented");
+	int err_code;
+	struct Env* target_e;
+
+	if ((err_code = envid2env(envid, &target_e, 0)) < 0) {
+		return -E_BAD_ENV;
+	}
+
+	if (!target_e->env_ipc_recving) {
+		return -E_IPC_NOT_RECV;
+	}
+
+
+	if (((uint32_t)srcva) < UTOP &&
+			((uint32_t)target_e->env_ipc_dstva) < UTOP) {
+
+		if (!IS_PAGE_ALIGNED((uint32_t)srcva)) {
+			return -E_INVAL;
+		}
+
+		if (check_perm(perm) < 0) {
+			return -E_INVAL;
+		}
+
+		struct PageInfo* src_page = NULL;
+		pte_t* pte = NULL;
+		if (!(src_page = page_lookup(curenv->env_pgdir, srcva, &pte))) {
+			return -E_INVAL;
+		}
+
+		if ((perm & PTE_W) && !(*pte & PTE_W)) {
+			return -E_INVAL;
+		}
+
+		// try page mapping
+		if (target_e->env_ipc_dstva) {
+			// map
+			if ((err_code = page_insert(target_e->env_pgdir,
+																	src_page,
+																	target_e->env_ipc_dstva,
+																	perm)) < 0) {
+				return err_code;
+			}
+		}
+	}
+
+	// update
+	target_e->env_ipc_value = value;
+	target_e->env_ipc_from = curenv->env_id;
+	target_e->env_ipc_recving = 0;
+	target_e->env_status = ENV_RUNNABLE;
+	target_e->env_tf.tf_regs.reg_eax = 0;
+	target_e->env_ipc_perm = perm;
+
+	return 0;
 }
 
 // Block until a value is ready.  Record that you want to receive
@@ -392,8 +445,15 @@ sys_ipc_try_send(envid_t envid, uint32_t value, void *srcva, unsigned perm)
 static int
 sys_ipc_recv(void *dstva)
 {
-	// LAB 4: Your code here.
-	panic("sys_ipc_recv not implemented");
+
+	if (!IS_PAGE_ALIGNED((uint32_t)dstva)) {
+		return -E_INVAL;
+	}
+
+	curenv->env_ipc_recving = 1;
+	curenv->env_ipc_dstva = dstva;
+	curenv->env_status = ENV_NOT_RUNNABLE;
+	sched_yield();
 	return 0;
 }
 
@@ -437,6 +497,12 @@ syscall(uint32_t syscallno, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, 
 
 		case SYS_env_set_pgfault_upcall:
 			return sys_env_set_pgfault_upcall(a1, (void*)a2);
+
+		case SYS_ipc_try_send:
+			return sys_ipc_try_send(a1, a2, (void*)a3, a4);
+
+		case SYS_ipc_recv:
+			return sys_ipc_recv((void*)a1);
 	}
 	return 0;
 }
