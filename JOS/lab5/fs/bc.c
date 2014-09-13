@@ -33,7 +33,17 @@ bc_pgfault(struct UTrapframe *utf)
 	// Hint: first round addr to page boundary.
 	//
 	// LAB 5: you code here:
-
+	// allocate a page in the fault addr
+	void *round_addr = ROUNDDOWN(addr, PGSIZE);
+	int err_code;
+	if ((err_code = sys_page_alloc(0, round_addr, PTE_P | PTE_U | PTE_W)) < 0) {
+		panic("bc_pgfault:sys_page_alloc:%e", err_code);
+	}
+	// load page from disk to the new allocated memory page
+	uint32_t secno = ((uint32_t)round_addr - DISKMAP) / SECTSIZE;
+	if ((err_code = ide_read(secno, round_addr, BLKSECTS)) < 0) {
+		panic("bc_pgfault:ide_read");
+	}
 }
 
 

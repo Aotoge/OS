@@ -418,6 +418,13 @@ env_create(uint8_t *binary, size_t size, enum EnvType type) {
 	}
 	load_icode(new_env, binary, size);
 	new_env->env_type = type;
+
+	// I/O instructions are allowed only if CPL <= IOPL
+	// so for a user space (CPL = 3) to execute I/O, 
+	// we have to set IOPL to 3
+	if (type == ENV_TYPE_FS) {
+		new_env->env_tf.tf_eflags |= FL_IOPL_3;
+	}
 }
 
 //
