@@ -1,7 +1,7 @@
 00200010 R __STAB_BEGIN__
-00205da0 R __STAB_END__
-00205da1 R __STABSTR_BEGIN__
-00208a7d R __STABSTR_END__
+00205dac R __STAB_END__
+00205dad R __STABSTR_BEGIN__
+00208a89 R __STABSTR_END__
 00800020 T _start
 0080002c t args_exist
 00800040 T umain
@@ -49,10 +49,10 @@
 008010cf T sys_ipc_recv
 00801121 t pgfault
 00801210 T fork
-0080144a T sfork
-0080146c T ipc_recv
-008014d4 T ipc_send
-0080153a T ipc_find_env
+00801454 T sfork
+00801476 T ipc_recv
+008014de T ipc_send
+00801544 T ipc_find_env
 00801590 T fd2num
 008015a0 T fd2data
 008015b7 T fd_alloc

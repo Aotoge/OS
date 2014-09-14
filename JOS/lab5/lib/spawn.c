@@ -84,9 +84,11 @@ spawn(const char *prog, const char **argv)
 	//     correct initial eip and esp values in the child.
 	//
 	//   - Start the child process running with sys_env_set_status().
-	cprintf("open.\n");
-	if ((r = open(prog, O_RDONLY)) < 0)
+	cprintf("open. %s\n", prog);
+	if ((r = open(prog, O_RDONLY)) < 0) {
+		cprintf("cannot\n");
 		return r;
+	}
 	fd = r;
 
 	cprintf("read elf header.\n");
@@ -305,7 +307,26 @@ map_segment(envid_t child, uintptr_t va, size_t memsz,
 static int
 copy_shared_pages(envid_t child)
 {
-	// LAB 5: Your code here.
+	uint32_t pn_beg = UTEXT >> PTXSHIFT;
+	uint32_t pn_end = USTACKTOP >> PTXSHIFT;
+	for (; pn_beg < pn_end; ++pn_beg) {
+
+		if (!(uvpd[pn_beg >> 10] & (PTE_P | PTE_U))) {
+			continue;
+		}
+
+		const pte_t pte = uvpt[pn_beg];
+
+		if (pte & PTE_SHARE) {
+			void* va = (void*) (pn_beg * PGSIZE);
+			int perm = pte & PTE_SYSCALL;
+			int err_code;
+			if ((err_code = sys_page_map(0, va, child, va, perm)) < 0) {
+				panic("copy_shared_pages:sys_page_map");
+			}
+		}
+
+	}
 	return 0;
 }
 

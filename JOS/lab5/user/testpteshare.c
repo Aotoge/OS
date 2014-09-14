@@ -31,6 +31,7 @@ umain(int argc, char **argv)
 	// check spawn
 	if ((r = spawnl("/testpteshare", "testpteshare", "arg", 0)) < 0)
 		panic("spawn: %e", r);
+	cprintf("try to wait.\n");
 	wait(r);
 	cprintf("spawn handles PTE_SHARE %s\n", strcmp(VA, msg2) == 0 ? "right" : "wrong");
 

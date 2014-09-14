@@ -56,7 +56,7 @@ top:
   800047:	c7 44 24 04 00 00 00 	movl   $0x0,0x4(%esp)
   80004e:	00 
   80004f:	89 34 24             	mov    %esi,(%esp)
-  800052:	e8 35 13 00 00       	call   80138c <ipc_recv>
+  800052:	e8 3f 13 00 00       	call   801396 <ipc_recv>
   800057:	89 c3                	mov    %eax,%ebx
 	cprintf("CPU %d: %d ", thisenv->env_cpunum, p);
   800059:	a1 04 40 80 00       	mov    0x804004,%eax
@@ -94,7 +94,7 @@ top:
   8000af:	c7 44 24 04 00 00 00 	movl   $0x0,0x4(%esp)
   8000b6:	00 
   8000b7:	89 34 24             	mov    %esi,(%esp)
-  8000ba:	e8 cd 12 00 00       	call   80138c <ipc_recv>
+  8000ba:	e8 d7 12 00 00       	call   801396 <ipc_recv>
   8000bf:	89 c1                	mov    %eax,%ecx
 		if (i % p)
   8000c1:	99                   	cltd   
@@ -108,7 +108,7 @@ top:
   8000d7:	00 
   8000d8:	89 4c 24 04          	mov    %ecx,0x4(%esp)
   8000dc:	89 3c 24             	mov    %edi,(%esp)
-  8000df:	e8 10 13 00 00       	call   8013f4 <ipc_send>
+  8000df:	e8 1a 13 00 00       	call   8013fe <ipc_send>
   8000e4:	eb c1                	jmp    8000a7 <primeproc+0x74>
 
 008000e6 <umain>:
@@ -155,7 +155,7 @@ umain(int argc, char **argv)
   800136:	00 
   800137:	89 5c 24 04          	mov    %ebx,0x4(%esp)
   80013b:	89 34 24             	mov    %esi,(%esp)
-  80013e:	e8 b1 12 00 00       	call   8013f4 <ipc_send>
+  80013e:	e8 bb 12 00 00       	call   8013fe <ipc_send>
 		panic("fork: %e", id);
 	if (id == 0)
 		primeproc();
@@ -2983,7 +2983,7 @@ sys_exofork(void)
 		panic("fork");
   801153:	c7 44 24 08 07 2a 80 	movl   $0x802a07,0x8(%esp)
   80115a:	00 
-  80115b:	c7 44 24 04 84 00 00 	movl   $0x84,0x4(%esp)
+  80115b:	c7 44 24 04 85 00 00 	movl   $0x85,0x4(%esp)
   801162:	00 
   801163:	c7 04 24 c9 29 80 00 	movl   $0x8029c9,(%esp)
   80116a:	e8 6a f0 ff ff       	call   8001d9 <_panic>
@@ -3003,7 +3003,7 @@ sys_exofork(void)
   80118e:	a3 04 40 80 00       	mov    %eax,0x804004
 		return 0;
   801193:	b8 00 00 00 00       	mov    $0x0,%eax
-  801198:	e9 c5 01 00 00       	jmp    801362 <fork+0x232>
+  801198:	e9 cf 01 00 00       	jmp    80136c <fork+0x23c>
 	// copy "mapping"
 	uint32_t pn_beg = UTEXT >> PTXSHIFT;
 	uint32_t pn_end = USTACKTOP >> PTXSHIFT;
@@ -3014,14 +3014,14 @@ sys_exofork(void)
   80119f:	c1 e8 0a             	shr    $0xa,%eax
   8011a2:	8b 04 85 00 d0 7b ef 	mov    -0x10843000(,%eax,4),%eax
   8011a9:	a8 01                	test   $0x1,%al
-  8011ab:	0f 84 f2 00 00 00    	je     8012a3 <fork+0x173>
+  8011ab:	0f 84 fc 00 00 00    	je     8012ad <fork+0x17d>
 			continue;
 		}
 
 		if (!(uvpt[pn_beg] & (PTE_P | PTE_U))) {
   8011b1:	8b 04 9d 00 00 40 ef 	mov    -0x10c00000(,%ebx,4),%eax
   8011b8:	a8 05                	test   $0x5,%al
-  8011ba:	0f 84 e3 00 00 00    	je     8012a3 <fork+0x173>
+  8011ba:	0f 84 ed 00 00 00    	je     8012ad <fork+0x17d>
 // use sys_page_map
 static int
 duppage(envid_t envid, unsigned pn)
@@ -3033,355 +3033,353 @@ duppage(envid_t envid, unsigned pn)
   8011c9:	c1 e6 0c             	shl    $0xc,%esi
 
 	int err_code;
-	// get current page permitssion
 	void* va = (void*)(pn * PGSIZE);
-	if ((pte & PTE_W) || (pte & PTE_COW)) { // for writable or copy-on-write page
-  8011cc:	a9 02 08 00 00       	test   $0x802,%eax
-  8011d1:	0f 84 88 00 00 00    	je     80125f <fork+0x12f>
+	// this page is not share page and it is writable or c-o-w
+	if ( !(pte & PTE_SHARE) &&
+  8011cc:	f6 c4 04             	test   $0x4,%ah
+  8011cf:	0f 85 93 00 00 00    	jne    801268 <fork+0x138>
+  8011d5:	a9 02 08 00 00       	test   $0x802,%eax
+  8011da:	0f 84 88 00 00 00    	je     801268 <fork+0x138>
+			 ((pte & PTE_W) || (pte & PTE_COW))) {
 
 		// set as readonly and copy-on-write
 		int perm = PTE_U | PTE_P | PTE_COW;
 		if ((err_code = sys_page_map(0, va, envid, va, perm)) < 0) {
-  8011d7:	c7 44 24 10 05 08 00 	movl   $0x805,0x10(%esp)
-  8011de:	00 
-  8011df:	89 74 24 0c          	mov    %esi,0xc(%esp)
-  8011e3:	89 7c 24 08          	mov    %edi,0x8(%esp)
-  8011e7:	89 74 24 04          	mov    %esi,0x4(%esp)
-  8011eb:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
-  8011f2:	e8 36 fc ff ff       	call   800e2d <sys_page_map>
-  8011f7:	85 c0                	test   %eax,%eax
-  8011f9:	79 20                	jns    80121b <fork+0xeb>
+  8011e0:	c7 44 24 10 05 08 00 	movl   $0x805,0x10(%esp)
+  8011e7:	00 
+  8011e8:	89 74 24 0c          	mov    %esi,0xc(%esp)
+  8011ec:	89 7c 24 08          	mov    %edi,0x8(%esp)
+  8011f0:	89 74 24 04          	mov    %esi,0x4(%esp)
+  8011f4:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
+  8011fb:	e8 2d fc ff ff       	call   800e2d <sys_page_map>
+  801200:	85 c0                	test   %eax,%eax
+  801202:	79 20                	jns    801224 <fork+0xf4>
 			panic("duppage:sys_page_map:1:%e", err_code);
-  8011fb:	89 44 24 0c          	mov    %eax,0xc(%esp)
-  8011ff:	c7 44 24 08 0c 2a 80 	movl   $0x802a0c,0x8(%esp)
-  801206:	00 
-  801207:	c7 44 24 04 56 00 00 	movl   $0x56,0x4(%esp)
-  80120e:	00 
-  80120f:	c7 04 24 c9 29 80 00 	movl   $0x8029c9,(%esp)
-  801216:	e8 be ef ff ff       	call   8001d9 <_panic>
+  801204:	89 44 24 0c          	mov    %eax,0xc(%esp)
+  801208:	c7 44 24 08 0c 2a 80 	movl   $0x802a0c,0x8(%esp)
+  80120f:	00 
+  801210:	c7 44 24 04 57 00 00 	movl   $0x57,0x4(%esp)
+  801217:	00 
+  801218:	c7 04 24 c9 29 80 00 	movl   $0x8029c9,(%esp)
+  80121f:	e8 b5 ef ff ff       	call   8001d9 <_panic>
 		}
 
 		// remap
 		if ((err_code = sys_page_map(envid, va, 0, va, perm)) < 0) {
-  80121b:	c7 44 24 10 05 08 00 	movl   $0x805,0x10(%esp)
-  801222:	00 
-  801223:	89 74 24 0c          	mov    %esi,0xc(%esp)
-  801227:	c7 44 24 08 00 00 00 	movl   $0x0,0x8(%esp)
-  80122e:	00 
-  80122f:	89 74 24 04          	mov    %esi,0x4(%esp)
-  801233:	89 3c 24             	mov    %edi,(%esp)
-  801236:	e8 f2 fb ff ff       	call   800e2d <sys_page_map>
-  80123b:	85 c0                	test   %eax,%eax
-  80123d:	79 64                	jns    8012a3 <fork+0x173>
+  801224:	c7 44 24 10 05 08 00 	movl   $0x805,0x10(%esp)
+  80122b:	00 
+  80122c:	89 74 24 0c          	mov    %esi,0xc(%esp)
+  801230:	c7 44 24 08 00 00 00 	movl   $0x0,0x8(%esp)
+  801237:	00 
+  801238:	89 74 24 04          	mov    %esi,0x4(%esp)
+  80123c:	89 3c 24             	mov    %edi,(%esp)
+  80123f:	e8 e9 fb ff ff       	call   800e2d <sys_page_map>
+  801244:	85 c0                	test   %eax,%eax
+  801246:	79 65                	jns    8012ad <fork+0x17d>
 			panic("duppage:sys_page_map:2:%e", err_code);
-  80123f:	89 44 24 0c          	mov    %eax,0xc(%esp)
-  801243:	c7 44 24 08 26 2a 80 	movl   $0x802a26,0x8(%esp)
-  80124a:	00 
-  80124b:	c7 44 24 04 5b 00 00 	movl   $0x5b,0x4(%esp)
-  801252:	00 
-  801253:	c7 04 24 c9 29 80 00 	movl   $0x8029c9,(%esp)
-  80125a:	e8 7a ef ff ff       	call   8001d9 <_panic>
+  801248:	89 44 24 0c          	mov    %eax,0xc(%esp)
+  80124c:	c7 44 24 08 26 2a 80 	movl   $0x802a26,0x8(%esp)
+  801253:	00 
+  801254:	c7 44 24 04 5c 00 00 	movl   $0x5c,0x4(%esp)
+  80125b:	00 
+  80125c:	c7 04 24 c9 29 80 00 	movl   $0x8029c9,(%esp)
+  801263:	e8 71 ef ff ff       	call   8001d9 <_panic>
 		}
 
-	} else { // read-only page
-		int perm = PTE_U | PTE_P;
+	} else { // read-only page or share page
+		int perm = (pte & PTE_SYSCALL);
+  801268:	25 07 0e 00 00       	and    $0xe07,%eax
 		if ((err_code = sys_page_map(0, va, envid, va, perm)) < 0) {
-  80125f:	c7 44 24 10 05 00 00 	movl   $0x5,0x10(%esp)
-  801266:	00 
-  801267:	89 74 24 0c          	mov    %esi,0xc(%esp)
-  80126b:	89 7c 24 08          	mov    %edi,0x8(%esp)
-  80126f:	89 74 24 04          	mov    %esi,0x4(%esp)
-  801273:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
-  80127a:	e8 ae fb ff ff       	call   800e2d <sys_page_map>
-  80127f:	85 c0                	test   %eax,%eax
-  801281:	79 20                	jns    8012a3 <fork+0x173>
+  80126d:	89 44 24 10          	mov    %eax,0x10(%esp)
+  801271:	89 74 24 0c          	mov    %esi,0xc(%esp)
+  801275:	89 7c 24 08          	mov    %edi,0x8(%esp)
+  801279:	89 74 24 04          	mov    %esi,0x4(%esp)
+  80127d:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
+  801284:	e8 a4 fb ff ff       	call   800e2d <sys_page_map>
+  801289:	85 c0                	test   %eax,%eax
+  80128b:	79 20                	jns    8012ad <fork+0x17d>
 			panic("sys_page_map:3:%e", err_code);
-  801283:	89 44 24 0c          	mov    %eax,0xc(%esp)
-  801287:	c7 44 24 08 40 2a 80 	movl   $0x802a40,0x8(%esp)
-  80128e:	00 
-  80128f:	c7 44 24 04 61 00 00 	movl   $0x61,0x4(%esp)
-  801296:	00 
-  801297:	c7 04 24 c9 29 80 00 	movl   $0x8029c9,(%esp)
-  80129e:	e8 36 ef ff ff       	call   8001d9 <_panic>
+  80128d:	89 44 24 0c          	mov    %eax,0xc(%esp)
+  801291:	c7 44 24 08 40 2a 80 	movl   $0x802a40,0x8(%esp)
+  801298:	00 
+  801299:	c7 44 24 04 62 00 00 	movl   $0x62,0x4(%esp)
+  8012a0:	00 
+  8012a1:	c7 04 24 c9 29 80 00 	movl   $0x8029c9,(%esp)
+  8012a8:	e8 2c ef ff ff       	call   8001d9 <_panic>
 	}
 
 	// copy "mapping"
 	uint32_t pn_beg = UTEXT >> PTXSHIFT;
 	uint32_t pn_end = USTACKTOP >> PTXSHIFT;
 	for (; pn_beg < pn_end; ++pn_beg) {
-  8012a3:	83 c3 01             	add    $0x1,%ebx
-  8012a6:	81 fb fe eb 0e 00    	cmp    $0xeebfe,%ebx
-  8012ac:	0f 85 eb fe ff ff    	jne    80119d <fork+0x6d>
+  8012ad:	83 c3 01             	add    $0x1,%ebx
+  8012b0:	81 fb fe eb 0e 00    	cmp    $0xeebfe,%ebx
+  8012b6:	0f 85 e1 fe ff ff    	jne    80119d <fork+0x6d>
 
 	int err_code;
 
 	// set child process's page fault upcall entry point
 	// we don't need to install the handler since the "share mapping" !
 	if ((err_code = sys_env_set_pgfault_upcall(envid, _pgfault_upcall)) < 0) {
-  8012b2:	c7 44 24 04 bf 22 80 	movl   $0x8022bf,0x4(%esp)
-  8012b9:	00 
-  8012ba:	8b 45 e4             	mov    -0x1c(%ebp),%eax
-  8012bd:	89 04 24             	mov    %eax,(%esp)
-  8012c0:	e8 b4 fc ff ff       	call   800f79 <sys_env_set_pgfault_upcall>
-  8012c5:	85 c0                	test   %eax,%eax
-  8012c7:	79 20                	jns    8012e9 <fork+0x1b9>
+  8012bc:	c7 44 24 04 bf 22 80 	movl   $0x8022bf,0x4(%esp)
+  8012c3:	00 
+  8012c4:	8b 45 e4             	mov    -0x1c(%ebp),%eax
+  8012c7:	89 04 24             	mov    %eax,(%esp)
+  8012ca:	e8 aa fc ff ff       	call   800f79 <sys_env_set_pgfault_upcall>
+  8012cf:	85 c0                	test   %eax,%eax
+  8012d1:	79 20                	jns    8012f3 <fork+0x1c3>
 		panic("fork: sys_env_set_pgfault_upcall:%e\n", err_code);
-  8012c9:	89 44 24 0c          	mov    %eax,0xc(%esp)
-  8012cd:	c7 44 24 08 a4 29 80 	movl   $0x8029a4,0x8(%esp)
-  8012d4:	00 
-  8012d5:	c7 44 24 04 a2 00 00 	movl   $0xa2,0x4(%esp)
-  8012dc:	00 
-  8012dd:	c7 04 24 c9 29 80 00 	movl   $0x8029c9,(%esp)
-  8012e4:	e8 f0 ee ff ff       	call   8001d9 <_panic>
+  8012d3:	89 44 24 0c          	mov    %eax,0xc(%esp)
+  8012d7:	c7 44 24 08 a4 29 80 	movl   $0x8029a4,0x8(%esp)
+  8012de:	00 
+  8012df:	c7 44 24 04 a3 00 00 	movl   $0xa3,0x4(%esp)
+  8012e6:	00 
+  8012e7:	c7 04 24 c9 29 80 00 	movl   $0x8029c9,(%esp)
+  8012ee:	e8 e6 ee ff ff       	call   8001d9 <_panic>
 	}
 
 	// allocate page for child's process exception stack
 	if ((err_code = sys_page_alloc(envid, (void*)(UXSTACKTOP - PGSIZE), PTE_U | PTE_P | PTE_W)) < 0) {
-  8012e9:	c7 44 24 08 07 00 00 	movl   $0x7,0x8(%esp)
-  8012f0:	00 
-  8012f1:	c7 44 24 04 00 f0 bf 	movl   $0xeebff000,0x4(%esp)
-  8012f8:	ee 
-  8012f9:	8b 45 e4             	mov    -0x1c(%ebp),%eax
-  8012fc:	89 04 24             	mov    %eax,(%esp)
-  8012ff:	e8 d5 fa ff ff       	call   800dd9 <sys_page_alloc>
-  801304:	85 c0                	test   %eax,%eax
-  801306:	79 20                	jns    801328 <fork+0x1f8>
+  8012f3:	c7 44 24 08 07 00 00 	movl   $0x7,0x8(%esp)
+  8012fa:	00 
+  8012fb:	c7 44 24 04 00 f0 bf 	movl   $0xeebff000,0x4(%esp)
+  801302:	ee 
+  801303:	8b 45 e4             	mov    -0x1c(%ebp),%eax
+  801306:	89 04 24             	mov    %eax,(%esp)
+  801309:	e8 cb fa ff ff       	call   800dd9 <sys_page_alloc>
+  80130e:	85 c0                	test   %eax,%eax
+  801310:	79 20                	jns    801332 <fork+0x202>
 		panic("fork:sys_page_alloc:%e\n", err_code);
-  801308:	89 44 24 0c          	mov    %eax,0xc(%esp)
-  80130c:	c7 44 24 08 52 2a 80 	movl   $0x802a52,0x8(%esp)
-  801313:	00 
-  801314:	c7 44 24 04 a7 00 00 	movl   $0xa7,0x4(%esp)
-  80131b:	00 
-  80131c:	c7 04 24 c9 29 80 00 	movl   $0x8029c9,(%esp)
-  801323:	e8 b1 ee ff ff       	call   8001d9 <_panic>
+  801312:	89 44 24 0c          	mov    %eax,0xc(%esp)
+  801316:	c7 44 24 08 52 2a 80 	movl   $0x802a52,0x8(%esp)
+  80131d:	00 
+  80131e:	c7 44 24 04 a8 00 00 	movl   $0xa8,0x4(%esp)
+  801325:	00 
+  801326:	c7 04 24 c9 29 80 00 	movl   $0x8029c9,(%esp)
+  80132d:	e8 a7 ee ff ff       	call   8001d9 <_panic>
 	}
 
 	if ((err_code = sys_env_set_status(envid, ENV_RUNNABLE)) < 0) {
-  801328:	c7 44 24 04 02 00 00 	movl   $0x2,0x4(%esp)
-  80132f:	00 
-  801330:	8b 45 e4             	mov    -0x1c(%ebp),%eax
-  801333:	89 04 24             	mov    %eax,(%esp)
-  801336:	e8 98 fb ff ff       	call   800ed3 <sys_env_set_status>
-  80133b:	85 c0                	test   %eax,%eax
-  80133d:	79 20                	jns    80135f <fork+0x22f>
+  801332:	c7 44 24 04 02 00 00 	movl   $0x2,0x4(%esp)
+  801339:	00 
+  80133a:	8b 45 e4             	mov    -0x1c(%ebp),%eax
+  80133d:	89 04 24             	mov    %eax,(%esp)
+  801340:	e8 8e fb ff ff       	call   800ed3 <sys_env_set_status>
+  801345:	85 c0                	test   %eax,%eax
+  801347:	79 20                	jns    801369 <fork+0x239>
 		panic("fork:sys_env_set_status:%e", err_code);
-  80133f:	89 44 24 0c          	mov    %eax,0xc(%esp)
-  801343:	c7 44 24 08 6a 2a 80 	movl   $0x802a6a,0x8(%esp)
-  80134a:	00 
-  80134b:	c7 44 24 04 ab 00 00 	movl   $0xab,0x4(%esp)
-  801352:	00 
-  801353:	c7 04 24 c9 29 80 00 	movl   $0x8029c9,(%esp)
-  80135a:	e8 7a ee ff ff       	call   8001d9 <_panic>
+  801349:	89 44 24 0c          	mov    %eax,0xc(%esp)
+  80134d:	c7 44 24 08 6a 2a 80 	movl   $0x802a6a,0x8(%esp)
+  801354:	00 
+  801355:	c7 44 24 04 ac 00 00 	movl   $0xac,0x4(%esp)
+  80135c:	00 
+  80135d:	c7 04 24 c9 29 80 00 	movl   $0x8029c9,(%esp)
+  801364:	e8 70 ee ff ff       	call   8001d9 <_panic>
 	}
 
 	return envid;
-  80135f:	8b 45 e4             	mov    -0x1c(%ebp),%eax
+  801369:	8b 45 e4             	mov    -0x1c(%ebp),%eax
 }
-  801362:	83 c4 2c             	add    $0x2c,%esp
-  801365:	5b                   	pop    %ebx
-  801366:	5e                   	pop    %esi
-  801367:	5f                   	pop    %edi
-  801368:	5d                   	pop    %ebp
-  801369:	c3                   	ret    
+  80136c:	83 c4 2c             	add    $0x2c,%esp
+  80136f:	5b                   	pop    %ebx
+  801370:	5e                   	pop    %esi
+  801371:	5f                   	pop    %edi
+  801372:	5d                   	pop    %ebp
+  801373:	c3                   	ret    
 
-0080136a <sfork>:
+00801374 <sfork>:
 
 // Challenge!
 int
 sfork(void)
 {
-  80136a:	55                   	push   %ebp
-  80136b:	89 e5                	mov    %esp,%ebp
-  80136d:	83 ec 18             	sub    $0x18,%esp
+  801374:	55                   	push   %ebp
+  801375:	89 e5                	mov    %esp,%ebp
+  801377:	83 ec 18             	sub    $0x18,%esp
 	panic("sfork not implemented");
-  801370:	c7 44 24 08 85 2a 80 	movl   $0x802a85,0x8(%esp)
-  801377:	00 
-  801378:	c7 44 24 04 b5 00 00 	movl   $0xb5,0x4(%esp)
-  80137f:	00 
-  801380:	c7 04 24 c9 29 80 00 	movl   $0x8029c9,(%esp)
-  801387:	e8 4d ee ff ff       	call   8001d9 <_panic>
+  80137a:	c7 44 24 08 85 2a 80 	movl   $0x802a85,0x8(%esp)
+  801381:	00 
+  801382:	c7 44 24 04 b6 00 00 	movl   $0xb6,0x4(%esp)
+  801389:	00 
+  80138a:	c7 04 24 c9 29 80 00 	movl   $0x8029c9,(%esp)
+  801391:	e8 43 ee ff ff       	call   8001d9 <_panic>
 
-0080138c <ipc_recv>:
+00801396 <ipc_recv>:
 //   If 'pg' is null, pass sys_ipc_recv a value that it will understand
 //   as meaning "no page".  (Zero is not the right value, since that's
 //   a perfectly valid place to map a page.)
 int32_t
 ipc_recv(envid_t *from_env_store, void *pg, int *perm_store)
 {
-  80138c:	55                   	push   %ebp
-  80138d:	89 e5                	mov    %esp,%ebp
-  80138f:	56                   	push   %esi
-  801390:	53                   	push   %ebx
-  801391:	83 ec 10             	sub    $0x10,%esp
-  801394:	8b 75 08             	mov    0x8(%ebp),%esi
-  801397:	8b 45 0c             	mov    0xc(%ebp),%eax
-  80139a:	8b 5d 10             	mov    0x10(%ebp),%ebx
+  801396:	55                   	push   %ebp
+  801397:	89 e5                	mov    %esp,%ebp
+  801399:	56                   	push   %esi
+  80139a:	53                   	push   %ebx
+  80139b:	83 ec 10             	sub    $0x10,%esp
+  80139e:	8b 75 08             	mov    0x8(%ebp),%esi
+  8013a1:	8b 45 0c             	mov    0xc(%ebp),%eax
+  8013a4:	8b 5d 10             	mov    0x10(%ebp),%ebx
 	// use UTOP to indicate a no mapping
 	int err_code = sys_ipc_recv(pg == NULL ? (void*)UTOP : pg);
-  80139d:	85 c0                	test   %eax,%eax
-  80139f:	ba 00 00 c0 ee       	mov    $0xeec00000,%edx
-  8013a4:	0f 44 c2             	cmove  %edx,%eax
-  8013a7:	89 04 24             	mov    %eax,(%esp)
-  8013aa:	e8 40 fc ff ff       	call   800fef <sys_ipc_recv>
+  8013a7:	85 c0                	test   %eax,%eax
+  8013a9:	ba 00 00 c0 ee       	mov    $0xeec00000,%edx
+  8013ae:	0f 44 c2             	cmove  %edx,%eax
+  8013b1:	89 04 24             	mov    %eax,(%esp)
+  8013b4:	e8 36 fc ff ff       	call   800fef <sys_ipc_recv>
 	if (err_code < 0) {
-  8013af:	85 c0                	test   %eax,%eax
-  8013b1:	79 16                	jns    8013c9 <ipc_recv+0x3d>
+  8013b9:	85 c0                	test   %eax,%eax
+  8013bb:	79 16                	jns    8013d3 <ipc_recv+0x3d>
 		if (from_env_store) *from_env_store = 0;
-  8013b3:	85 f6                	test   %esi,%esi
-  8013b5:	74 06                	je     8013bd <ipc_recv+0x31>
-  8013b7:	c7 06 00 00 00 00    	movl   $0x0,(%esi)
+  8013bd:	85 f6                	test   %esi,%esi
+  8013bf:	74 06                	je     8013c7 <ipc_recv+0x31>
+  8013c1:	c7 06 00 00 00 00    	movl   $0x0,(%esi)
 		if (perm_store) *perm_store = 0;
-  8013bd:	85 db                	test   %ebx,%ebx
-  8013bf:	74 2c                	je     8013ed <ipc_recv+0x61>
-  8013c1:	c7 03 00 00 00 00    	movl   $0x0,(%ebx)
-  8013c7:	eb 24                	jmp    8013ed <ipc_recv+0x61>
+  8013c7:	85 db                	test   %ebx,%ebx
+  8013c9:	74 2c                	je     8013f7 <ipc_recv+0x61>
+  8013cb:	c7 03 00 00 00 00    	movl   $0x0,(%ebx)
+  8013d1:	eb 24                	jmp    8013f7 <ipc_recv+0x61>
 	} else {
 		if (from_env_store) *from_env_store = thisenv->env_ipc_from;
-  8013c9:	85 f6                	test   %esi,%esi
-  8013cb:	74 0a                	je     8013d7 <ipc_recv+0x4b>
-  8013cd:	a1 04 40 80 00       	mov    0x804004,%eax
-  8013d2:	8b 40 74             	mov    0x74(%eax),%eax
-  8013d5:	89 06                	mov    %eax,(%esi)
+  8013d3:	85 f6                	test   %esi,%esi
+  8013d5:	74 0a                	je     8013e1 <ipc_recv+0x4b>
+  8013d7:	a1 04 40 80 00       	mov    0x804004,%eax
+  8013dc:	8b 40 74             	mov    0x74(%eax),%eax
+  8013df:	89 06                	mov    %eax,(%esi)
 		if (perm_store) *perm_store = thisenv->env_ipc_perm;
-  8013d7:	85 db                	test   %ebx,%ebx
-  8013d9:	74 0a                	je     8013e5 <ipc_recv+0x59>
-  8013db:	a1 04 40 80 00       	mov    0x804004,%eax
-  8013e0:	8b 40 78             	mov    0x78(%eax),%eax
-  8013e3:	89 03                	mov    %eax,(%ebx)
+  8013e1:	85 db                	test   %ebx,%ebx
+  8013e3:	74 0a                	je     8013ef <ipc_recv+0x59>
+  8013e5:	a1 04 40 80 00       	mov    0x804004,%eax
+  8013ea:	8b 40 78             	mov    0x78(%eax),%eax
+  8013ed:	89 03                	mov    %eax,(%ebx)
 	}
 	return err_code < 0 ? err_code : thisenv->env_ipc_value;
-  8013e5:	a1 04 40 80 00       	mov    0x804004,%eax
-  8013ea:	8b 40 70             	mov    0x70(%eax),%eax
+  8013ef:	a1 04 40 80 00       	mov    0x804004,%eax
+  8013f4:	8b 40 70             	mov    0x70(%eax),%eax
 }
-  8013ed:	83 c4 10             	add    $0x10,%esp
-  8013f0:	5b                   	pop    %ebx
-  8013f1:	5e                   	pop    %esi
-  8013f2:	5d                   	pop    %ebp
-  8013f3:	c3                   	ret    
+  8013f7:	83 c4 10             	add    $0x10,%esp
+  8013fa:	5b                   	pop    %ebx
+  8013fb:	5e                   	pop    %esi
+  8013fc:	5d                   	pop    %ebp
+  8013fd:	c3                   	ret    
 
-008013f4 <ipc_send>:
+008013fe <ipc_send>:
 //   Use sys_yield() to be CPU-friendly.
 //   If 'pg' is null, pass sys_ipc_recv a value that it will understand
 //   as meaning "no page".  (Zero is not the right value.)
 void
 ipc_send(envid_t to_env, uint32_t val, void *pg, int perm)
 {
-  8013f4:	55                   	push   %ebp
-  8013f5:	89 e5                	mov    %esp,%ebp
-  8013f7:	57                   	push   %edi
-  8013f8:	56                   	push   %esi
-  8013f9:	53                   	push   %ebx
-  8013fa:	83 ec 1c             	sub    $0x1c,%esp
-  8013fd:	8b 7d 08             	mov    0x8(%ebp),%edi
-  801400:	8b 75 0c             	mov    0xc(%ebp),%esi
-  801403:	8b 5d 10             	mov    0x10(%ebp),%ebx
+  8013fe:	55                   	push   %ebp
+  8013ff:	89 e5                	mov    %esp,%ebp
+  801401:	57                   	push   %edi
+  801402:	56                   	push   %esi
+  801403:	53                   	push   %ebx
+  801404:	83 ec 1c             	sub    $0x1c,%esp
+  801407:	8b 7d 08             	mov    0x8(%ebp),%edi
+  80140a:	8b 75 0c             	mov    0xc(%ebp),%esi
+  80140d:	8b 5d 10             	mov    0x10(%ebp),%ebx
 	int err_code;
 	while ((err_code = sys_ipc_try_send(to_env, val, pg == NULL ? (void*)UTOP : pg, perm))) {
-  801406:	eb 25                	jmp    80142d <ipc_send+0x39>
+  801410:	eb 25                	jmp    801437 <ipc_send+0x39>
 		if (err_code != -E_IPC_NOT_RECV) {
-  801408:	83 f8 f9             	cmp    $0xfffffff9,%eax
-  80140b:	74 20                	je     80142d <ipc_send+0x39>
+  801412:	83 f8 f9             	cmp    $0xfffffff9,%eax
+  801415:	74 20                	je     801437 <ipc_send+0x39>
 			panic("ipc_send:%e", err_code);
-  80140d:	89 44 24 0c          	mov    %eax,0xc(%esp)
-  801411:	c7 44 24 08 9b 2a 80 	movl   $0x802a9b,0x8(%esp)
-  801418:	00 
-  801419:	c7 44 24 04 33 00 00 	movl   $0x33,0x4(%esp)
-  801420:	00 
-  801421:	c7 04 24 a7 2a 80 00 	movl   $0x802aa7,(%esp)
-  801428:	e8 ac ed ff ff       	call   8001d9 <_panic>
+  801417:	89 44 24 0c          	mov    %eax,0xc(%esp)
+  80141b:	c7 44 24 08 9b 2a 80 	movl   $0x802a9b,0x8(%esp)
+  801422:	00 
+  801423:	c7 44 24 04 33 00 00 	movl   $0x33,0x4(%esp)
+  80142a:	00 
+  80142b:	c7 04 24 a7 2a 80 00 	movl   $0x802aa7,(%esp)
+  801432:	e8 a2 ed ff ff       	call   8001d9 <_panic>
 //   as meaning "no page".  (Zero is not the right value.)
 void
 ipc_send(envid_t to_env, uint32_t val, void *pg, int perm)
 {
 	int err_code;
 	while ((err_code = sys_ipc_try_send(to_env, val, pg == NULL ? (void*)UTOP : pg, perm))) {
-  80142d:	85 db                	test   %ebx,%ebx
-  80142f:	b8 00 00 c0 ee       	mov    $0xeec00000,%eax
-  801434:	0f 45 c3             	cmovne %ebx,%eax
-  801437:	8b 55 14             	mov    0x14(%ebp),%edx
-  80143a:	89 54 24 0c          	mov    %edx,0xc(%esp)
-  80143e:	89 44 24 08          	mov    %eax,0x8(%esp)
-  801442:	89 74 24 04          	mov    %esi,0x4(%esp)
-  801446:	89 3c 24             	mov    %edi,(%esp)
-  801449:	e8 7e fb ff ff       	call   800fcc <sys_ipc_try_send>
-  80144e:	85 c0                	test   %eax,%eax
-  801450:	75 b6                	jne    801408 <ipc_send+0x14>
+  801437:	85 db                	test   %ebx,%ebx
+  801439:	b8 00 00 c0 ee       	mov    $0xeec00000,%eax
+  80143e:	0f 45 c3             	cmovne %ebx,%eax
+  801441:	8b 55 14             	mov    0x14(%ebp),%edx
+  801444:	89 54 24 0c          	mov    %edx,0xc(%esp)
+  801448:	89 44 24 08          	mov    %eax,0x8(%esp)
+  80144c:	89 74 24 04          	mov    %esi,0x4(%esp)
+  801450:	89 3c 24             	mov    %edi,(%esp)
+  801453:	e8 74 fb ff ff       	call   800fcc <sys_ipc_try_send>
+  801458:	85 c0                	test   %eax,%eax
+  80145a:	75 b6                	jne    801412 <ipc_send+0x14>
 		if (err_code != -E_IPC_NOT_RECV) {
 			panic("ipc_send:%e", err_code);
 		}
 	}
 }
-  801452:	83 c4 1c             	add    $0x1c,%esp
-  801455:	5b                   	pop    %ebx
-  801456:	5e                   	pop    %esi
-  801457:	5f                   	pop    %edi
-  801458:	5d                   	pop    %ebp
-  801459:	c3                   	ret    
+  80145c:	83 c4 1c             	add    $0x1c,%esp
+  80145f:	5b                   	pop    %ebx
+  801460:	5e                   	pop    %esi
+  801461:	5f                   	pop    %edi
+  801462:	5d                   	pop    %ebp
+  801463:	c3                   	ret    
 
-0080145a <ipc_find_env>:
+00801464 <ipc_find_env>:
 // Find the first environment of the given type.  We'll use this to
 // find special environments.
 // Returns 0 if no such environment exists.
 envid_t
 ipc_find_env(enum EnvType type)
 {
-  80145a:	55                   	push   %ebp
-  80145b:	89 e5                	mov    %esp,%ebp
-  80145d:	8b 4d 08             	mov    0x8(%ebp),%ecx
+  801464:	55                   	push   %ebp
+  801465:	89 e5                	mov    %esp,%ebp
+  801467:	8b 4d 08             	mov    0x8(%ebp),%ecx
 	int i;
 	for (i = 0; i < NENV; i++)
 		if (envs[i].env_type == type)
-  801460:	a1 50 00 c0 ee       	mov    0xeec00050,%eax
-  801465:	39 c8                	cmp    %ecx,%eax
-  801467:	74 17                	je     801480 <ipc_find_env+0x26>
+  80146a:	a1 50 00 c0 ee       	mov    0xeec00050,%eax
+  80146f:	39 c8                	cmp    %ecx,%eax
+  801471:	74 17                	je     80148a <ipc_find_env+0x26>
 // Returns 0 if no such environment exists.
 envid_t
 ipc_find_env(enum EnvType type)
 {
 	int i;
 	for (i = 0; i < NENV; i++)
-  801469:	b8 01 00 00 00       	mov    $0x1,%eax
+  801473:	b8 01 00 00 00       	mov    $0x1,%eax
 		if (envs[i].env_type == type)
-  80146e:	6b d0 7c             	imul   $0x7c,%eax,%edx
-  801471:	81 c2 00 00 c0 ee    	add    $0xeec00000,%edx
-  801477:	8b 52 50             	mov    0x50(%edx),%edx
-  80147a:	39 ca                	cmp    %ecx,%edx
-  80147c:	75 14                	jne    801492 <ipc_find_env+0x38>
-  80147e:	eb 05                	jmp    801485 <ipc_find_env+0x2b>
+  801478:	6b d0 7c             	imul   $0x7c,%eax,%edx
+  80147b:	81 c2 00 00 c0 ee    	add    $0xeec00000,%edx
+  801481:	8b 52 50             	mov    0x50(%edx),%edx
+  801484:	39 ca                	cmp    %ecx,%edx
+  801486:	75 14                	jne    80149c <ipc_find_env+0x38>
+  801488:	eb 05                	jmp    80148f <ipc_find_env+0x2b>
 // Returns 0 if no such environment exists.
 envid_t
 ipc_find_env(enum EnvType type)
 {
 	int i;
 	for (i = 0; i < NENV; i++)
-  801480:	b8 00 00 00 00       	mov    $0x0,%eax
+  80148a:	b8 00 00 00 00       	mov    $0x0,%eax
 		if (envs[i].env_type == type)
 			return envs[i].env_id;
-  801485:	6b c0 7c             	imul   $0x7c,%eax,%eax
-  801488:	05 08 00 c0 ee       	add    $0xeec00008,%eax
-  80148d:	8b 40 40             	mov    0x40(%eax),%eax
-  801490:	eb 0e                	jmp    8014a0 <ipc_find_env+0x46>
+  80148f:	6b c0 7c             	imul   $0x7c,%eax,%eax
+  801492:	05 08 00 c0 ee       	add    $0xeec00008,%eax
+  801497:	8b 40 40             	mov    0x40(%eax),%eax
+  80149a:	eb 0e                	jmp    8014aa <ipc_find_env+0x46>
 // Returns 0 if no such environment exists.
 envid_t
 ipc_find_env(enum EnvType type)
 {
 	int i;
 	for (i = 0; i < NENV; i++)
-  801492:	83 c0 01             	add    $0x1,%eax
-  801495:	3d 00 04 00 00       	cmp    $0x400,%eax
-  80149a:	75 d2                	jne    80146e <ipc_find_env+0x14>
+  80149c:	83 c0 01             	add    $0x1,%eax
+  80149f:	3d 00 04 00 00       	cmp    $0x400,%eax
+  8014a4:	75 d2                	jne    801478 <ipc_find_env+0x14>
 		if (envs[i].env_type == type)
 			return envs[i].env_id;
 	return 0;
-  80149c:	66 b8 00 00          	mov    $0x0,%ax
+  8014a6:	66 b8 00 00          	mov    $0x0,%ax
 }
-  8014a0:	5d                   	pop    %ebp
-  8014a1:	c3                   	ret    
-  8014a2:	66 90                	xchg   %ax,%ax
-  8014a4:	66 90                	xchg   %ax,%ax
-  8014a6:	66 90                	xchg   %ax,%ax
-  8014a8:	66 90                	xchg   %ax,%ax
-  8014aa:	66 90                	xchg   %ax,%ax
+  8014aa:	5d                   	pop    %ebp
+  8014ab:	c3                   	ret    
   8014ac:	66 90                	xchg   %ax,%ax
   8014ae:	66 90                	xchg   %ax,%ax
 
@@ -4381,7 +4379,7 @@ fsipc(unsigned type, void *dstva)
   801af2:	75 11                	jne    801b05 <fsipc+0x26>
 		fsenv = ipc_find_env(ENV_TYPE_FS);
   801af4:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
-  801afb:	e8 5a f9 ff ff       	call   80145a <ipc_find_env>
+  801afb:	e8 64 f9 ff ff       	call   801464 <ipc_find_env>
   801b00:	a3 00 40 80 00       	mov    %eax,0x804000
 	static_assert(sizeof(fsipcbuf) == PGSIZE);
 
@@ -4396,13 +4394,13 @@ fsipc(unsigned type, void *dstva)
   801b15:	89 74 24 04          	mov    %esi,0x4(%esp)
   801b19:	a1 00 40 80 00       	mov    0x804000,%eax
   801b1e:	89 04 24             	mov    %eax,(%esp)
-  801b21:	e8 ce f8 ff ff       	call   8013f4 <ipc_send>
+  801b21:	e8 d8 f8 ff ff       	call   8013fe <ipc_send>
 	return ipc_recv(NULL, dstva, NULL);
   801b26:	c7 44 24 08 00 00 00 	movl   $0x0,0x8(%esp)
   801b2d:	00 
   801b2e:	89 5c 24 04          	mov    %ebx,0x4(%esp)
   801b32:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
-  801b39:	e8 4e f8 ff ff       	call   80138c <ipc_recv>
+  801b39:	e8 58 f8 ff ff       	call   801396 <ipc_recv>
 }
   801b3e:	83 c4 10             	add    $0x10,%esp
   801b41:	5b                   	pop    %ebx

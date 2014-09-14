@@ -47,23 +47,23 @@ umain(int argc, char **argv)
 	int i, pid, p[2];
 
 	binaryname = "pipereadeof";
-  80003b:	c7 05 04 30 80 00 20 	movl   $0x802820,0x803004
+  80003b:	c7 05 04 30 80 00 40 	movl   $0x802840,0x803004
   800042:	28 80 00 
 
 	if ((i = pipe(p)) < 0)
   800045:	8d 45 8c             	lea    -0x74(%ebp),%eax
   800048:	89 04 24             	mov    %eax,(%esp)
-  80004b:	e8 59 1f 00 00       	call   801fa9 <pipe>
+  80004b:	e8 69 1f 00 00       	call   801fb9 <pipe>
   800050:	89 c6                	mov    %eax,%esi
   800052:	85 c0                	test   %eax,%eax
   800054:	79 20                	jns    800076 <umain+0x43>
 		panic("pipe: %e", i);
   800056:	89 44 24 0c          	mov    %eax,0xc(%esp)
-  80005a:	c7 44 24 08 2c 28 80 	movl   $0x80282c,0x8(%esp)
+  80005a:	c7 44 24 08 4c 28 80 	movl   $0x80284c,0x8(%esp)
   800061:	00 
   800062:	c7 44 24 04 0e 00 00 	movl   $0xe,0x4(%esp)
   800069:	00 
-  80006a:	c7 04 24 35 28 80 00 	movl   $0x802835,(%esp)
+  80006a:	c7 04 24 55 28 80 00 	movl   $0x802855,(%esp)
   800071:	e8 30 03 00 00       	call   8003a6 <_panic>
 
 	if ((pid = fork()) < 0)
@@ -73,11 +73,11 @@ umain(int argc, char **argv)
   80007f:	79 20                	jns    8000a1 <umain+0x6e>
 		panic("fork: %e", i);
   800081:	89 74 24 0c          	mov    %esi,0xc(%esp)
-  800085:	c7 44 24 08 45 28 80 	movl   $0x802845,0x8(%esp)
+  800085:	c7 44 24 08 65 28 80 	movl   $0x802865,0x8(%esp)
   80008c:	00 
   80008d:	c7 44 24 04 11 00 00 	movl   $0x11,0x4(%esp)
   800094:	00 
-  800095:	c7 04 24 35 28 80 00 	movl   $0x802835,(%esp)
+  800095:	c7 04 24 55 28 80 00 	movl   $0x802855,(%esp)
   80009c:	e8 05 03 00 00       	call   8003a6 <_panic>
 
 	if (pid == 0) {
@@ -89,19 +89,19 @@ umain(int argc, char **argv)
   8000b1:	8b 55 90             	mov    -0x70(%ebp),%edx
   8000b4:	89 54 24 08          	mov    %edx,0x8(%esp)
   8000b8:	89 44 24 04          	mov    %eax,0x4(%esp)
-  8000bc:	c7 04 24 4e 28 80 00 	movl   $0x80284e,(%esp)
+  8000bc:	c7 04 24 6e 28 80 00 	movl   $0x80286e,(%esp)
   8000c3:	e8 d7 03 00 00       	call   80049f <cprintf>
 		close(p[1]);
   8000c8:	8b 45 90             	mov    -0x70(%ebp),%eax
   8000cb:	89 04 24             	mov    %eax,(%esp)
-  8000ce:	e8 70 16 00 00       	call   801743 <close>
+  8000ce:	e8 80 16 00 00       	call   801753 <close>
 		cprintf("[%08x] pipereadeof readn %d\n", thisenv->env_id, p[0]);
   8000d3:	a1 04 40 80 00       	mov    0x804004,%eax
   8000d8:	8b 40 48             	mov    0x48(%eax),%eax
   8000db:	8b 55 8c             	mov    -0x74(%ebp),%edx
   8000de:	89 54 24 08          	mov    %edx,0x8(%esp)
   8000e2:	89 44 24 04          	mov    %eax,0x4(%esp)
-  8000e6:	c7 04 24 6b 28 80 00 	movl   $0x80286b,(%esp)
+  8000e6:	c7 04 24 8b 28 80 00 	movl   $0x80288b,(%esp)
   8000ed:	e8 ad 03 00 00       	call   80049f <cprintf>
 		i = readn(p[0], buf, sizeof buf-1);
   8000f2:	c7 44 24 08 63 00 00 	movl   $0x63,0x8(%esp)
@@ -110,18 +110,18 @@ umain(int argc, char **argv)
   8000fd:	89 44 24 04          	mov    %eax,0x4(%esp)
   800101:	8b 45 8c             	mov    -0x74(%ebp),%eax
   800104:	89 04 24             	mov    %eax,(%esp)
-  800107:	e8 2c 18 00 00       	call   801938 <readn>
+  800107:	e8 3c 18 00 00       	call   801948 <readn>
   80010c:	89 c6                	mov    %eax,%esi
 		if (i < 0)
   80010e:	85 c0                	test   %eax,%eax
   800110:	79 20                	jns    800132 <umain+0xff>
 			panic("read: %e", i);
   800112:	89 44 24 0c          	mov    %eax,0xc(%esp)
-  800116:	c7 44 24 08 88 28 80 	movl   $0x802888,0x8(%esp)
+  800116:	c7 44 24 08 a8 28 80 	movl   $0x8028a8,0x8(%esp)
   80011d:	00 
   80011e:	c7 44 24 04 19 00 00 	movl   $0x19,0x4(%esp)
   800125:	00 
-  800126:	c7 04 24 35 28 80 00 	movl   $0x802835,(%esp)
+  800126:	c7 04 24 55 28 80 00 	movl   $0x802855,(%esp)
   80012d:	e8 74 02 00 00       	call   8003a6 <_panic>
 		buf[i] = 0;
   800132:	c6 44 05 94 00       	movb   $0x0,-0x6c(%ebp,%eax,1)
@@ -134,7 +134,7 @@ umain(int argc, char **argv)
   80014b:	85 c0                	test   %eax,%eax
   80014d:	75 0e                	jne    80015d <umain+0x12a>
 			cprintf("\npipe read closed properly\n");
-  80014f:	c7 04 24 91 28 80 00 	movl   $0x802891,(%esp)
+  80014f:	c7 04 24 b1 28 80 00 	movl   $0x8028b1,(%esp)
   800156:	e8 44 03 00 00       	call   80049f <cprintf>
   80015b:	eb 17                	jmp    800174 <umain+0x141>
 		else
@@ -142,7 +142,7 @@ umain(int argc, char **argv)
   80015d:	8d 45 94             	lea    -0x6c(%ebp),%eax
   800160:	89 44 24 08          	mov    %eax,0x8(%esp)
   800164:	89 74 24 04          	mov    %esi,0x4(%esp)
-  800168:	c7 04 24 ad 28 80 00 	movl   $0x8028ad,(%esp)
+  800168:	c7 04 24 cd 28 80 00 	movl   $0x8028cd,(%esp)
   80016f:	e8 2b 03 00 00       	call   80049f <cprintf>
 		exit();
   800174:	e8 14 02 00 00       	call   80038d <exit>
@@ -154,19 +154,19 @@ umain(int argc, char **argv)
   800186:	8b 55 8c             	mov    -0x74(%ebp),%edx
   800189:	89 54 24 08          	mov    %edx,0x8(%esp)
   80018d:	89 44 24 04          	mov    %eax,0x4(%esp)
-  800191:	c7 04 24 4e 28 80 00 	movl   $0x80284e,(%esp)
+  800191:	c7 04 24 6e 28 80 00 	movl   $0x80286e,(%esp)
   800198:	e8 02 03 00 00       	call   80049f <cprintf>
 		close(p[0]);
   80019d:	8b 45 8c             	mov    -0x74(%ebp),%eax
   8001a0:	89 04 24             	mov    %eax,(%esp)
-  8001a3:	e8 9b 15 00 00       	call   801743 <close>
+  8001a3:	e8 ab 15 00 00       	call   801753 <close>
 		cprintf("[%08x] pipereadeof write %d\n", thisenv->env_id, p[1]);
   8001a8:	a1 04 40 80 00       	mov    0x804004,%eax
   8001ad:	8b 40 48             	mov    0x48(%eax),%eax
   8001b0:	8b 55 90             	mov    -0x70(%ebp),%edx
   8001b3:	89 54 24 08          	mov    %edx,0x8(%esp)
   8001b7:	89 44 24 04          	mov    %eax,0x4(%esp)
-  8001bb:	c7 04 24 c0 28 80 00 	movl   $0x8028c0,(%esp)
+  8001bb:	c7 04 24 e0 28 80 00 	movl   $0x8028e0,(%esp)
   8001c2:	e8 d8 02 00 00       	call   80049f <cprintf>
 		if ((i = write(p[1], msg, strlen(msg))) != strlen(msg))
   8001c7:	a1 00 30 80 00       	mov    0x803000,%eax
@@ -177,7 +177,7 @@ umain(int argc, char **argv)
   8001dd:	89 44 24 04          	mov    %eax,0x4(%esp)
   8001e1:	8b 45 90             	mov    -0x70(%ebp),%eax
   8001e4:	89 04 24             	mov    %eax,(%esp)
-  8001e7:	e8 a7 17 00 00       	call   801993 <write>
+  8001e7:	e8 b7 17 00 00       	call   8019a3 <write>
   8001ec:	89 c6                	mov    %eax,%esi
   8001ee:	a1 00 30 80 00       	mov    0x803000,%eax
   8001f3:	89 04 24             	mov    %eax,(%esp)
@@ -186,38 +186,38 @@ umain(int argc, char **argv)
   8001fd:	74 20                	je     80021f <umain+0x1ec>
 			panic("write: %e", i);
   8001ff:	89 74 24 0c          	mov    %esi,0xc(%esp)
-  800203:	c7 44 24 08 dd 28 80 	movl   $0x8028dd,0x8(%esp)
+  800203:	c7 44 24 08 fd 28 80 	movl   $0x8028fd,0x8(%esp)
   80020a:	00 
   80020b:	c7 44 24 04 25 00 00 	movl   $0x25,0x4(%esp)
   800212:	00 
-  800213:	c7 04 24 35 28 80 00 	movl   $0x802835,(%esp)
+  800213:	c7 04 24 55 28 80 00 	movl   $0x802855,(%esp)
   80021a:	e8 87 01 00 00       	call   8003a6 <_panic>
 		close(p[1]);
   80021f:	8b 45 90             	mov    -0x70(%ebp),%eax
   800222:	89 04 24             	mov    %eax,(%esp)
-  800225:	e8 19 15 00 00       	call   801743 <close>
+  800225:	e8 29 15 00 00       	call   801753 <close>
 	}
 	wait(pid);
   80022a:	89 1c 24             	mov    %ebx,(%esp)
-  80022d:	e8 1d 1f 00 00       	call   80214f <wait>
+  80022d:	e8 2d 1f 00 00       	call   80215f <wait>
 
 	binaryname = "pipewriteeof";
-  800232:	c7 05 04 30 80 00 e7 	movl   $0x8028e7,0x803004
-  800239:	28 80 00 
+  800232:	c7 05 04 30 80 00 07 	movl   $0x802907,0x803004
+  800239:	29 80 00 
 	if ((i = pipe(p)) < 0)
   80023c:	8d 45 8c             	lea    -0x74(%ebp),%eax
   80023f:	89 04 24             	mov    %eax,(%esp)
-  800242:	e8 62 1d 00 00       	call   801fa9 <pipe>
+  800242:	e8 72 1d 00 00       	call   801fb9 <pipe>
   800247:	89 c6                	mov    %eax,%esi
   800249:	85 c0                	test   %eax,%eax
   80024b:	79 20                	jns    80026d <umain+0x23a>
 		panic("pipe: %e", i);
   80024d:	89 44 24 0c          	mov    %eax,0xc(%esp)
-  800251:	c7 44 24 08 2c 28 80 	movl   $0x80282c,0x8(%esp)
+  800251:	c7 44 24 08 4c 28 80 	movl   $0x80284c,0x8(%esp)
   800258:	00 
   800259:	c7 44 24 04 2c 00 00 	movl   $0x2c,0x4(%esp)
   800260:	00 
-  800261:	c7 04 24 35 28 80 00 	movl   $0x802835,(%esp)
+  800261:	c7 04 24 55 28 80 00 	movl   $0x802855,(%esp)
   800268:	e8 39 01 00 00       	call   8003a6 <_panic>
 
 	if ((pid = fork()) < 0)
@@ -227,11 +227,11 @@ umain(int argc, char **argv)
   800276:	79 20                	jns    800298 <umain+0x265>
 		panic("fork: %e", i);
   800278:	89 74 24 0c          	mov    %esi,0xc(%esp)
-  80027c:	c7 44 24 08 45 28 80 	movl   $0x802845,0x8(%esp)
+  80027c:	c7 44 24 08 65 28 80 	movl   $0x802865,0x8(%esp)
   800283:	00 
   800284:	c7 44 24 04 2f 00 00 	movl   $0x2f,0x4(%esp)
   80028b:	00 
-  80028c:	c7 04 24 35 28 80 00 	movl   $0x802835,(%esp)
+  80028c:	c7 04 24 55 28 80 00 	movl   $0x802855,(%esp)
   800293:	e8 0e 01 00 00       	call   8003a6 <_panic>
 
 	if (pid == 0) {
@@ -240,25 +240,25 @@ umain(int argc, char **argv)
 		close(p[0]);
   80029c:	8b 45 8c             	mov    -0x74(%ebp),%eax
   80029f:	89 04 24             	mov    %eax,(%esp)
-  8002a2:	e8 9c 14 00 00       	call   801743 <close>
+  8002a2:	e8 ac 14 00 00       	call   801753 <close>
 		while (1) {
 			cprintf(".");
-  8002a7:	c7 04 24 f4 28 80 00 	movl   $0x8028f4,(%esp)
+  8002a7:	c7 04 24 14 29 80 00 	movl   $0x802914,(%esp)
   8002ae:	e8 ec 01 00 00       	call   80049f <cprintf>
 			if (write(p[1], "x", 1) != 1)
   8002b3:	c7 44 24 08 01 00 00 	movl   $0x1,0x8(%esp)
   8002ba:	00 
-  8002bb:	c7 44 24 04 f6 28 80 	movl   $0x8028f6,0x4(%esp)
+  8002bb:	c7 44 24 04 16 29 80 	movl   $0x802916,0x4(%esp)
   8002c2:	00 
   8002c3:	8b 55 90             	mov    -0x70(%ebp),%edx
   8002c6:	89 14 24             	mov    %edx,(%esp)
-  8002c9:	e8 c5 16 00 00       	call   801993 <write>
+  8002c9:	e8 d5 16 00 00       	call   8019a3 <write>
   8002ce:	83 f8 01             	cmp    $0x1,%eax
   8002d1:	74 d4                	je     8002a7 <umain+0x274>
 				break;
 		}
 		cprintf("\npipe write closed properly\n");
-  8002d3:	c7 04 24 f8 28 80 00 	movl   $0x8028f8,(%esp)
+  8002d3:	c7 04 24 18 29 80 00 	movl   $0x802918,(%esp)
   8002da:	e8 c0 01 00 00       	call   80049f <cprintf>
 		exit();
   8002df:	e8 a9 00 00 00       	call   80038d <exit>
@@ -266,17 +266,17 @@ umain(int argc, char **argv)
 	close(p[0]);
   8002e4:	8b 45 8c             	mov    -0x74(%ebp),%eax
   8002e7:	89 04 24             	mov    %eax,(%esp)
-  8002ea:	e8 54 14 00 00       	call   801743 <close>
+  8002ea:	e8 64 14 00 00       	call   801753 <close>
 	close(p[1]);
   8002ef:	8b 45 90             	mov    -0x70(%ebp),%eax
   8002f2:	89 04 24             	mov    %eax,(%esp)
-  8002f5:	e8 49 14 00 00       	call   801743 <close>
+  8002f5:	e8 59 14 00 00       	call   801753 <close>
 	wait(pid);
   8002fa:	89 1c 24             	mov    %ebx,(%esp)
-  8002fd:	e8 4d 1e 00 00       	call   80214f <wait>
+  8002fd:	e8 5d 1e 00 00       	call   80215f <wait>
 
 	cprintf("pipe tests passed\n");
-  800302:	c7 04 24 15 29 80 00 	movl   $0x802915,(%esp)
+  800302:	c7 04 24 35 29 80 00 	movl   $0x802935,(%esp)
   800309:	e8 91 01 00 00       	call   80049f <cprintf>
 }
   80030e:	83 ec 80             	sub    $0xffffff80,%esp
@@ -385,7 +385,7 @@ exit(void)
   80038e:	89 e5                	mov    %esp,%ebp
   800390:	83 ec 18             	sub    $0x18,%esp
 	close_all();
-  800393:	e8 de 13 00 00       	call   801776 <close_all>
+  800393:	e8 ee 13 00 00       	call   801786 <close_all>
 	sys_env_destroy(0);
   800398:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
   80039f:	e8 75 0b 00 00       	call   800f19 <sys_env_destroy>
@@ -420,7 +420,7 @@ _panic(const char *file, int line, const char *fmt, ...)
   8003c6:	89 54 24 0c          	mov    %edx,0xc(%esp)
   8003ca:	89 74 24 08          	mov    %esi,0x8(%esp)
   8003ce:	89 44 24 04          	mov    %eax,0x4(%esp)
-  8003d2:	c7 04 24 78 29 80 00 	movl   $0x802978,(%esp)
+  8003d2:	c7 04 24 98 29 80 00 	movl   $0x802998,(%esp)
   8003d9:	e8 c1 00 00 00       	call   80049f <cprintf>
 		sys_getenvid(), binaryname, file, line);
 	vcprintf(fmt, ap);
@@ -429,7 +429,7 @@ _panic(const char *file, int line, const char *fmt, ...)
   8003e5:	89 04 24             	mov    %eax,(%esp)
   8003e8:	e8 51 00 00 00       	call   80043e <vcprintf>
 	cprintf("\n");
-  8003ed:	c7 04 24 69 28 80 00 	movl   $0x802869,(%esp)
+  8003ed:	c7 04 24 89 28 80 00 	movl   $0x802889,(%esp)
   8003f4:	e8 a6 00 00 00       	call   80049f <cprintf>
 
 	// Cause a breakpoint exception
@@ -606,7 +606,7 @@ printnum(void (*putch)(int, void*), void *putdat,
   800532:	89 04 24             	mov    %eax,(%esp)
   800535:	8b 45 d4             	mov    -0x2c(%ebp),%eax
   800538:	89 44 24 04          	mov    %eax,0x4(%esp)
-  80053c:	e8 4f 20 00 00       	call   802590 <__udivdi3>
+  80053c:	e8 5f 20 00 00       	call   8025a0 <__udivdi3>
   800541:	89 d9                	mov    %ebx,%ecx
   800543:	89 4c 24 08          	mov    %ecx,0x8(%esp)
   800547:	89 74 24 0c          	mov    %esi,0xc(%esp)
@@ -648,9 +648,9 @@ printnum(void (*putch)(int, void*), void *putdat,
   80058b:	89 04 24             	mov    %eax,(%esp)
   80058e:	8b 45 d4             	mov    -0x2c(%ebp),%eax
   800591:	89 44 24 04          	mov    %eax,0x4(%esp)
-  800595:	e8 26 21 00 00       	call   8026c0 <__umoddi3>
+  800595:	e8 36 21 00 00       	call   8026d0 <__umoddi3>
   80059a:	89 7c 24 04          	mov    %edi,0x4(%esp)
-  80059e:	0f be 80 9b 29 80 00 	movsbl 0x80299b(%eax),%eax
+  80059e:	0f be 80 bb 29 80 00 	movsbl 0x8029bb(%eax),%eax
   8005a5:	89 04 24             	mov    %eax,(%esp)
   8005a8:	8b 45 e4             	mov    -0x1c(%ebp),%eax
   8005ab:	ff d0                	call   *%eax
@@ -865,7 +865,7 @@ vprintfmt(void (*putch)(int, void*), void *putdat, const char *fmt, va_list ap)
   8006b1:	3c 55                	cmp    $0x55,%al
   8006b3:	0f 87 2f 03 00 00    	ja     8009e8 <vprintfmt+0x3b4>
   8006b9:	0f b6 c0             	movzbl %al,%eax
-  8006bc:	ff 24 85 e0 2a 80 00 	jmp    *0x802ae0(,%eax,4)
+  8006bc:	ff 24 85 00 2b 80 00 	jmp    *0x802b00(,%eax,4)
 		case '6':
 		case '7':
 		case '8':
@@ -1020,12 +1020,12 @@ vprintfmt(void (*putch)(int, void*), void *putdat, const char *fmt, va_list ap)
 			if (err >= MAXERROR || (p = error_string[err]) == NULL)
   80076a:	83 f8 0f             	cmp    $0xf,%eax
   80076d:	7f 0b                	jg     80077a <vprintfmt+0x146>
-  80076f:	8b 14 85 40 2c 80 00 	mov    0x802c40(,%eax,4),%edx
+  80076f:	8b 14 85 60 2c 80 00 	mov    0x802c60(,%eax,4),%edx
   800776:	85 d2                	test   %edx,%edx
   800778:	75 20                	jne    80079a <vprintfmt+0x166>
 				printfmt(putch, putdat, "error %d", err);
   80077a:	89 44 24 0c          	mov    %eax,0xc(%esp)
-  80077e:	c7 44 24 08 b3 29 80 	movl   $0x8029b3,0x8(%esp)
+  80077e:	c7 44 24 08 d3 29 80 	movl   $0x8029d3,0x8(%esp)
   800785:	00 
   800786:	89 7c 24 04          	mov    %edi,0x4(%esp)
   80078a:	8b 45 08             	mov    0x8(%ebp),%eax
@@ -1035,7 +1035,7 @@ vprintfmt(void (*putch)(int, void*), void *putdat, const char *fmt, va_list ap)
 			else
 				printfmt(putch, putdat, "%s", p);
   80079a:	89 54 24 0c          	mov    %edx,0xc(%esp)
-  80079e:	c7 44 24 08 8f 2e 80 	movl   $0x802e8f,0x8(%esp)
+  80079e:	c7 44 24 08 af 2e 80 	movl   $0x802eaf,0x8(%esp)
   8007a5:	00 
   8007a6:	89 7c 24 04          	mov    %edi,0x4(%esp)
   8007aa:	8b 45 08             	mov    0x8(%ebp),%eax
@@ -1062,7 +1062,7 @@ vprintfmt(void (*putch)(int, void*), void *putdat, const char *fmt, va_list ap)
   8007c9:	8b 00                	mov    (%eax),%eax
 				p = "(null)";
   8007cb:	85 c0                	test   %eax,%eax
-  8007cd:	ba ac 29 80 00       	mov    $0x8029ac,%edx
+  8007cd:	ba cc 29 80 00       	mov    $0x8029cc,%edx
   8007d2:	0f 45 d0             	cmovne %eax,%edx
   8007d5:	89 55 d0             	mov    %edx,-0x30(%ebp)
 			if (width > 0 && padc != '-')
@@ -2460,11 +2460,11 @@ sys_env_destroy(envid_t envid)
   800f3b:	89 44 24 10          	mov    %eax,0x10(%esp)
   800f3f:	c7 44 24 0c 03 00 00 	movl   $0x3,0xc(%esp)
   800f46:	00 
-  800f47:	c7 44 24 08 9f 2c 80 	movl   $0x802c9f,0x8(%esp)
+  800f47:	c7 44 24 08 bf 2c 80 	movl   $0x802cbf,0x8(%esp)
   800f4e:	00 
   800f4f:	c7 44 24 04 22 00 00 	movl   $0x22,0x4(%esp)
   800f56:	00 
-  800f57:	c7 04 24 bc 2c 80 00 	movl   $0x802cbc,(%esp)
+  800f57:	c7 04 24 dc 2c 80 00 	movl   $0x802cdc,(%esp)
   800f5e:	e8 43 f4 ff ff       	call   8003a6 <_panic>
 
 int
@@ -2585,11 +2585,11 @@ sys_page_alloc(envid_t envid, void *va, int perm)
   800fcd:	89 44 24 10          	mov    %eax,0x10(%esp)
   800fd1:	c7 44 24 0c 04 00 00 	movl   $0x4,0xc(%esp)
   800fd8:	00 
-  800fd9:	c7 44 24 08 9f 2c 80 	movl   $0x802c9f,0x8(%esp)
+  800fd9:	c7 44 24 08 bf 2c 80 	movl   $0x802cbf,0x8(%esp)
   800fe0:	00 
   800fe1:	c7 44 24 04 22 00 00 	movl   $0x22,0x4(%esp)
   800fe8:	00 
-  800fe9:	c7 04 24 bc 2c 80 00 	movl   $0x802cbc,(%esp)
+  800fe9:	c7 04 24 dc 2c 80 00 	movl   $0x802cdc,(%esp)
   800ff0:	e8 b1 f3 ff ff       	call   8003a6 <_panic>
 
 int
@@ -2640,11 +2640,11 @@ sys_page_map(envid_t srcenv, void *srcva, envid_t dstenv, void *dstva, int perm)
   801020:	89 44 24 10          	mov    %eax,0x10(%esp)
   801024:	c7 44 24 0c 05 00 00 	movl   $0x5,0xc(%esp)
   80102b:	00 
-  80102c:	c7 44 24 08 9f 2c 80 	movl   $0x802c9f,0x8(%esp)
+  80102c:	c7 44 24 08 bf 2c 80 	movl   $0x802cbf,0x8(%esp)
   801033:	00 
   801034:	c7 44 24 04 22 00 00 	movl   $0x22,0x4(%esp)
   80103b:	00 
-  80103c:	c7 04 24 bc 2c 80 00 	movl   $0x802cbc,(%esp)
+  80103c:	c7 04 24 dc 2c 80 00 	movl   $0x802cdc,(%esp)
   801043:	e8 5e f3 ff ff       	call   8003a6 <_panic>
 
 int
@@ -2695,11 +2695,11 @@ sys_page_unmap(envid_t envid, void *va)
   801073:	89 44 24 10          	mov    %eax,0x10(%esp)
   801077:	c7 44 24 0c 06 00 00 	movl   $0x6,0xc(%esp)
   80107e:	00 
-  80107f:	c7 44 24 08 9f 2c 80 	movl   $0x802c9f,0x8(%esp)
+  80107f:	c7 44 24 08 bf 2c 80 	movl   $0x802cbf,0x8(%esp)
   801086:	00 
   801087:	c7 44 24 04 22 00 00 	movl   $0x22,0x4(%esp)
   80108e:	00 
-  80108f:	c7 04 24 bc 2c 80 00 	movl   $0x802cbc,(%esp)
+  80108f:	c7 04 24 dc 2c 80 00 	movl   $0x802cdc,(%esp)
   801096:	e8 0b f3 ff ff       	call   8003a6 <_panic>
 
 int
@@ -2752,11 +2752,11 @@ sys_env_set_status(envid_t envid, int status)
   8010c6:	89 44 24 10          	mov    %eax,0x10(%esp)
   8010ca:	c7 44 24 0c 08 00 00 	movl   $0x8,0xc(%esp)
   8010d1:	00 
-  8010d2:	c7 44 24 08 9f 2c 80 	movl   $0x802c9f,0x8(%esp)
+  8010d2:	c7 44 24 08 bf 2c 80 	movl   $0x802cbf,0x8(%esp)
   8010d9:	00 
   8010da:	c7 44 24 04 22 00 00 	movl   $0x22,0x4(%esp)
   8010e1:	00 
-  8010e2:	c7 04 24 bc 2c 80 00 	movl   $0x802cbc,(%esp)
+  8010e2:	c7 04 24 dc 2c 80 00 	movl   $0x802cdc,(%esp)
   8010e9:	e8 b8 f2 ff ff       	call   8003a6 <_panic>
 
 int
@@ -2807,11 +2807,11 @@ sys_env_set_trapframe(envid_t envid, struct Trapframe *tf)
   801119:	89 44 24 10          	mov    %eax,0x10(%esp)
   80111d:	c7 44 24 0c 09 00 00 	movl   $0x9,0xc(%esp)
   801124:	00 
-  801125:	c7 44 24 08 9f 2c 80 	movl   $0x802c9f,0x8(%esp)
+  801125:	c7 44 24 08 bf 2c 80 	movl   $0x802cbf,0x8(%esp)
   80112c:	00 
   80112d:	c7 44 24 04 22 00 00 	movl   $0x22,0x4(%esp)
   801134:	00 
-  801135:	c7 04 24 bc 2c 80 00 	movl   $0x802cbc,(%esp)
+  801135:	c7 04 24 dc 2c 80 00 	movl   $0x802cdc,(%esp)
   80113c:	e8 65 f2 ff ff       	call   8003a6 <_panic>
 
 int
@@ -2862,11 +2862,11 @@ sys_env_set_pgfault_upcall(envid_t envid, void *upcall)
   80116c:	89 44 24 10          	mov    %eax,0x10(%esp)
   801170:	c7 44 24 0c 0a 00 00 	movl   $0xa,0xc(%esp)
   801177:	00 
-  801178:	c7 44 24 08 9f 2c 80 	movl   $0x802c9f,0x8(%esp)
+  801178:	c7 44 24 08 bf 2c 80 	movl   $0x802cbf,0x8(%esp)
   80117f:	00 
   801180:	c7 44 24 04 22 00 00 	movl   $0x22,0x4(%esp)
   801187:	00 
-  801188:	c7 04 24 bc 2c 80 00 	movl   $0x802cbc,(%esp)
+  801188:	c7 04 24 dc 2c 80 00 	movl   $0x802cdc,(%esp)
   80118f:	e8 12 f2 ff ff       	call   8003a6 <_panic>
 
 int
@@ -2952,11 +2952,11 @@ sys_ipc_recv(void *dstva)
   8011e1:	89 44 24 10          	mov    %eax,0x10(%esp)
   8011e5:	c7 44 24 0c 0d 00 00 	movl   $0xd,0xc(%esp)
   8011ec:	00 
-  8011ed:	c7 44 24 08 9f 2c 80 	movl   $0x802c9f,0x8(%esp)
+  8011ed:	c7 44 24 08 bf 2c 80 	movl   $0x802cbf,0x8(%esp)
   8011f4:	00 
   8011f5:	c7 44 24 04 22 00 00 	movl   $0x22,0x4(%esp)
   8011fc:	00 
-  8011fd:	c7 04 24 bc 2c 80 00 	movl   $0x802cbc,(%esp)
+  8011fd:	c7 04 24 dc 2c 80 00 	movl   $0x802cdc,(%esp)
   801204:	e8 9d f1 ff ff       	call   8003a6 <_panic>
 
 int
@@ -3001,11 +3001,11 @@ pgfault(struct UTrapframe *utf)
   80122f:	f6 c6 08             	test   $0x8,%dh
   801232:	75 1c                	jne    801250 <pgfault+0x3f>
 		panic("pgfault: %x is not write access to copy-on-write page.\n");
-  801234:	c7 44 24 08 cc 2c 80 	movl   $0x802ccc,0x8(%esp)
+  801234:	c7 44 24 08 ec 2c 80 	movl   $0x802cec,0x8(%esp)
   80123b:	00 
   80123c:	c7 44 24 04 21 00 00 	movl   $0x21,0x4(%esp)
   801243:	00 
-  801244:	c7 04 24 29 2d 80 00 	movl   $0x802d29,(%esp)
+  801244:	c7 04 24 49 2d 80 00 	movl   $0x802d49,(%esp)
   80124b:	e8 56 f1 ff ff       	call   8003a6 <_panic>
 	//   You should make three system calls. ?????
 	//   No need to explicitly delete the old page's mapping.
@@ -3023,11 +3023,11 @@ pgfault(struct UTrapframe *utf)
   80126e:	79 20                	jns    801290 <pgfault+0x7f>
 		panic("pgfault:sys_page_alloc:%e", err_code);
   801270:	89 44 24 0c          	mov    %eax,0xc(%esp)
-  801274:	c7 44 24 08 34 2d 80 	movl   $0x802d34,0x8(%esp)
+  801274:	c7 44 24 08 54 2d 80 	movl   $0x802d54,0x8(%esp)
   80127b:	00 
   80127c:	c7 44 24 04 2e 00 00 	movl   $0x2e,0x4(%esp)
   801283:	00 
-  801284:	c7 04 24 29 2d 80 00 	movl   $0x802d29,(%esp)
+  801284:	c7 04 24 49 2d 80 00 	movl   $0x802d49,(%esp)
   80128b:	e8 16 f1 ff ff       	call   8003a6 <_panic>
 	}
 	
@@ -3057,11 +3057,11 @@ pgfault(struct UTrapframe *utf)
   8012d8:	79 20                	jns    8012fa <pgfault+0xe9>
 		panic("pgfault: sys_page_map:%e", err_code);
   8012da:	89 44 24 0c          	mov    %eax,0xc(%esp)
-  8012de:	c7 44 24 08 4e 2d 80 	movl   $0x802d4e,0x8(%esp)
+  8012de:	c7 44 24 08 6e 2d 80 	movl   $0x802d6e,0x8(%esp)
   8012e5:	00 
   8012e6:	c7 44 24 04 38 00 00 	movl   $0x38,0x4(%esp)
   8012ed:	00 
-  8012ee:	c7 04 24 29 2d 80 00 	movl   $0x802d29,(%esp)
+  8012ee:	c7 04 24 49 2d 80 00 	movl   $0x802d49,(%esp)
   8012f5:	e8 ac f0 ff ff       	call   8003a6 <_panic>
 	}
 }
@@ -3086,7 +3086,7 @@ fork(void)
 	// set parent process fault handler
 	set_pgfault_handler(pgfault);
   801309:	c7 04 24 11 12 80 00 	movl   $0x801211,(%esp)
-  801310:	e8 61 10 00 00       	call   802376 <set_pgfault_handler>
+  801310:	e8 71 10 00 00       	call   802386 <set_pgfault_handler>
 // This must be inlined.  Exercise for reader: why?
 static __inline envid_t __attribute__((always_inline))
 sys_exofork(void)
@@ -3103,11 +3103,11 @@ sys_exofork(void)
   80131f:	85 c0                	test   %eax,%eax
   801321:	79 1c                	jns    80133f <fork+0x3f>
 		panic("fork");
-  801323:	c7 44 24 08 67 2d 80 	movl   $0x802d67,0x8(%esp)
+  801323:	c7 44 24 08 87 2d 80 	movl   $0x802d87,0x8(%esp)
   80132a:	00 
-  80132b:	c7 44 24 04 84 00 00 	movl   $0x84,0x4(%esp)
+  80132b:	c7 44 24 04 85 00 00 	movl   $0x85,0x4(%esp)
   801332:	00 
-  801333:	c7 04 24 29 2d 80 00 	movl   $0x802d29,(%esp)
+  801333:	c7 04 24 49 2d 80 00 	movl   $0x802d49,(%esp)
   80133a:	e8 67 f0 ff ff       	call   8003a6 <_panic>
   80133f:	89 c7                	mov    %eax,%edi
 	}
@@ -3125,7 +3125,7 @@ sys_exofork(void)
   80135e:	a3 04 40 80 00       	mov    %eax,0x804004
 		return 0;
   801363:	b8 00 00 00 00       	mov    $0x0,%eax
-  801368:	e9 c5 01 00 00       	jmp    801532 <fork+0x232>
+  801368:	e9 cf 01 00 00       	jmp    80153c <fork+0x23c>
 	// copy "mapping"
 	uint32_t pn_beg = UTEXT >> PTXSHIFT;
 	uint32_t pn_end = USTACKTOP >> PTXSHIFT;
@@ -3136,14 +3136,14 @@ sys_exofork(void)
   80136f:	c1 e8 0a             	shr    $0xa,%eax
   801372:	8b 04 85 00 d0 7b ef 	mov    -0x10843000(,%eax,4),%eax
   801379:	a8 01                	test   $0x1,%al
-  80137b:	0f 84 f2 00 00 00    	je     801473 <fork+0x173>
+  80137b:	0f 84 fc 00 00 00    	je     80147d <fork+0x17d>
 			continue;
 		}
 
 		if (!(uvpt[pn_beg] & (PTE_P | PTE_U))) {
   801381:	8b 04 9d 00 00 40 ef 	mov    -0x10c00000(,%ebx,4),%eax
   801388:	a8 05                	test   $0x5,%al
-  80138a:	0f 84 e3 00 00 00    	je     801473 <fork+0x173>
+  80138a:	0f 84 ed 00 00 00    	je     80147d <fork+0x17d>
 // use sys_page_map
 static int
 duppage(envid_t envid, unsigned pn)
@@ -3155,3051 +3155,3057 @@ duppage(envid_t envid, unsigned pn)
   801399:	c1 e6 0c             	shl    $0xc,%esi
 
 	int err_code;
-	// get current page permitssion
 	void* va = (void*)(pn * PGSIZE);
-	if ((pte & PTE_W) || (pte & PTE_COW)) { // for writable or copy-on-write page
-  80139c:	a9 02 08 00 00       	test   $0x802,%eax
-  8013a1:	0f 84 88 00 00 00    	je     80142f <fork+0x12f>
+	// this page is not share page and it is writable or c-o-w
+	if ( !(pte & PTE_SHARE) &&
+  80139c:	f6 c4 04             	test   $0x4,%ah
+  80139f:	0f 85 93 00 00 00    	jne    801438 <fork+0x138>
+  8013a5:	a9 02 08 00 00       	test   $0x802,%eax
+  8013aa:	0f 84 88 00 00 00    	je     801438 <fork+0x138>
+			 ((pte & PTE_W) || (pte & PTE_COW))) {
 
 		// set as readonly and copy-on-write
 		int perm = PTE_U | PTE_P | PTE_COW;
 		if ((err_code = sys_page_map(0, va, envid, va, perm)) < 0) {
-  8013a7:	c7 44 24 10 05 08 00 	movl   $0x805,0x10(%esp)
-  8013ae:	00 
-  8013af:	89 74 24 0c          	mov    %esi,0xc(%esp)
-  8013b3:	89 7c 24 08          	mov    %edi,0x8(%esp)
-  8013b7:	89 74 24 04          	mov    %esi,0x4(%esp)
-  8013bb:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
-  8013c2:	e8 36 fc ff ff       	call   800ffd <sys_page_map>
-  8013c7:	85 c0                	test   %eax,%eax
-  8013c9:	79 20                	jns    8013eb <fork+0xeb>
+  8013b0:	c7 44 24 10 05 08 00 	movl   $0x805,0x10(%esp)
+  8013b7:	00 
+  8013b8:	89 74 24 0c          	mov    %esi,0xc(%esp)
+  8013bc:	89 7c 24 08          	mov    %edi,0x8(%esp)
+  8013c0:	89 74 24 04          	mov    %esi,0x4(%esp)
+  8013c4:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
+  8013cb:	e8 2d fc ff ff       	call   800ffd <sys_page_map>
+  8013d0:	85 c0                	test   %eax,%eax
+  8013d2:	79 20                	jns    8013f4 <fork+0xf4>
 			panic("duppage:sys_page_map:1:%e", err_code);
-  8013cb:	89 44 24 0c          	mov    %eax,0xc(%esp)
-  8013cf:	c7 44 24 08 6c 2d 80 	movl   $0x802d6c,0x8(%esp)
-  8013d6:	00 
-  8013d7:	c7 44 24 04 56 00 00 	movl   $0x56,0x4(%esp)
-  8013de:	00 
-  8013df:	c7 04 24 29 2d 80 00 	movl   $0x802d29,(%esp)
-  8013e6:	e8 bb ef ff ff       	call   8003a6 <_panic>
+  8013d4:	89 44 24 0c          	mov    %eax,0xc(%esp)
+  8013d8:	c7 44 24 08 8c 2d 80 	movl   $0x802d8c,0x8(%esp)
+  8013df:	00 
+  8013e0:	c7 44 24 04 57 00 00 	movl   $0x57,0x4(%esp)
+  8013e7:	00 
+  8013e8:	c7 04 24 49 2d 80 00 	movl   $0x802d49,(%esp)
+  8013ef:	e8 b2 ef ff ff       	call   8003a6 <_panic>
 		}
 
 		// remap
 		if ((err_code = sys_page_map(envid, va, 0, va, perm)) < 0) {
-  8013eb:	c7 44 24 10 05 08 00 	movl   $0x805,0x10(%esp)
-  8013f2:	00 
-  8013f3:	89 74 24 0c          	mov    %esi,0xc(%esp)
-  8013f7:	c7 44 24 08 00 00 00 	movl   $0x0,0x8(%esp)
-  8013fe:	00 
-  8013ff:	89 74 24 04          	mov    %esi,0x4(%esp)
-  801403:	89 3c 24             	mov    %edi,(%esp)
-  801406:	e8 f2 fb ff ff       	call   800ffd <sys_page_map>
-  80140b:	85 c0                	test   %eax,%eax
-  80140d:	79 64                	jns    801473 <fork+0x173>
+  8013f4:	c7 44 24 10 05 08 00 	movl   $0x805,0x10(%esp)
+  8013fb:	00 
+  8013fc:	89 74 24 0c          	mov    %esi,0xc(%esp)
+  801400:	c7 44 24 08 00 00 00 	movl   $0x0,0x8(%esp)
+  801407:	00 
+  801408:	89 74 24 04          	mov    %esi,0x4(%esp)
+  80140c:	89 3c 24             	mov    %edi,(%esp)
+  80140f:	e8 e9 fb ff ff       	call   800ffd <sys_page_map>
+  801414:	85 c0                	test   %eax,%eax
+  801416:	79 65                	jns    80147d <fork+0x17d>
 			panic("duppage:sys_page_map:2:%e", err_code);
-  80140f:	89 44 24 0c          	mov    %eax,0xc(%esp)
-  801413:	c7 44 24 08 86 2d 80 	movl   $0x802d86,0x8(%esp)
-  80141a:	00 
-  80141b:	c7 44 24 04 5b 00 00 	movl   $0x5b,0x4(%esp)
-  801422:	00 
-  801423:	c7 04 24 29 2d 80 00 	movl   $0x802d29,(%esp)
-  80142a:	e8 77 ef ff ff       	call   8003a6 <_panic>
+  801418:	89 44 24 0c          	mov    %eax,0xc(%esp)
+  80141c:	c7 44 24 08 a6 2d 80 	movl   $0x802da6,0x8(%esp)
+  801423:	00 
+  801424:	c7 44 24 04 5c 00 00 	movl   $0x5c,0x4(%esp)
+  80142b:	00 
+  80142c:	c7 04 24 49 2d 80 00 	movl   $0x802d49,(%esp)
+  801433:	e8 6e ef ff ff       	call   8003a6 <_panic>
 		}
 
-	} else { // read-only page
-		int perm = PTE_U | PTE_P;
+	} else { // read-only page or share page
+		int perm = (pte & PTE_SYSCALL);
+  801438:	25 07 0e 00 00       	and    $0xe07,%eax
 		if ((err_code = sys_page_map(0, va, envid, va, perm)) < 0) {
-  80142f:	c7 44 24 10 05 00 00 	movl   $0x5,0x10(%esp)
-  801436:	00 
-  801437:	89 74 24 0c          	mov    %esi,0xc(%esp)
-  80143b:	89 7c 24 08          	mov    %edi,0x8(%esp)
-  80143f:	89 74 24 04          	mov    %esi,0x4(%esp)
-  801443:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
-  80144a:	e8 ae fb ff ff       	call   800ffd <sys_page_map>
-  80144f:	85 c0                	test   %eax,%eax
-  801451:	79 20                	jns    801473 <fork+0x173>
+  80143d:	89 44 24 10          	mov    %eax,0x10(%esp)
+  801441:	89 74 24 0c          	mov    %esi,0xc(%esp)
+  801445:	89 7c 24 08          	mov    %edi,0x8(%esp)
+  801449:	89 74 24 04          	mov    %esi,0x4(%esp)
+  80144d:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
+  801454:	e8 a4 fb ff ff       	call   800ffd <sys_page_map>
+  801459:	85 c0                	test   %eax,%eax
+  80145b:	79 20                	jns    80147d <fork+0x17d>
 			panic("sys_page_map:3:%e", err_code);
-  801453:	89 44 24 0c          	mov    %eax,0xc(%esp)
-  801457:	c7 44 24 08 a0 2d 80 	movl   $0x802da0,0x8(%esp)
-  80145e:	00 
-  80145f:	c7 44 24 04 61 00 00 	movl   $0x61,0x4(%esp)
-  801466:	00 
-  801467:	c7 04 24 29 2d 80 00 	movl   $0x802d29,(%esp)
-  80146e:	e8 33 ef ff ff       	call   8003a6 <_panic>
+  80145d:	89 44 24 0c          	mov    %eax,0xc(%esp)
+  801461:	c7 44 24 08 c0 2d 80 	movl   $0x802dc0,0x8(%esp)
+  801468:	00 
+  801469:	c7 44 24 04 62 00 00 	movl   $0x62,0x4(%esp)
+  801470:	00 
+  801471:	c7 04 24 49 2d 80 00 	movl   $0x802d49,(%esp)
+  801478:	e8 29 ef ff ff       	call   8003a6 <_panic>
 	}
 
 	// copy "mapping"
 	uint32_t pn_beg = UTEXT >> PTXSHIFT;
 	uint32_t pn_end = USTACKTOP >> PTXSHIFT;
 	for (; pn_beg < pn_end; ++pn_beg) {
-  801473:	83 c3 01             	add    $0x1,%ebx
-  801476:	81 fb fe eb 0e 00    	cmp    $0xeebfe,%ebx
-  80147c:	0f 85 eb fe ff ff    	jne    80136d <fork+0x6d>
+  80147d:	83 c3 01             	add    $0x1,%ebx
+  801480:	81 fb fe eb 0e 00    	cmp    $0xeebfe,%ebx
+  801486:	0f 85 e1 fe ff ff    	jne    80136d <fork+0x6d>
 
 	int err_code;
 
 	// set child process's page fault upcall entry point
 	// we don't need to install the handler since the "share mapping" !
 	if ((err_code = sys_env_set_pgfault_upcall(envid, _pgfault_upcall)) < 0) {
-  801482:	c7 44 24 04 df 23 80 	movl   $0x8023df,0x4(%esp)
-  801489:	00 
-  80148a:	8b 45 e4             	mov    -0x1c(%ebp),%eax
-  80148d:	89 04 24             	mov    %eax,(%esp)
-  801490:	e8 b4 fc ff ff       	call   801149 <sys_env_set_pgfault_upcall>
-  801495:	85 c0                	test   %eax,%eax
-  801497:	79 20                	jns    8014b9 <fork+0x1b9>
+  80148c:	c7 44 24 04 ef 23 80 	movl   $0x8023ef,0x4(%esp)
+  801493:	00 
+  801494:	8b 45 e4             	mov    -0x1c(%ebp),%eax
+  801497:	89 04 24             	mov    %eax,(%esp)
+  80149a:	e8 aa fc ff ff       	call   801149 <sys_env_set_pgfault_upcall>
+  80149f:	85 c0                	test   %eax,%eax
+  8014a1:	79 20                	jns    8014c3 <fork+0x1c3>
 		panic("fork: sys_env_set_pgfault_upcall:%e\n", err_code);
-  801499:	89 44 24 0c          	mov    %eax,0xc(%esp)
-  80149d:	c7 44 24 08 04 2d 80 	movl   $0x802d04,0x8(%esp)
-  8014a4:	00 
-  8014a5:	c7 44 24 04 a2 00 00 	movl   $0xa2,0x4(%esp)
-  8014ac:	00 
-  8014ad:	c7 04 24 29 2d 80 00 	movl   $0x802d29,(%esp)
-  8014b4:	e8 ed ee ff ff       	call   8003a6 <_panic>
+  8014a3:	89 44 24 0c          	mov    %eax,0xc(%esp)
+  8014a7:	c7 44 24 08 24 2d 80 	movl   $0x802d24,0x8(%esp)
+  8014ae:	00 
+  8014af:	c7 44 24 04 a3 00 00 	movl   $0xa3,0x4(%esp)
+  8014b6:	00 
+  8014b7:	c7 04 24 49 2d 80 00 	movl   $0x802d49,(%esp)
+  8014be:	e8 e3 ee ff ff       	call   8003a6 <_panic>
 	}
 
 	// allocate page for child's process exception stack
 	if ((err_code = sys_page_alloc(envid, (void*)(UXSTACKTOP - PGSIZE), PTE_U | PTE_P | PTE_W)) < 0) {
-  8014b9:	c7 44 24 08 07 00 00 	movl   $0x7,0x8(%esp)
-  8014c0:	00 
-  8014c1:	c7 44 24 04 00 f0 bf 	movl   $0xeebff000,0x4(%esp)
-  8014c8:	ee 
-  8014c9:	8b 45 e4             	mov    -0x1c(%ebp),%eax
-  8014cc:	89 04 24             	mov    %eax,(%esp)
-  8014cf:	e8 d5 fa ff ff       	call   800fa9 <sys_page_alloc>
-  8014d4:	85 c0                	test   %eax,%eax
-  8014d6:	79 20                	jns    8014f8 <fork+0x1f8>
+  8014c3:	c7 44 24 08 07 00 00 	movl   $0x7,0x8(%esp)
+  8014ca:	00 
+  8014cb:	c7 44 24 04 00 f0 bf 	movl   $0xeebff000,0x4(%esp)
+  8014d2:	ee 
+  8014d3:	8b 45 e4             	mov    -0x1c(%ebp),%eax
+  8014d6:	89 04 24             	mov    %eax,(%esp)
+  8014d9:	e8 cb fa ff ff       	call   800fa9 <sys_page_alloc>
+  8014de:	85 c0                	test   %eax,%eax
+  8014e0:	79 20                	jns    801502 <fork+0x202>
 		panic("fork:sys_page_alloc:%e\n", err_code);
-  8014d8:	89 44 24 0c          	mov    %eax,0xc(%esp)
-  8014dc:	c7 44 24 08 b2 2d 80 	movl   $0x802db2,0x8(%esp)
-  8014e3:	00 
-  8014e4:	c7 44 24 04 a7 00 00 	movl   $0xa7,0x4(%esp)
-  8014eb:	00 
-  8014ec:	c7 04 24 29 2d 80 00 	movl   $0x802d29,(%esp)
-  8014f3:	e8 ae ee ff ff       	call   8003a6 <_panic>
+  8014e2:	89 44 24 0c          	mov    %eax,0xc(%esp)
+  8014e6:	c7 44 24 08 d2 2d 80 	movl   $0x802dd2,0x8(%esp)
+  8014ed:	00 
+  8014ee:	c7 44 24 04 a8 00 00 	movl   $0xa8,0x4(%esp)
+  8014f5:	00 
+  8014f6:	c7 04 24 49 2d 80 00 	movl   $0x802d49,(%esp)
+  8014fd:	e8 a4 ee ff ff       	call   8003a6 <_panic>
 	}
 
 	if ((err_code = sys_env_set_status(envid, ENV_RUNNABLE)) < 0) {
-  8014f8:	c7 44 24 04 02 00 00 	movl   $0x2,0x4(%esp)
-  8014ff:	00 
-  801500:	8b 45 e4             	mov    -0x1c(%ebp),%eax
-  801503:	89 04 24             	mov    %eax,(%esp)
-  801506:	e8 98 fb ff ff       	call   8010a3 <sys_env_set_status>
-  80150b:	85 c0                	test   %eax,%eax
-  80150d:	79 20                	jns    80152f <fork+0x22f>
+  801502:	c7 44 24 04 02 00 00 	movl   $0x2,0x4(%esp)
+  801509:	00 
+  80150a:	8b 45 e4             	mov    -0x1c(%ebp),%eax
+  80150d:	89 04 24             	mov    %eax,(%esp)
+  801510:	e8 8e fb ff ff       	call   8010a3 <sys_env_set_status>
+  801515:	85 c0                	test   %eax,%eax
+  801517:	79 20                	jns    801539 <fork+0x239>
 		panic("fork:sys_env_set_status:%e", err_code);
-  80150f:	89 44 24 0c          	mov    %eax,0xc(%esp)
-  801513:	c7 44 24 08 ca 2d 80 	movl   $0x802dca,0x8(%esp)
-  80151a:	00 
-  80151b:	c7 44 24 04 ab 00 00 	movl   $0xab,0x4(%esp)
-  801522:	00 
-  801523:	c7 04 24 29 2d 80 00 	movl   $0x802d29,(%esp)
-  80152a:	e8 77 ee ff ff       	call   8003a6 <_panic>
+  801519:	89 44 24 0c          	mov    %eax,0xc(%esp)
+  80151d:	c7 44 24 08 ea 2d 80 	movl   $0x802dea,0x8(%esp)
+  801524:	00 
+  801525:	c7 44 24 04 ac 00 00 	movl   $0xac,0x4(%esp)
+  80152c:	00 
+  80152d:	c7 04 24 49 2d 80 00 	movl   $0x802d49,(%esp)
+  801534:	e8 6d ee ff ff       	call   8003a6 <_panic>
 	}
 
 	return envid;
-  80152f:	8b 45 e4             	mov    -0x1c(%ebp),%eax
+  801539:	8b 45 e4             	mov    -0x1c(%ebp),%eax
 }
-  801532:	83 c4 2c             	add    $0x2c,%esp
-  801535:	5b                   	pop    %ebx
-  801536:	5e                   	pop    %esi
-  801537:	5f                   	pop    %edi
-  801538:	5d                   	pop    %ebp
-  801539:	c3                   	ret    
+  80153c:	83 c4 2c             	add    $0x2c,%esp
+  80153f:	5b                   	pop    %ebx
+  801540:	5e                   	pop    %esi
+  801541:	5f                   	pop    %edi
+  801542:	5d                   	pop    %ebp
+  801543:	c3                   	ret    
 
-0080153a <sfork>:
+00801544 <sfork>:
 
 // Challenge!
 int
 sfork(void)
 {
-  80153a:	55                   	push   %ebp
-  80153b:	89 e5                	mov    %esp,%ebp
-  80153d:	83 ec 18             	sub    $0x18,%esp
+  801544:	55                   	push   %ebp
+  801545:	89 e5                	mov    %esp,%ebp
+  801547:	83 ec 18             	sub    $0x18,%esp
 	panic("sfork not implemented");
-  801540:	c7 44 24 08 e5 2d 80 	movl   $0x802de5,0x8(%esp)
-  801547:	00 
-  801548:	c7 44 24 04 b5 00 00 	movl   $0xb5,0x4(%esp)
-  80154f:	00 
-  801550:	c7 04 24 29 2d 80 00 	movl   $0x802d29,(%esp)
-  801557:	e8 4a ee ff ff       	call   8003a6 <_panic>
-  80155c:	66 90                	xchg   %ax,%ax
-  80155e:	66 90                	xchg   %ax,%ax
+  80154a:	c7 44 24 08 05 2e 80 	movl   $0x802e05,0x8(%esp)
+  801551:	00 
+  801552:	c7 44 24 04 b6 00 00 	movl   $0xb6,0x4(%esp)
+  801559:	00 
+  80155a:	c7 04 24 49 2d 80 00 	movl   $0x802d49,(%esp)
+  801561:	e8 40 ee ff ff       	call   8003a6 <_panic>
+  801566:	66 90                	xchg   %ax,%ax
+  801568:	66 90                	xchg   %ax,%ax
+  80156a:	66 90                	xchg   %ax,%ax
+  80156c:	66 90                	xchg   %ax,%ax
+  80156e:	66 90                	xchg   %ax,%ax
 
-00801560 <fd2num>:
+00801570 <fd2num>:
 // File descriptor manipulators
 // --------------------------------------------------------------
 
 int
 fd2num(struct Fd *fd)
 {
-  801560:	55                   	push   %ebp
-  801561:	89 e5                	mov    %esp,%ebp
+  801570:	55                   	push   %ebp
+  801571:	89 e5                	mov    %esp,%ebp
 	return ((uintptr_t) fd - FDTABLE) / PGSIZE;
-  801563:	8b 45 08             	mov    0x8(%ebp),%eax
-  801566:	05 00 00 00 30       	add    $0x30000000,%eax
-  80156b:	c1 e8 0c             	shr    $0xc,%eax
+  801573:	8b 45 08             	mov    0x8(%ebp),%eax
+  801576:	05 00 00 00 30       	add    $0x30000000,%eax
+  80157b:	c1 e8 0c             	shr    $0xc,%eax
 }
-  80156e:	5d                   	pop    %ebp
-  80156f:	c3                   	ret    
+  80157e:	5d                   	pop    %ebp
+  80157f:	c3                   	ret    
 
-00801570 <fd2data>:
+00801580 <fd2data>:
 
 char*
 fd2data(struct Fd *fd)
 {
-  801570:	55                   	push   %ebp
-  801571:	89 e5                	mov    %esp,%ebp
+  801580:	55                   	push   %ebp
+  801581:	89 e5                	mov    %esp,%ebp
 // --------------------------------------------------------------
 
 int
 fd2num(struct Fd *fd)
 {
 	return ((uintptr_t) fd - FDTABLE) / PGSIZE;
-  801573:	8b 45 08             	mov    0x8(%ebp),%eax
-  801576:	05 00 00 00 30       	add    $0x30000000,%eax
+  801583:	8b 45 08             	mov    0x8(%ebp),%eax
+  801586:	05 00 00 00 30       	add    $0x30000000,%eax
 }
 
 char*
 fd2data(struct Fd *fd)
 {
 	return INDEX2DATA(fd2num(fd));
-  80157b:	25 00 f0 ff ff       	and    $0xfffff000,%eax
-  801580:	2d 00 00 fe 2f       	sub    $0x2ffe0000,%eax
+  80158b:	25 00 f0 ff ff       	and    $0xfffff000,%eax
+  801590:	2d 00 00 fe 2f       	sub    $0x2ffe0000,%eax
 }
-  801585:	5d                   	pop    %ebp
-  801586:	c3                   	ret    
+  801595:	5d                   	pop    %ebp
+  801596:	c3                   	ret    
 
-00801587 <fd_alloc>:
+00801597 <fd_alloc>:
 // Returns 0 on success, < 0 on error.  Errors are:
 //	-E_MAX_FD: no more file descriptors
 // On error, *fd_store is set to 0.
 int
 fd_alloc(struct Fd **fd_store)
 {
-  801587:	55                   	push   %ebp
-  801588:	89 e5                	mov    %esp,%ebp
+  801597:	55                   	push   %ebp
+  801598:	89 e5                	mov    %esp,%ebp
 	int i;
 	struct Fd *fd;
 
 	for (i = 0; i < MAXFD; i++) {
 		fd = INDEX2FD(i);
 		if ((uvpd[PDX(fd)] & PTE_P) == 0 || (uvpt[PGNUM(fd)] & PTE_P) == 0) {
-  80158a:	a1 00 dd 7b ef       	mov    0xef7bdd00,%eax
-  80158f:	a8 01                	test   $0x1,%al
-  801591:	74 34                	je     8015c7 <fd_alloc+0x40>
-  801593:	a1 00 00 74 ef       	mov    0xef740000,%eax
-  801598:	a8 01                	test   $0x1,%al
-  80159a:	74 32                	je     8015ce <fd_alloc+0x47>
-  80159c:	b8 00 10 00 d0       	mov    $0xd0001000,%eax
+  80159a:	a1 00 dd 7b ef       	mov    0xef7bdd00,%eax
+  80159f:	a8 01                	test   $0x1,%al
+  8015a1:	74 34                	je     8015d7 <fd_alloc+0x40>
+  8015a3:	a1 00 00 74 ef       	mov    0xef740000,%eax
+  8015a8:	a8 01                	test   $0x1,%al
+  8015aa:	74 32                	je     8015de <fd_alloc+0x47>
+  8015ac:	b8 00 10 00 d0       	mov    $0xd0001000,%eax
 {
 	int i;
 	struct Fd *fd;
 
 	for (i = 0; i < MAXFD; i++) {
 		fd = INDEX2FD(i);
-  8015a1:	89 c1                	mov    %eax,%ecx
+  8015b1:	89 c1                	mov    %eax,%ecx
 		if ((uvpd[PDX(fd)] & PTE_P) == 0 || (uvpt[PGNUM(fd)] & PTE_P) == 0) {
-  8015a3:	89 c2                	mov    %eax,%edx
-  8015a5:	c1 ea 16             	shr    $0x16,%edx
-  8015a8:	8b 14 95 00 d0 7b ef 	mov    -0x10843000(,%edx,4),%edx
-  8015af:	f6 c2 01             	test   $0x1,%dl
-  8015b2:	74 1f                	je     8015d3 <fd_alloc+0x4c>
-  8015b4:	89 c2                	mov    %eax,%edx
-  8015b6:	c1 ea 0c             	shr    $0xc,%edx
-  8015b9:	8b 14 95 00 00 40 ef 	mov    -0x10c00000(,%edx,4),%edx
-  8015c0:	f6 c2 01             	test   $0x1,%dl
-  8015c3:	75 1a                	jne    8015df <fd_alloc+0x58>
-  8015c5:	eb 0c                	jmp    8015d3 <fd_alloc+0x4c>
+  8015b3:	89 c2                	mov    %eax,%edx
+  8015b5:	c1 ea 16             	shr    $0x16,%edx
+  8015b8:	8b 14 95 00 d0 7b ef 	mov    -0x10843000(,%edx,4),%edx
+  8015bf:	f6 c2 01             	test   $0x1,%dl
+  8015c2:	74 1f                	je     8015e3 <fd_alloc+0x4c>
+  8015c4:	89 c2                	mov    %eax,%edx
+  8015c6:	c1 ea 0c             	shr    $0xc,%edx
+  8015c9:	8b 14 95 00 00 40 ef 	mov    -0x10c00000(,%edx,4),%edx
+  8015d0:	f6 c2 01             	test   $0x1,%dl
+  8015d3:	75 1a                	jne    8015ef <fd_alloc+0x58>
+  8015d5:	eb 0c                	jmp    8015e3 <fd_alloc+0x4c>
 {
 	int i;
 	struct Fd *fd;
 
 	for (i = 0; i < MAXFD; i++) {
 		fd = INDEX2FD(i);
-  8015c7:	b9 00 00 00 d0       	mov    $0xd0000000,%ecx
-  8015cc:	eb 05                	jmp    8015d3 <fd_alloc+0x4c>
-  8015ce:	b9 00 00 00 d0       	mov    $0xd0000000,%ecx
+  8015d7:	b9 00 00 00 d0       	mov    $0xd0000000,%ecx
+  8015dc:	eb 05                	jmp    8015e3 <fd_alloc+0x4c>
+  8015de:	b9 00 00 00 d0       	mov    $0xd0000000,%ecx
 		if ((uvpd[PDX(fd)] & PTE_P) == 0 || (uvpt[PGNUM(fd)] & PTE_P) == 0) {
 			*fd_store = fd;
-  8015d3:	8b 45 08             	mov    0x8(%ebp),%eax
-  8015d6:	89 08                	mov    %ecx,(%eax)
+  8015e3:	8b 45 08             	mov    0x8(%ebp),%eax
+  8015e6:	89 08                	mov    %ecx,(%eax)
 			return 0;
-  8015d8:	b8 00 00 00 00       	mov    $0x0,%eax
-  8015dd:	eb 1a                	jmp    8015f9 <fd_alloc+0x72>
-  8015df:	05 00 10 00 00       	add    $0x1000,%eax
+  8015e8:	b8 00 00 00 00       	mov    $0x0,%eax
+  8015ed:	eb 1a                	jmp    801609 <fd_alloc+0x72>
+  8015ef:	05 00 10 00 00       	add    $0x1000,%eax
 fd_alloc(struct Fd **fd_store)
 {
 	int i;
 	struct Fd *fd;
 
 	for (i = 0; i < MAXFD; i++) {
-  8015e4:	3d 00 00 02 d0       	cmp    $0xd0020000,%eax
-  8015e9:	75 b6                	jne    8015a1 <fd_alloc+0x1a>
+  8015f4:	3d 00 00 02 d0       	cmp    $0xd0020000,%eax
+  8015f9:	75 b6                	jne    8015b1 <fd_alloc+0x1a>
 		if ((uvpd[PDX(fd)] & PTE_P) == 0 || (uvpt[PGNUM(fd)] & PTE_P) == 0) {
 			*fd_store = fd;
 			return 0;
 		}
 	}
 	*fd_store = 0;
-  8015eb:	8b 45 08             	mov    0x8(%ebp),%eax
-  8015ee:	c7 00 00 00 00 00    	movl   $0x0,(%eax)
+  8015fb:	8b 45 08             	mov    0x8(%ebp),%eax
+  8015fe:	c7 00 00 00 00 00    	movl   $0x0,(%eax)
 	return -E_MAX_OPEN;
-  8015f4:	b8 f6 ff ff ff       	mov    $0xfffffff6,%eax
+  801604:	b8 f6 ff ff ff       	mov    $0xfffffff6,%eax
 }
-  8015f9:	5d                   	pop    %ebp
-  8015fa:	c3                   	ret    
+  801609:	5d                   	pop    %ebp
+  80160a:	c3                   	ret    
 
-008015fb <fd_lookup>:
+0080160b <fd_lookup>:
 // Returns 0 on success (the page is in range and mapped), < 0 on error.
 // Errors are:
 //	-E_INVAL: fdnum was either not in range or not mapped.
 int
 fd_lookup(int fdnum, struct Fd **fd_store)
 {
-  8015fb:	55                   	push   %ebp
-  8015fc:	89 e5                	mov    %esp,%ebp
-  8015fe:	8b 45 08             	mov    0x8(%ebp),%eax
+  80160b:	55                   	push   %ebp
+  80160c:	89 e5                	mov    %esp,%ebp
+  80160e:	8b 45 08             	mov    0x8(%ebp),%eax
 	struct Fd *fd;
 
 	if (fdnum < 0 || fdnum >= MAXFD) {
-  801601:	83 f8 1f             	cmp    $0x1f,%eax
-  801604:	77 36                	ja     80163c <fd_lookup+0x41>
+  801611:	83 f8 1f             	cmp    $0x1f,%eax
+  801614:	77 36                	ja     80164c <fd_lookup+0x41>
 		if (debug)
 			cprintf("[%08x] bad fd %d\n", thisenv->env_id, fdnum);
 		return -E_INVAL;
 	}
 	fd = INDEX2FD(fdnum);
-  801606:	c1 e0 0c             	shl    $0xc,%eax
-  801609:	2d 00 00 00 30       	sub    $0x30000000,%eax
+  801616:	c1 e0 0c             	shl    $0xc,%eax
+  801619:	2d 00 00 00 30       	sub    $0x30000000,%eax
 	if (!(uvpd[PDX(fd)] & PTE_P) || !(uvpt[PGNUM(fd)] & PTE_P)) {
-  80160e:	89 c2                	mov    %eax,%edx
-  801610:	c1 ea 16             	shr    $0x16,%edx
-  801613:	8b 14 95 00 d0 7b ef 	mov    -0x10843000(,%edx,4),%edx
-  80161a:	f6 c2 01             	test   $0x1,%dl
-  80161d:	74 24                	je     801643 <fd_lookup+0x48>
-  80161f:	89 c2                	mov    %eax,%edx
-  801621:	c1 ea 0c             	shr    $0xc,%edx
-  801624:	8b 14 95 00 00 40 ef 	mov    -0x10c00000(,%edx,4),%edx
-  80162b:	f6 c2 01             	test   $0x1,%dl
-  80162e:	74 1a                	je     80164a <fd_lookup+0x4f>
+  80161e:	89 c2                	mov    %eax,%edx
+  801620:	c1 ea 16             	shr    $0x16,%edx
+  801623:	8b 14 95 00 d0 7b ef 	mov    -0x10843000(,%edx,4),%edx
+  80162a:	f6 c2 01             	test   $0x1,%dl
+  80162d:	74 24                	je     801653 <fd_lookup+0x48>
+  80162f:	89 c2                	mov    %eax,%edx
+  801631:	c1 ea 0c             	shr    $0xc,%edx
+  801634:	8b 14 95 00 00 40 ef 	mov    -0x10c00000(,%edx,4),%edx
+  80163b:	f6 c2 01             	test   $0x1,%dl
+  80163e:	74 1a                	je     80165a <fd_lookup+0x4f>
 		if (debug)
 			cprintf("[%08x] closed fd %d\n", thisenv->env_id, fdnum);
 		return -E_INVAL;
 	}
 	*fd_store = fd;
-  801630:	8b 55 0c             	mov    0xc(%ebp),%edx
-  801633:	89 02                	mov    %eax,(%edx)
+  801640:	8b 55 0c             	mov    0xc(%ebp),%edx
+  801643:	89 02                	mov    %eax,(%edx)
 	return 0;
-  801635:	b8 00 00 00 00       	mov    $0x0,%eax
-  80163a:	eb 13                	jmp    80164f <fd_lookup+0x54>
+  801645:	b8 00 00 00 00       	mov    $0x0,%eax
+  80164a:	eb 13                	jmp    80165f <fd_lookup+0x54>
 	struct Fd *fd;
 
 	if (fdnum < 0 || fdnum >= MAXFD) {
 		if (debug)
 			cprintf("[%08x] bad fd %d\n", thisenv->env_id, fdnum);
 		return -E_INVAL;
-  80163c:	b8 fd ff ff ff       	mov    $0xfffffffd,%eax
-  801641:	eb 0c                	jmp    80164f <fd_lookup+0x54>
+  80164c:	b8 fd ff ff ff       	mov    $0xfffffffd,%eax
+  801651:	eb 0c                	jmp    80165f <fd_lookup+0x54>
 	}
 	fd = INDEX2FD(fdnum);
 	if (!(uvpd[PDX(fd)] & PTE_P) || !(uvpt[PGNUM(fd)] & PTE_P)) {
 		if (debug)
 			cprintf("[%08x] closed fd %d\n", thisenv->env_id, fdnum);
 		return -E_INVAL;
-  801643:	b8 fd ff ff ff       	mov    $0xfffffffd,%eax
-  801648:	eb 05                	jmp    80164f <fd_lookup+0x54>
-  80164a:	b8 fd ff ff ff       	mov    $0xfffffffd,%eax
+  801653:	b8 fd ff ff ff       	mov    $0xfffffffd,%eax
+  801658:	eb 05                	jmp    80165f <fd_lookup+0x54>
+  80165a:	b8 fd ff ff ff       	mov    $0xfffffffd,%eax
 	}
 	*fd_store = fd;
 	return 0;
 }
-  80164f:	5d                   	pop    %ebp
-  801650:	c3                   	ret    
+  80165f:	5d                   	pop    %ebp
+  801660:	c3                   	ret    
 
-00801651 <dev_lookup>:
+00801661 <dev_lookup>:
 	0
 };
 
 int
 dev_lookup(int dev_id, struct Dev **dev)
 {
-  801651:	55                   	push   %ebp
-  801652:	89 e5                	mov    %esp,%ebp
-  801654:	53                   	push   %ebx
-  801655:	83 ec 14             	sub    $0x14,%esp
-  801658:	8b 45 08             	mov    0x8(%ebp),%eax
-  80165b:	8b 5d 0c             	mov    0xc(%ebp),%ebx
+  801661:	55                   	push   %ebp
+  801662:	89 e5                	mov    %esp,%ebp
+  801664:	53                   	push   %ebx
+  801665:	83 ec 14             	sub    $0x14,%esp
+  801668:	8b 45 08             	mov    0x8(%ebp),%eax
+  80166b:	8b 5d 0c             	mov    0xc(%ebp),%ebx
 	int i;
 	for (i = 0; devtab[i]; i++)
 		if (devtab[i]->dev_id == dev_id) {
-  80165e:	39 05 08 30 80 00    	cmp    %eax,0x803008
-  801664:	75 1e                	jne    801684 <dev_lookup+0x33>
-  801666:	eb 0e                	jmp    801676 <dev_lookup+0x25>
+  80166e:	39 05 08 30 80 00    	cmp    %eax,0x803008
+  801674:	75 1e                	jne    801694 <dev_lookup+0x33>
+  801676:	eb 0e                	jmp    801686 <dev_lookup+0x25>
 
 int
 dev_lookup(int dev_id, struct Dev **dev)
 {
 	int i;
 	for (i = 0; devtab[i]; i++)
-  801668:	b8 24 30 80 00       	mov    $0x803024,%eax
-  80166d:	eb 0c                	jmp    80167b <dev_lookup+0x2a>
-  80166f:	b8 40 30 80 00       	mov    $0x803040,%eax
-  801674:	eb 05                	jmp    80167b <dev_lookup+0x2a>
-  801676:	b8 08 30 80 00       	mov    $0x803008,%eax
+  801678:	b8 24 30 80 00       	mov    $0x803024,%eax
+  80167d:	eb 0c                	jmp    80168b <dev_lookup+0x2a>
+  80167f:	b8 40 30 80 00       	mov    $0x803040,%eax
+  801684:	eb 05                	jmp    80168b <dev_lookup+0x2a>
+  801686:	b8 08 30 80 00       	mov    $0x803008,%eax
 		if (devtab[i]->dev_id == dev_id) {
 			*dev = devtab[i];
-  80167b:	89 03                	mov    %eax,(%ebx)
+  80168b:	89 03                	mov    %eax,(%ebx)
 			return 0;
-  80167d:	b8 00 00 00 00       	mov    $0x0,%eax
-  801682:	eb 38                	jmp    8016bc <dev_lookup+0x6b>
+  80168d:	b8 00 00 00 00       	mov    $0x0,%eax
+  801692:	eb 38                	jmp    8016cc <dev_lookup+0x6b>
 int
 dev_lookup(int dev_id, struct Dev **dev)
 {
 	int i;
 	for (i = 0; devtab[i]; i++)
 		if (devtab[i]->dev_id == dev_id) {
-  801684:	39 05 24 30 80 00    	cmp    %eax,0x803024
-  80168a:	74 dc                	je     801668 <dev_lookup+0x17>
-  80168c:	39 05 40 30 80 00    	cmp    %eax,0x803040
-  801692:	74 db                	je     80166f <dev_lookup+0x1e>
+  801694:	39 05 24 30 80 00    	cmp    %eax,0x803024
+  80169a:	74 dc                	je     801678 <dev_lookup+0x17>
+  80169c:	39 05 40 30 80 00    	cmp    %eax,0x803040
+  8016a2:	74 db                	je     80167f <dev_lookup+0x1e>
 			*dev = devtab[i];
 			return 0;
 		}
 	cprintf("[%08x] unknown device type %d\n", thisenv->env_id, dev_id);
-  801694:	8b 15 04 40 80 00    	mov    0x804004,%edx
-  80169a:	8b 52 48             	mov    0x48(%edx),%edx
-  80169d:	89 44 24 08          	mov    %eax,0x8(%esp)
-  8016a1:	89 54 24 04          	mov    %edx,0x4(%esp)
-  8016a5:	c7 04 24 fc 2d 80 00 	movl   $0x802dfc,(%esp)
-  8016ac:	e8 ee ed ff ff       	call   80049f <cprintf>
+  8016a4:	8b 15 04 40 80 00    	mov    0x804004,%edx
+  8016aa:	8b 52 48             	mov    0x48(%edx),%edx
+  8016ad:	89 44 24 08          	mov    %eax,0x8(%esp)
+  8016b1:	89 54 24 04          	mov    %edx,0x4(%esp)
+  8016b5:	c7 04 24 1c 2e 80 00 	movl   $0x802e1c,(%esp)
+  8016bc:	e8 de ed ff ff       	call   80049f <cprintf>
 	*dev = 0;
-  8016b1:	c7 03 00 00 00 00    	movl   $0x0,(%ebx)
+  8016c1:	c7 03 00 00 00 00    	movl   $0x0,(%ebx)
 	return -E_INVAL;
-  8016b7:	b8 fd ff ff ff       	mov    $0xfffffffd,%eax
+  8016c7:	b8 fd ff ff ff       	mov    $0xfffffffd,%eax
 }
-  8016bc:	83 c4 14             	add    $0x14,%esp
-  8016bf:	5b                   	pop    %ebx
-  8016c0:	5d                   	pop    %ebp
-  8016c1:	c3                   	ret    
+  8016cc:	83 c4 14             	add    $0x14,%esp
+  8016cf:	5b                   	pop    %ebx
+  8016d0:	5d                   	pop    %ebp
+  8016d1:	c3                   	ret    
 
-008016c2 <fd_close>:
+008016d2 <fd_close>:
 // If 'must_exist' is 1, then fd_close returns -E_INVAL when passed a
 // closed or nonexistent file descriptor.
 // Returns 0 on success, < 0 on error.
 int
 fd_close(struct Fd *fd, bool must_exist)
 {
-  8016c2:	55                   	push   %ebp
-  8016c3:	89 e5                	mov    %esp,%ebp
-  8016c5:	56                   	push   %esi
-  8016c6:	53                   	push   %ebx
-  8016c7:	83 ec 20             	sub    $0x20,%esp
-  8016ca:	8b 75 08             	mov    0x8(%ebp),%esi
-  8016cd:	8b 5d 0c             	mov    0xc(%ebp),%ebx
+  8016d2:	55                   	push   %ebp
+  8016d3:	89 e5                	mov    %esp,%ebp
+  8016d5:	56                   	push   %esi
+  8016d6:	53                   	push   %ebx
+  8016d7:	83 ec 20             	sub    $0x20,%esp
+  8016da:	8b 75 08             	mov    0x8(%ebp),%esi
+  8016dd:	8b 5d 0c             	mov    0xc(%ebp),%ebx
 	struct Fd *fd2;
 	struct Dev *dev;
 	int r;
 	if ((r = fd_lookup(fd2num(fd), &fd2)) < 0
-  8016d0:	8d 45 f4             	lea    -0xc(%ebp),%eax
-  8016d3:	89 44 24 04          	mov    %eax,0x4(%esp)
+  8016e0:	8d 45 f4             	lea    -0xc(%ebp),%eax
+  8016e3:	89 44 24 04          	mov    %eax,0x4(%esp)
 // --------------------------------------------------------------
 
 int
 fd2num(struct Fd *fd)
 {
 	return ((uintptr_t) fd - FDTABLE) / PGSIZE;
-  8016d7:	8d 86 00 00 00 30    	lea    0x30000000(%esi),%eax
-  8016dd:	c1 e8 0c             	shr    $0xc,%eax
+  8016e7:	8d 86 00 00 00 30    	lea    0x30000000(%esi),%eax
+  8016ed:	c1 e8 0c             	shr    $0xc,%eax
 fd_close(struct Fd *fd, bool must_exist)
 {
 	struct Fd *fd2;
 	struct Dev *dev;
 	int r;
 	if ((r = fd_lookup(fd2num(fd), &fd2)) < 0
-  8016e0:	89 04 24             	mov    %eax,(%esp)
-  8016e3:	e8 13 ff ff ff       	call   8015fb <fd_lookup>
-  8016e8:	85 c0                	test   %eax,%eax
-  8016ea:	78 05                	js     8016f1 <fd_close+0x2f>
+  8016f0:	89 04 24             	mov    %eax,(%esp)
+  8016f3:	e8 13 ff ff ff       	call   80160b <fd_lookup>
+  8016f8:	85 c0                	test   %eax,%eax
+  8016fa:	78 05                	js     801701 <fd_close+0x2f>
 	    || fd != fd2)
-  8016ec:	3b 75 f4             	cmp    -0xc(%ebp),%esi
-  8016ef:	74 0c                	je     8016fd <fd_close+0x3b>
+  8016fc:	3b 75 f4             	cmp    -0xc(%ebp),%esi
+  8016ff:	74 0c                	je     80170d <fd_close+0x3b>
 		return (must_exist ? r : 0);
-  8016f1:	84 db                	test   %bl,%bl
-  8016f3:	ba 00 00 00 00       	mov    $0x0,%edx
-  8016f8:	0f 44 c2             	cmove  %edx,%eax
-  8016fb:	eb 3f                	jmp    80173c <fd_close+0x7a>
+  801701:	84 db                	test   %bl,%bl
+  801703:	ba 00 00 00 00       	mov    $0x0,%edx
+  801708:	0f 44 c2             	cmove  %edx,%eax
+  80170b:	eb 3f                	jmp    80174c <fd_close+0x7a>
 	if ((r = dev_lookup(fd->fd_dev_id, &dev)) >= 0) {
-  8016fd:	8d 45 f0             	lea    -0x10(%ebp),%eax
-  801700:	89 44 24 04          	mov    %eax,0x4(%esp)
-  801704:	8b 06                	mov    (%esi),%eax
-  801706:	89 04 24             	mov    %eax,(%esp)
-  801709:	e8 43 ff ff ff       	call   801651 <dev_lookup>
-  80170e:	89 c3                	mov    %eax,%ebx
-  801710:	85 c0                	test   %eax,%eax
-  801712:	78 16                	js     80172a <fd_close+0x68>
+  80170d:	8d 45 f0             	lea    -0x10(%ebp),%eax
+  801710:	89 44 24 04          	mov    %eax,0x4(%esp)
+  801714:	8b 06                	mov    (%esi),%eax
+  801716:	89 04 24             	mov    %eax,(%esp)
+  801719:	e8 43 ff ff ff       	call   801661 <dev_lookup>
+  80171e:	89 c3                	mov    %eax,%ebx
+  801720:	85 c0                	test   %eax,%eax
+  801722:	78 16                	js     80173a <fd_close+0x68>
 		if (dev->dev_close)
-  801714:	8b 45 f0             	mov    -0x10(%ebp),%eax
-  801717:	8b 40 10             	mov    0x10(%eax),%eax
+  801724:	8b 45 f0             	mov    -0x10(%ebp),%eax
+  801727:	8b 40 10             	mov    0x10(%eax),%eax
 			r = (*dev->dev_close)(fd);
 		else
 			r = 0;
-  80171a:	bb 00 00 00 00       	mov    $0x0,%ebx
+  80172a:	bb 00 00 00 00       	mov    $0x0,%ebx
 	int r;
 	if ((r = fd_lookup(fd2num(fd), &fd2)) < 0
 	    || fd != fd2)
 		return (must_exist ? r : 0);
 	if ((r = dev_lookup(fd->fd_dev_id, &dev)) >= 0) {
 		if (dev->dev_close)
-  80171f:	85 c0                	test   %eax,%eax
-  801721:	74 07                	je     80172a <fd_close+0x68>
+  80172f:	85 c0                	test   %eax,%eax
+  801731:	74 07                	je     80173a <fd_close+0x68>
 			r = (*dev->dev_close)(fd);
-  801723:	89 34 24             	mov    %esi,(%esp)
-  801726:	ff d0                	call   *%eax
-  801728:	89 c3                	mov    %eax,%ebx
+  801733:	89 34 24             	mov    %esi,(%esp)
+  801736:	ff d0                	call   *%eax
+  801738:	89 c3                	mov    %eax,%ebx
 		else
 			r = 0;
 	}
 	// Make sure fd is unmapped.  Might be a no-op if
 	// (*dev->dev_close)(fd) already unmapped it.
 	(void) sys_page_unmap(0, fd);
-  80172a:	89 74 24 04          	mov    %esi,0x4(%esp)
-  80172e:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
-  801735:	e8 16 f9 ff ff       	call   801050 <sys_page_unmap>
+  80173a:	89 74 24 04          	mov    %esi,0x4(%esp)
+  80173e:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
+  801745:	e8 06 f9 ff ff       	call   801050 <sys_page_unmap>
 	return r;
-  80173a:	89 d8                	mov    %ebx,%eax
+  80174a:	89 d8                	mov    %ebx,%eax
 }
-  80173c:	83 c4 20             	add    $0x20,%esp
-  80173f:	5b                   	pop    %ebx
-  801740:	5e                   	pop    %esi
-  801741:	5d                   	pop    %ebp
-  801742:	c3                   	ret    
+  80174c:	83 c4 20             	add    $0x20,%esp
+  80174f:	5b                   	pop    %ebx
+  801750:	5e                   	pop    %esi
+  801751:	5d                   	pop    %ebp
+  801752:	c3                   	ret    
 
-00801743 <close>:
+00801753 <close>:
 	return -E_INVAL;
 }
 
 int
 close(int fdnum)
 {
-  801743:	55                   	push   %ebp
-  801744:	89 e5                	mov    %esp,%ebp
-  801746:	83 ec 28             	sub    $0x28,%esp
+  801753:	55                   	push   %ebp
+  801754:	89 e5                	mov    %esp,%ebp
+  801756:	83 ec 28             	sub    $0x28,%esp
 	struct Fd *fd;
 	int r;
 
 	if ((r = fd_lookup(fdnum, &fd)) < 0)
-  801749:	8d 45 f4             	lea    -0xc(%ebp),%eax
-  80174c:	89 44 24 04          	mov    %eax,0x4(%esp)
-  801750:	8b 45 08             	mov    0x8(%ebp),%eax
-  801753:	89 04 24             	mov    %eax,(%esp)
-  801756:	e8 a0 fe ff ff       	call   8015fb <fd_lookup>
-  80175b:	89 c2                	mov    %eax,%edx
-  80175d:	85 d2                	test   %edx,%edx
-  80175f:	78 13                	js     801774 <close+0x31>
+  801759:	8d 45 f4             	lea    -0xc(%ebp),%eax
+  80175c:	89 44 24 04          	mov    %eax,0x4(%esp)
+  801760:	8b 45 08             	mov    0x8(%ebp),%eax
+  801763:	89 04 24             	mov    %eax,(%esp)
+  801766:	e8 a0 fe ff ff       	call   80160b <fd_lookup>
+  80176b:	89 c2                	mov    %eax,%edx
+  80176d:	85 d2                	test   %edx,%edx
+  80176f:	78 13                	js     801784 <close+0x31>
 		return r;
 	else
 		return fd_close(fd, 1);
-  801761:	c7 44 24 04 01 00 00 	movl   $0x1,0x4(%esp)
-  801768:	00 
-  801769:	8b 45 f4             	mov    -0xc(%ebp),%eax
-  80176c:	89 04 24             	mov    %eax,(%esp)
-  80176f:	e8 4e ff ff ff       	call   8016c2 <fd_close>
+  801771:	c7 44 24 04 01 00 00 	movl   $0x1,0x4(%esp)
+  801778:	00 
+  801779:	8b 45 f4             	mov    -0xc(%ebp),%eax
+  80177c:	89 04 24             	mov    %eax,(%esp)
+  80177f:	e8 4e ff ff ff       	call   8016d2 <fd_close>
 }
-  801774:	c9                   	leave  
-  801775:	c3                   	ret    
+  801784:	c9                   	leave  
+  801785:	c3                   	ret    
 
-00801776 <close_all>:
+00801786 <close_all>:
 
 void
 close_all(void)
 {
-  801776:	55                   	push   %ebp
-  801777:	89 e5                	mov    %esp,%ebp
-  801779:	53                   	push   %ebx
-  80177a:	83 ec 14             	sub    $0x14,%esp
+  801786:	55                   	push   %ebp
+  801787:	89 e5                	mov    %esp,%ebp
+  801789:	53                   	push   %ebx
+  80178a:	83 ec 14             	sub    $0x14,%esp
 	int i;
 	for (i = 0; i < MAXFD; i++)
-  80177d:	bb 00 00 00 00       	mov    $0x0,%ebx
+  80178d:	bb 00 00 00 00       	mov    $0x0,%ebx
 		close(i);
-  801782:	89 1c 24             	mov    %ebx,(%esp)
-  801785:	e8 b9 ff ff ff       	call   801743 <close>
+  801792:	89 1c 24             	mov    %ebx,(%esp)
+  801795:	e8 b9 ff ff ff       	call   801753 <close>
 
 void
 close_all(void)
 {
 	int i;
 	for (i = 0; i < MAXFD; i++)
-  80178a:	83 c3 01             	add    $0x1,%ebx
-  80178d:	83 fb 20             	cmp    $0x20,%ebx
-  801790:	75 f0                	jne    801782 <close_all+0xc>
+  80179a:	83 c3 01             	add    $0x1,%ebx
+  80179d:	83 fb 20             	cmp    $0x20,%ebx
+  8017a0:	75 f0                	jne    801792 <close_all+0xc>
 		close(i);
 }
-  801792:	83 c4 14             	add    $0x14,%esp
-  801795:	5b                   	pop    %ebx
-  801796:	5d                   	pop    %ebp
-  801797:	c3                   	ret    
+  8017a2:	83 c4 14             	add    $0x14,%esp
+  8017a5:	5b                   	pop    %ebx
+  8017a6:	5d                   	pop    %ebp
+  8017a7:	c3                   	ret    
 
-00801798 <dup>:
+008017a8 <dup>:
 // file and the file offset of the other.
 // Closes any previously open file descriptor at 'newfdnum'.
 // This is implemented using virtual memory tricks (of course!).
 int
 dup(int oldfdnum, int newfdnum)
 {
-  801798:	55                   	push   %ebp
-  801799:	89 e5                	mov    %esp,%ebp
-  80179b:	57                   	push   %edi
-  80179c:	56                   	push   %esi
-  80179d:	53                   	push   %ebx
-  80179e:	83 ec 3c             	sub    $0x3c,%esp
+  8017a8:	55                   	push   %ebp
+  8017a9:	89 e5                	mov    %esp,%ebp
+  8017ab:	57                   	push   %edi
+  8017ac:	56                   	push   %esi
+  8017ad:	53                   	push   %ebx
+  8017ae:	83 ec 3c             	sub    $0x3c,%esp
 	int r;
 	char *ova, *nva;
 	pte_t pte;
 	struct Fd *oldfd, *newfd;
 
 	if ((r = fd_lookup(oldfdnum, &oldfd)) < 0)
-  8017a1:	8d 45 e4             	lea    -0x1c(%ebp),%eax
-  8017a4:	89 44 24 04          	mov    %eax,0x4(%esp)
-  8017a8:	8b 45 08             	mov    0x8(%ebp),%eax
-  8017ab:	89 04 24             	mov    %eax,(%esp)
-  8017ae:	e8 48 fe ff ff       	call   8015fb <fd_lookup>
-  8017b3:	89 c2                	mov    %eax,%edx
-  8017b5:	85 d2                	test   %edx,%edx
-  8017b7:	0f 88 e1 00 00 00    	js     80189e <dup+0x106>
+  8017b1:	8d 45 e4             	lea    -0x1c(%ebp),%eax
+  8017b4:	89 44 24 04          	mov    %eax,0x4(%esp)
+  8017b8:	8b 45 08             	mov    0x8(%ebp),%eax
+  8017bb:	89 04 24             	mov    %eax,(%esp)
+  8017be:	e8 48 fe ff ff       	call   80160b <fd_lookup>
+  8017c3:	89 c2                	mov    %eax,%edx
+  8017c5:	85 d2                	test   %edx,%edx
+  8017c7:	0f 88 e1 00 00 00    	js     8018ae <dup+0x106>
 		return r;
 	close(newfdnum);
-  8017bd:	8b 45 0c             	mov    0xc(%ebp),%eax
-  8017c0:	89 04 24             	mov    %eax,(%esp)
-  8017c3:	e8 7b ff ff ff       	call   801743 <close>
+  8017cd:	8b 45 0c             	mov    0xc(%ebp),%eax
+  8017d0:	89 04 24             	mov    %eax,(%esp)
+  8017d3:	e8 7b ff ff ff       	call   801753 <close>
 
 	newfd = INDEX2FD(newfdnum);
-  8017c8:	8b 5d 0c             	mov    0xc(%ebp),%ebx
-  8017cb:	c1 e3 0c             	shl    $0xc,%ebx
-  8017ce:	81 eb 00 00 00 30    	sub    $0x30000000,%ebx
+  8017d8:	8b 5d 0c             	mov    0xc(%ebp),%ebx
+  8017db:	c1 e3 0c             	shl    $0xc,%ebx
+  8017de:	81 eb 00 00 00 30    	sub    $0x30000000,%ebx
 	ova = fd2data(oldfd);
-  8017d4:	8b 45 e4             	mov    -0x1c(%ebp),%eax
-  8017d7:	89 04 24             	mov    %eax,(%esp)
-  8017da:	e8 91 fd ff ff       	call   801570 <fd2data>
-  8017df:	89 c6                	mov    %eax,%esi
+  8017e4:	8b 45 e4             	mov    -0x1c(%ebp),%eax
+  8017e7:	89 04 24             	mov    %eax,(%esp)
+  8017ea:	e8 91 fd ff ff       	call   801580 <fd2data>
+  8017ef:	89 c6                	mov    %eax,%esi
 	nva = fd2data(newfd);
-  8017e1:	89 1c 24             	mov    %ebx,(%esp)
-  8017e4:	e8 87 fd ff ff       	call   801570 <fd2data>
-  8017e9:	89 c7                	mov    %eax,%edi
+  8017f1:	89 1c 24             	mov    %ebx,(%esp)
+  8017f4:	e8 87 fd ff ff       	call   801580 <fd2data>
+  8017f9:	89 c7                	mov    %eax,%edi
 
 	if ((uvpd[PDX(ova)] & PTE_P) && (uvpt[PGNUM(ova)] & PTE_P))
-  8017eb:	89 f0                	mov    %esi,%eax
-  8017ed:	c1 e8 16             	shr    $0x16,%eax
-  8017f0:	8b 04 85 00 d0 7b ef 	mov    -0x10843000(,%eax,4),%eax
-  8017f7:	a8 01                	test   $0x1,%al
-  8017f9:	74 43                	je     80183e <dup+0xa6>
   8017fb:	89 f0                	mov    %esi,%eax
-  8017fd:	c1 e8 0c             	shr    $0xc,%eax
-  801800:	8b 14 85 00 00 40 ef 	mov    -0x10c00000(,%eax,4),%edx
-  801807:	f6 c2 01             	test   $0x1,%dl
-  80180a:	74 32                	je     80183e <dup+0xa6>
+  8017fd:	c1 e8 16             	shr    $0x16,%eax
+  801800:	8b 04 85 00 d0 7b ef 	mov    -0x10843000(,%eax,4),%eax
+  801807:	a8 01                	test   $0x1,%al
+  801809:	74 43                	je     80184e <dup+0xa6>
+  80180b:	89 f0                	mov    %esi,%eax
+  80180d:	c1 e8 0c             	shr    $0xc,%eax
+  801810:	8b 14 85 00 00 40 ef 	mov    -0x10c00000(,%eax,4),%edx
+  801817:	f6 c2 01             	test   $0x1,%dl
+  80181a:	74 32                	je     80184e <dup+0xa6>
 		if ((r = sys_page_map(0, ova, 0, nva, uvpt[PGNUM(ova)] & PTE_SYSCALL)) < 0)
-  80180c:	8b 04 85 00 00 40 ef 	mov    -0x10c00000(,%eax,4),%eax
-  801813:	25 07 0e 00 00       	and    $0xe07,%eax
-  801818:	89 44 24 10          	mov    %eax,0x10(%esp)
-  80181c:	89 7c 24 0c          	mov    %edi,0xc(%esp)
-  801820:	c7 44 24 08 00 00 00 	movl   $0x0,0x8(%esp)
-  801827:	00 
-  801828:	89 74 24 04          	mov    %esi,0x4(%esp)
-  80182c:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
-  801833:	e8 c5 f7 ff ff       	call   800ffd <sys_page_map>
-  801838:	89 c6                	mov    %eax,%esi
-  80183a:	85 c0                	test   %eax,%eax
-  80183c:	78 3e                	js     80187c <dup+0xe4>
+  80181c:	8b 04 85 00 00 40 ef 	mov    -0x10c00000(,%eax,4),%eax
+  801823:	25 07 0e 00 00       	and    $0xe07,%eax
+  801828:	89 44 24 10          	mov    %eax,0x10(%esp)
+  80182c:	89 7c 24 0c          	mov    %edi,0xc(%esp)
+  801830:	c7 44 24 08 00 00 00 	movl   $0x0,0x8(%esp)
+  801837:	00 
+  801838:	89 74 24 04          	mov    %esi,0x4(%esp)
+  80183c:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
+  801843:	e8 b5 f7 ff ff       	call   800ffd <sys_page_map>
+  801848:	89 c6                	mov    %eax,%esi
+  80184a:	85 c0                	test   %eax,%eax
+  80184c:	78 3e                	js     80188c <dup+0xe4>
 			goto err;
 	if ((r = sys_page_map(0, oldfd, 0, newfd, uvpt[PGNUM(oldfd)] & PTE_SYSCALL)) < 0)
-  80183e:	8b 45 e4             	mov    -0x1c(%ebp),%eax
-  801841:	89 c2                	mov    %eax,%edx
-  801843:	c1 ea 0c             	shr    $0xc,%edx
-  801846:	8b 14 95 00 00 40 ef 	mov    -0x10c00000(,%edx,4),%edx
-  80184d:	81 e2 07 0e 00 00    	and    $0xe07,%edx
-  801853:	89 54 24 10          	mov    %edx,0x10(%esp)
-  801857:	89 5c 24 0c          	mov    %ebx,0xc(%esp)
-  80185b:	c7 44 24 08 00 00 00 	movl   $0x0,0x8(%esp)
-  801862:	00 
-  801863:	89 44 24 04          	mov    %eax,0x4(%esp)
-  801867:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
-  80186e:	e8 8a f7 ff ff       	call   800ffd <sys_page_map>
-  801873:	89 c6                	mov    %eax,%esi
+  80184e:	8b 45 e4             	mov    -0x1c(%ebp),%eax
+  801851:	89 c2                	mov    %eax,%edx
+  801853:	c1 ea 0c             	shr    $0xc,%edx
+  801856:	8b 14 95 00 00 40 ef 	mov    -0x10c00000(,%edx,4),%edx
+  80185d:	81 e2 07 0e 00 00    	and    $0xe07,%edx
+  801863:	89 54 24 10          	mov    %edx,0x10(%esp)
+  801867:	89 5c 24 0c          	mov    %ebx,0xc(%esp)
+  80186b:	c7 44 24 08 00 00 00 	movl   $0x0,0x8(%esp)
+  801872:	00 
+  801873:	89 44 24 04          	mov    %eax,0x4(%esp)
+  801877:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
+  80187e:	e8 7a f7 ff ff       	call   800ffd <sys_page_map>
+  801883:	89 c6                	mov    %eax,%esi
 		goto err;
 
 	return newfdnum;
-  801875:	8b 45 0c             	mov    0xc(%ebp),%eax
+  801885:	8b 45 0c             	mov    0xc(%ebp),%eax
 	nva = fd2data(newfd);
 
 	if ((uvpd[PDX(ova)] & PTE_P) && (uvpt[PGNUM(ova)] & PTE_P))
 		if ((r = sys_page_map(0, ova, 0, nva, uvpt[PGNUM(ova)] & PTE_SYSCALL)) < 0)
 			goto err;
 	if ((r = sys_page_map(0, oldfd, 0, newfd, uvpt[PGNUM(oldfd)] & PTE_SYSCALL)) < 0)
-  801878:	85 f6                	test   %esi,%esi
-  80187a:	79 22                	jns    80189e <dup+0x106>
+  801888:	85 f6                	test   %esi,%esi
+  80188a:	79 22                	jns    8018ae <dup+0x106>
 		goto err;
 
 	return newfdnum;
 
 err:
 	sys_page_unmap(0, newfd);
-  80187c:	89 5c 24 04          	mov    %ebx,0x4(%esp)
-  801880:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
-  801887:	e8 c4 f7 ff ff       	call   801050 <sys_page_unmap>
-	sys_page_unmap(0, nva);
-  80188c:	89 7c 24 04          	mov    %edi,0x4(%esp)
+  80188c:	89 5c 24 04          	mov    %ebx,0x4(%esp)
   801890:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
   801897:	e8 b4 f7 ff ff       	call   801050 <sys_page_unmap>
+	sys_page_unmap(0, nva);
+  80189c:	89 7c 24 04          	mov    %edi,0x4(%esp)
+  8018a0:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
+  8018a7:	e8 a4 f7 ff ff       	call   801050 <sys_page_unmap>
 	return r;
-  80189c:	89 f0                	mov    %esi,%eax
+  8018ac:	89 f0                	mov    %esi,%eax
 }
-  80189e:	83 c4 3c             	add    $0x3c,%esp
-  8018a1:	5b                   	pop    %ebx
-  8018a2:	5e                   	pop    %esi
-  8018a3:	5f                   	pop    %edi
-  8018a4:	5d                   	pop    %ebp
-  8018a5:	c3                   	ret    
+  8018ae:	83 c4 3c             	add    $0x3c,%esp
+  8018b1:	5b                   	pop    %ebx
+  8018b2:	5e                   	pop    %esi
+  8018b3:	5f                   	pop    %edi
+  8018b4:	5d                   	pop    %ebp
+  8018b5:	c3                   	ret    
 
-008018a6 <read>:
+008018b6 <read>:
 
 ssize_t
 read(int fdnum, void *buf, size_t n)
 {
-  8018a6:	55                   	push   %ebp
-  8018a7:	89 e5                	mov    %esp,%ebp
-  8018a9:	53                   	push   %ebx
-  8018aa:	83 ec 24             	sub    $0x24,%esp
-  8018ad:	8b 5d 08             	mov    0x8(%ebp),%ebx
+  8018b6:	55                   	push   %ebp
+  8018b7:	89 e5                	mov    %esp,%ebp
+  8018b9:	53                   	push   %ebx
+  8018ba:	83 ec 24             	sub    $0x24,%esp
+  8018bd:	8b 5d 08             	mov    0x8(%ebp),%ebx
 	int r;
 	struct Dev *dev;
 	struct Fd *fd;
 
 	if ((r = fd_lookup(fdnum, &fd)) < 0
-  8018b0:	8d 45 f0             	lea    -0x10(%ebp),%eax
-  8018b3:	89 44 24 04          	mov    %eax,0x4(%esp)
-  8018b7:	89 1c 24             	mov    %ebx,(%esp)
-  8018ba:	e8 3c fd ff ff       	call   8015fb <fd_lookup>
-  8018bf:	89 c2                	mov    %eax,%edx
-  8018c1:	85 d2                	test   %edx,%edx
-  8018c3:	78 6d                	js     801932 <read+0x8c>
+  8018c0:	8d 45 f0             	lea    -0x10(%ebp),%eax
+  8018c3:	89 44 24 04          	mov    %eax,0x4(%esp)
+  8018c7:	89 1c 24             	mov    %ebx,(%esp)
+  8018ca:	e8 3c fd ff ff       	call   80160b <fd_lookup>
+  8018cf:	89 c2                	mov    %eax,%edx
+  8018d1:	85 d2                	test   %edx,%edx
+  8018d3:	78 6d                	js     801942 <read+0x8c>
 	    || (r = dev_lookup(fd->fd_dev_id, &dev)) < 0)
-  8018c5:	8d 45 f4             	lea    -0xc(%ebp),%eax
-  8018c8:	89 44 24 04          	mov    %eax,0x4(%esp)
-  8018cc:	8b 45 f0             	mov    -0x10(%ebp),%eax
-  8018cf:	8b 00                	mov    (%eax),%eax
-  8018d1:	89 04 24             	mov    %eax,(%esp)
-  8018d4:	e8 78 fd ff ff       	call   801651 <dev_lookup>
-  8018d9:	85 c0                	test   %eax,%eax
-  8018db:	78 55                	js     801932 <read+0x8c>
+  8018d5:	8d 45 f4             	lea    -0xc(%ebp),%eax
+  8018d8:	89 44 24 04          	mov    %eax,0x4(%esp)
+  8018dc:	8b 45 f0             	mov    -0x10(%ebp),%eax
+  8018df:	8b 00                	mov    (%eax),%eax
+  8018e1:	89 04 24             	mov    %eax,(%esp)
+  8018e4:	e8 78 fd ff ff       	call   801661 <dev_lookup>
+  8018e9:	85 c0                	test   %eax,%eax
+  8018eb:	78 55                	js     801942 <read+0x8c>
 		return r;
 	if ((fd->fd_omode & O_ACCMODE) == O_WRONLY) {
-  8018dd:	8b 45 f0             	mov    -0x10(%ebp),%eax
-  8018e0:	8b 50 08             	mov    0x8(%eax),%edx
-  8018e3:	83 e2 03             	and    $0x3,%edx
-  8018e6:	83 fa 01             	cmp    $0x1,%edx
-  8018e9:	75 23                	jne    80190e <read+0x68>
+  8018ed:	8b 45 f0             	mov    -0x10(%ebp),%eax
+  8018f0:	8b 50 08             	mov    0x8(%eax),%edx
+  8018f3:	83 e2 03             	and    $0x3,%edx
+  8018f6:	83 fa 01             	cmp    $0x1,%edx
+  8018f9:	75 23                	jne    80191e <read+0x68>
 		cprintf("[%08x] read %d -- bad mode\n", thisenv->env_id, fdnum);
-  8018eb:	a1 04 40 80 00       	mov    0x804004,%eax
-  8018f0:	8b 40 48             	mov    0x48(%eax),%eax
-  8018f3:	89 5c 24 08          	mov    %ebx,0x8(%esp)
-  8018f7:	89 44 24 04          	mov    %eax,0x4(%esp)
-  8018fb:	c7 04 24 3d 2e 80 00 	movl   $0x802e3d,(%esp)
-  801902:	e8 98 eb ff ff       	call   80049f <cprintf>
+  8018fb:	a1 04 40 80 00       	mov    0x804004,%eax
+  801900:	8b 40 48             	mov    0x48(%eax),%eax
+  801903:	89 5c 24 08          	mov    %ebx,0x8(%esp)
+  801907:	89 44 24 04          	mov    %eax,0x4(%esp)
+  80190b:	c7 04 24 5d 2e 80 00 	movl   $0x802e5d,(%esp)
+  801912:	e8 88 eb ff ff       	call   80049f <cprintf>
 		return -E_INVAL;
-  801907:	b8 fd ff ff ff       	mov    $0xfffffffd,%eax
-  80190c:	eb 24                	jmp    801932 <read+0x8c>
+  801917:	b8 fd ff ff ff       	mov    $0xfffffffd,%eax
+  80191c:	eb 24                	jmp    801942 <read+0x8c>
 	}
 	if (!dev->dev_read)
-  80190e:	8b 55 f4             	mov    -0xc(%ebp),%edx
-  801911:	8b 52 08             	mov    0x8(%edx),%edx
-  801914:	85 d2                	test   %edx,%edx
-  801916:	74 15                	je     80192d <read+0x87>
+  80191e:	8b 55 f4             	mov    -0xc(%ebp),%edx
+  801921:	8b 52 08             	mov    0x8(%edx),%edx
+  801924:	85 d2                	test   %edx,%edx
+  801926:	74 15                	je     80193d <read+0x87>
 		return -E_NOT_SUPP;
 	return (*dev->dev_read)(fd, buf, n);
-  801918:	8b 4d 10             	mov    0x10(%ebp),%ecx
-  80191b:	89 4c 24 08          	mov    %ecx,0x8(%esp)
-  80191f:	8b 4d 0c             	mov    0xc(%ebp),%ecx
-  801922:	89 4c 24 04          	mov    %ecx,0x4(%esp)
-  801926:	89 04 24             	mov    %eax,(%esp)
-  801929:	ff d2                	call   *%edx
-  80192b:	eb 05                	jmp    801932 <read+0x8c>
+  801928:	8b 4d 10             	mov    0x10(%ebp),%ecx
+  80192b:	89 4c 24 08          	mov    %ecx,0x8(%esp)
+  80192f:	8b 4d 0c             	mov    0xc(%ebp),%ecx
+  801932:	89 4c 24 04          	mov    %ecx,0x4(%esp)
+  801936:	89 04 24             	mov    %eax,(%esp)
+  801939:	ff d2                	call   *%edx
+  80193b:	eb 05                	jmp    801942 <read+0x8c>
 	if ((fd->fd_omode & O_ACCMODE) == O_WRONLY) {
 		cprintf("[%08x] read %d -- bad mode\n", thisenv->env_id, fdnum);
 		return -E_INVAL;
 	}
 	if (!dev->dev_read)
 		return -E_NOT_SUPP;
-  80192d:	b8 f1 ff ff ff       	mov    $0xfffffff1,%eax
+  80193d:	b8 f1 ff ff ff       	mov    $0xfffffff1,%eax
 	return (*dev->dev_read)(fd, buf, n);
 }
-  801932:	83 c4 24             	add    $0x24,%esp
-  801935:	5b                   	pop    %ebx
-  801936:	5d                   	pop    %ebp
-  801937:	c3                   	ret    
+  801942:	83 c4 24             	add    $0x24,%esp
+  801945:	5b                   	pop    %ebx
+  801946:	5d                   	pop    %ebp
+  801947:	c3                   	ret    
 
-00801938 <readn>:
+00801948 <readn>:
 
 ssize_t
 readn(int fdnum, void *buf, size_t n)
 {
-  801938:	55                   	push   %ebp
-  801939:	89 e5                	mov    %esp,%ebp
-  80193b:	57                   	push   %edi
-  80193c:	56                   	push   %esi
-  80193d:	53                   	push   %ebx
-  80193e:	83 ec 1c             	sub    $0x1c,%esp
-  801941:	8b 7d 08             	mov    0x8(%ebp),%edi
-  801944:	8b 75 10             	mov    0x10(%ebp),%esi
+  801948:	55                   	push   %ebp
+  801949:	89 e5                	mov    %esp,%ebp
+  80194b:	57                   	push   %edi
+  80194c:	56                   	push   %esi
+  80194d:	53                   	push   %ebx
+  80194e:	83 ec 1c             	sub    $0x1c,%esp
+  801951:	8b 7d 08             	mov    0x8(%ebp),%edi
+  801954:	8b 75 10             	mov    0x10(%ebp),%esi
 	int m, tot;
 
 	for (tot = 0; tot < n; tot += m) {
-  801947:	85 f6                	test   %esi,%esi
-  801949:	74 33                	je     80197e <readn+0x46>
-  80194b:	b8 00 00 00 00       	mov    $0x0,%eax
-  801950:	bb 00 00 00 00       	mov    $0x0,%ebx
+  801957:	85 f6                	test   %esi,%esi
+  801959:	74 33                	je     80198e <readn+0x46>
+  80195b:	b8 00 00 00 00       	mov    $0x0,%eax
+  801960:	bb 00 00 00 00       	mov    $0x0,%ebx
 		m = read(fdnum, (char*)buf + tot, n - tot);
-  801955:	89 f2                	mov    %esi,%edx
-  801957:	29 c2                	sub    %eax,%edx
-  801959:	89 54 24 08          	mov    %edx,0x8(%esp)
-  80195d:	03 45 0c             	add    0xc(%ebp),%eax
-  801960:	89 44 24 04          	mov    %eax,0x4(%esp)
-  801964:	89 3c 24             	mov    %edi,(%esp)
-  801967:	e8 3a ff ff ff       	call   8018a6 <read>
+  801965:	89 f2                	mov    %esi,%edx
+  801967:	29 c2                	sub    %eax,%edx
+  801969:	89 54 24 08          	mov    %edx,0x8(%esp)
+  80196d:	03 45 0c             	add    0xc(%ebp),%eax
+  801970:	89 44 24 04          	mov    %eax,0x4(%esp)
+  801974:	89 3c 24             	mov    %edi,(%esp)
+  801977:	e8 3a ff ff ff       	call   8018b6 <read>
 		if (m < 0)
-  80196c:	85 c0                	test   %eax,%eax
-  80196e:	78 1b                	js     80198b <readn+0x53>
+  80197c:	85 c0                	test   %eax,%eax
+  80197e:	78 1b                	js     80199b <readn+0x53>
 			return m;
 		if (m == 0)
-  801970:	85 c0                	test   %eax,%eax
-  801972:	74 11                	je     801985 <readn+0x4d>
+  801980:	85 c0                	test   %eax,%eax
+  801982:	74 11                	je     801995 <readn+0x4d>
 ssize_t
 readn(int fdnum, void *buf, size_t n)
 {
 	int m, tot;
 
 	for (tot = 0; tot < n; tot += m) {
-  801974:	01 c3                	add    %eax,%ebx
-  801976:	89 d8                	mov    %ebx,%eax
-  801978:	39 f3                	cmp    %esi,%ebx
-  80197a:	72 d9                	jb     801955 <readn+0x1d>
-  80197c:	eb 0b                	jmp    801989 <readn+0x51>
-  80197e:	b8 00 00 00 00       	mov    $0x0,%eax
-  801983:	eb 06                	jmp    80198b <readn+0x53>
-  801985:	89 d8                	mov    %ebx,%eax
-  801987:	eb 02                	jmp    80198b <readn+0x53>
-  801989:	89 d8                	mov    %ebx,%eax
+  801984:	01 c3                	add    %eax,%ebx
+  801986:	89 d8                	mov    %ebx,%eax
+  801988:	39 f3                	cmp    %esi,%ebx
+  80198a:	72 d9                	jb     801965 <readn+0x1d>
+  80198c:	eb 0b                	jmp    801999 <readn+0x51>
+  80198e:	b8 00 00 00 00       	mov    $0x0,%eax
+  801993:	eb 06                	jmp    80199b <readn+0x53>
+  801995:	89 d8                	mov    %ebx,%eax
+  801997:	eb 02                	jmp    80199b <readn+0x53>
+  801999:	89 d8                	mov    %ebx,%eax
 			return m;
 		if (m == 0)
 			break;
 	}
 	return tot;
 }
-  80198b:	83 c4 1c             	add    $0x1c,%esp
-  80198e:	5b                   	pop    %ebx
-  80198f:	5e                   	pop    %esi
-  801990:	5f                   	pop    %edi
-  801991:	5d                   	pop    %ebp
-  801992:	c3                   	ret    
+  80199b:	83 c4 1c             	add    $0x1c,%esp
+  80199e:	5b                   	pop    %ebx
+  80199f:	5e                   	pop    %esi
+  8019a0:	5f                   	pop    %edi
+  8019a1:	5d                   	pop    %ebp
+  8019a2:	c3                   	ret    
 
-00801993 <write>:
+008019a3 <write>:
 
 ssize_t
 write(int fdnum, const void *buf, size_t n)
 {
-  801993:	55                   	push   %ebp
-  801994:	89 e5                	mov    %esp,%ebp
-  801996:	53                   	push   %ebx
-  801997:	83 ec 24             	sub    $0x24,%esp
-  80199a:	8b 5d 08             	mov    0x8(%ebp),%ebx
+  8019a3:	55                   	push   %ebp
+  8019a4:	89 e5                	mov    %esp,%ebp
+  8019a6:	53                   	push   %ebx
+  8019a7:	83 ec 24             	sub    $0x24,%esp
+  8019aa:	8b 5d 08             	mov    0x8(%ebp),%ebx
 	int r;
 	struct Dev *dev;
 	struct Fd *fd;
 
 	if ((r = fd_lookup(fdnum, &fd)) < 0
-  80199d:	8d 45 f0             	lea    -0x10(%ebp),%eax
-  8019a0:	89 44 24 04          	mov    %eax,0x4(%esp)
-  8019a4:	89 1c 24             	mov    %ebx,(%esp)
-  8019a7:	e8 4f fc ff ff       	call   8015fb <fd_lookup>
-  8019ac:	89 c2                	mov    %eax,%edx
-  8019ae:	85 d2                	test   %edx,%edx
-  8019b0:	78 68                	js     801a1a <write+0x87>
+  8019ad:	8d 45 f0             	lea    -0x10(%ebp),%eax
+  8019b0:	89 44 24 04          	mov    %eax,0x4(%esp)
+  8019b4:	89 1c 24             	mov    %ebx,(%esp)
+  8019b7:	e8 4f fc ff ff       	call   80160b <fd_lookup>
+  8019bc:	89 c2                	mov    %eax,%edx
+  8019be:	85 d2                	test   %edx,%edx
+  8019c0:	78 68                	js     801a2a <write+0x87>
 	    || (r = dev_lookup(fd->fd_dev_id, &dev)) < 0)
-  8019b2:	8d 45 f4             	lea    -0xc(%ebp),%eax
-  8019b5:	89 44 24 04          	mov    %eax,0x4(%esp)
-  8019b9:	8b 45 f0             	mov    -0x10(%ebp),%eax
-  8019bc:	8b 00                	mov    (%eax),%eax
-  8019be:	89 04 24             	mov    %eax,(%esp)
-  8019c1:	e8 8b fc ff ff       	call   801651 <dev_lookup>
-  8019c6:	85 c0                	test   %eax,%eax
-  8019c8:	78 50                	js     801a1a <write+0x87>
+  8019c2:	8d 45 f4             	lea    -0xc(%ebp),%eax
+  8019c5:	89 44 24 04          	mov    %eax,0x4(%esp)
+  8019c9:	8b 45 f0             	mov    -0x10(%ebp),%eax
+  8019cc:	8b 00                	mov    (%eax),%eax
+  8019ce:	89 04 24             	mov    %eax,(%esp)
+  8019d1:	e8 8b fc ff ff       	call   801661 <dev_lookup>
+  8019d6:	85 c0                	test   %eax,%eax
+  8019d8:	78 50                	js     801a2a <write+0x87>
 		return r;
 	if ((fd->fd_omode & O_ACCMODE) == O_RDONLY) {
-  8019ca:	8b 45 f0             	mov    -0x10(%ebp),%eax
-  8019cd:	f6 40 08 03          	testb  $0x3,0x8(%eax)
-  8019d1:	75 23                	jne    8019f6 <write+0x63>
+  8019da:	8b 45 f0             	mov    -0x10(%ebp),%eax
+  8019dd:	f6 40 08 03          	testb  $0x3,0x8(%eax)
+  8019e1:	75 23                	jne    801a06 <write+0x63>
 		cprintf("[%08x] write %d -- bad mode\n", thisenv->env_id, fdnum);
-  8019d3:	a1 04 40 80 00       	mov    0x804004,%eax
-  8019d8:	8b 40 48             	mov    0x48(%eax),%eax
-  8019db:	89 5c 24 08          	mov    %ebx,0x8(%esp)
-  8019df:	89 44 24 04          	mov    %eax,0x4(%esp)
-  8019e3:	c7 04 24 59 2e 80 00 	movl   $0x802e59,(%esp)
-  8019ea:	e8 b0 ea ff ff       	call   80049f <cprintf>
+  8019e3:	a1 04 40 80 00       	mov    0x804004,%eax
+  8019e8:	8b 40 48             	mov    0x48(%eax),%eax
+  8019eb:	89 5c 24 08          	mov    %ebx,0x8(%esp)
+  8019ef:	89 44 24 04          	mov    %eax,0x4(%esp)
+  8019f3:	c7 04 24 79 2e 80 00 	movl   $0x802e79,(%esp)
+  8019fa:	e8 a0 ea ff ff       	call   80049f <cprintf>
 		return -E_INVAL;
-  8019ef:	b8 fd ff ff ff       	mov    $0xfffffffd,%eax
-  8019f4:	eb 24                	jmp    801a1a <write+0x87>
+  8019ff:	b8 fd ff ff ff       	mov    $0xfffffffd,%eax
+  801a04:	eb 24                	jmp    801a2a <write+0x87>
 	}
 	if (debug)
 		cprintf("write %d %p %d via dev %s\n",
 			fdnum, buf, n, dev->dev_name);
 	if (!dev->dev_write)
-  8019f6:	8b 55 f4             	mov    -0xc(%ebp),%edx
-  8019f9:	8b 52 0c             	mov    0xc(%edx),%edx
-  8019fc:	85 d2                	test   %edx,%edx
-  8019fe:	74 15                	je     801a15 <write+0x82>
+  801a06:	8b 55 f4             	mov    -0xc(%ebp),%edx
+  801a09:	8b 52 0c             	mov    0xc(%edx),%edx
+  801a0c:	85 d2                	test   %edx,%edx
+  801a0e:	74 15                	je     801a25 <write+0x82>
 		return -E_NOT_SUPP;
 	return (*dev->dev_write)(fd, buf, n);
-  801a00:	8b 4d 10             	mov    0x10(%ebp),%ecx
-  801a03:	89 4c 24 08          	mov    %ecx,0x8(%esp)
-  801a07:	8b 4d 0c             	mov    0xc(%ebp),%ecx
-  801a0a:	89 4c 24 04          	mov    %ecx,0x4(%esp)
-  801a0e:	89 04 24             	mov    %eax,(%esp)
-  801a11:	ff d2                	call   *%edx
-  801a13:	eb 05                	jmp    801a1a <write+0x87>
+  801a10:	8b 4d 10             	mov    0x10(%ebp),%ecx
+  801a13:	89 4c 24 08          	mov    %ecx,0x8(%esp)
+  801a17:	8b 4d 0c             	mov    0xc(%ebp),%ecx
+  801a1a:	89 4c 24 04          	mov    %ecx,0x4(%esp)
+  801a1e:	89 04 24             	mov    %eax,(%esp)
+  801a21:	ff d2                	call   *%edx
+  801a23:	eb 05                	jmp    801a2a <write+0x87>
 	}
 	if (debug)
 		cprintf("write %d %p %d via dev %s\n",
 			fdnum, buf, n, dev->dev_name);
 	if (!dev->dev_write)
 		return -E_NOT_SUPP;
-  801a15:	b8 f1 ff ff ff       	mov    $0xfffffff1,%eax
+  801a25:	b8 f1 ff ff ff       	mov    $0xfffffff1,%eax
 	return (*dev->dev_write)(fd, buf, n);
 }
-  801a1a:	83 c4 24             	add    $0x24,%esp
-  801a1d:	5b                   	pop    %ebx
-  801a1e:	5d                   	pop    %ebp
-  801a1f:	c3                   	ret    
+  801a2a:	83 c4 24             	add    $0x24,%esp
+  801a2d:	5b                   	pop    %ebx
+  801a2e:	5d                   	pop    %ebp
+  801a2f:	c3                   	ret    
 
-00801a20 <seek>:
+00801a30 <seek>:
 
 int
 seek(int fdnum, off_t offset)
 {
-  801a20:	55                   	push   %ebp
-  801a21:	89 e5                	mov    %esp,%ebp
-  801a23:	83 ec 18             	sub    $0x18,%esp
+  801a30:	55                   	push   %ebp
+  801a31:	89 e5                	mov    %esp,%ebp
+  801a33:	83 ec 18             	sub    $0x18,%esp
 	int r;
 	struct Fd *fd;
 
 	if ((r = fd_lookup(fdnum, &fd)) < 0)
-  801a26:	8d 45 fc             	lea    -0x4(%ebp),%eax
-  801a29:	89 44 24 04          	mov    %eax,0x4(%esp)
-  801a2d:	8b 45 08             	mov    0x8(%ebp),%eax
-  801a30:	89 04 24             	mov    %eax,(%esp)
-  801a33:	e8 c3 fb ff ff       	call   8015fb <fd_lookup>
-  801a38:	85 c0                	test   %eax,%eax
-  801a3a:	78 0e                	js     801a4a <seek+0x2a>
+  801a36:	8d 45 fc             	lea    -0x4(%ebp),%eax
+  801a39:	89 44 24 04          	mov    %eax,0x4(%esp)
+  801a3d:	8b 45 08             	mov    0x8(%ebp),%eax
+  801a40:	89 04 24             	mov    %eax,(%esp)
+  801a43:	e8 c3 fb ff ff       	call   80160b <fd_lookup>
+  801a48:	85 c0                	test   %eax,%eax
+  801a4a:	78 0e                	js     801a5a <seek+0x2a>
 		return r;
 	fd->fd_offset = offset;
-  801a3c:	8b 45 fc             	mov    -0x4(%ebp),%eax
-  801a3f:	8b 55 0c             	mov    0xc(%ebp),%edx
-  801a42:	89 50 04             	mov    %edx,0x4(%eax)
+  801a4c:	8b 45 fc             	mov    -0x4(%ebp),%eax
+  801a4f:	8b 55 0c             	mov    0xc(%ebp),%edx
+  801a52:	89 50 04             	mov    %edx,0x4(%eax)
 	return 0;
-  801a45:	b8 00 00 00 00       	mov    $0x0,%eax
+  801a55:	b8 00 00 00 00       	mov    $0x0,%eax
 }
-  801a4a:	c9                   	leave  
-  801a4b:	c3                   	ret    
+  801a5a:	c9                   	leave  
+  801a5b:	c3                   	ret    
 
-00801a4c <ftruncate>:
+00801a5c <ftruncate>:
 
 int
 ftruncate(int fdnum, off_t newsize)
 {
-  801a4c:	55                   	push   %ebp
-  801a4d:	89 e5                	mov    %esp,%ebp
-  801a4f:	53                   	push   %ebx
-  801a50:	83 ec 24             	sub    $0x24,%esp
-  801a53:	8b 5d 08             	mov    0x8(%ebp),%ebx
+  801a5c:	55                   	push   %ebp
+  801a5d:	89 e5                	mov    %esp,%ebp
+  801a5f:	53                   	push   %ebx
+  801a60:	83 ec 24             	sub    $0x24,%esp
+  801a63:	8b 5d 08             	mov    0x8(%ebp),%ebx
 	int r;
 	struct Dev *dev;
 	struct Fd *fd;
 	if ((r = fd_lookup(fdnum, &fd)) < 0
-  801a56:	8d 45 f0             	lea    -0x10(%ebp),%eax
-  801a59:	89 44 24 04          	mov    %eax,0x4(%esp)
-  801a5d:	89 1c 24             	mov    %ebx,(%esp)
-  801a60:	e8 96 fb ff ff       	call   8015fb <fd_lookup>
-  801a65:	89 c2                	mov    %eax,%edx
-  801a67:	85 d2                	test   %edx,%edx
-  801a69:	78 61                	js     801acc <ftruncate+0x80>
+  801a66:	8d 45 f0             	lea    -0x10(%ebp),%eax
+  801a69:	89 44 24 04          	mov    %eax,0x4(%esp)
+  801a6d:	89 1c 24             	mov    %ebx,(%esp)
+  801a70:	e8 96 fb ff ff       	call   80160b <fd_lookup>
+  801a75:	89 c2                	mov    %eax,%edx
+  801a77:	85 d2                	test   %edx,%edx
+  801a79:	78 61                	js     801adc <ftruncate+0x80>
 	    || (r = dev_lookup(fd->fd_dev_id, &dev)) < 0)
-  801a6b:	8d 45 f4             	lea    -0xc(%ebp),%eax
-  801a6e:	89 44 24 04          	mov    %eax,0x4(%esp)
-  801a72:	8b 45 f0             	mov    -0x10(%ebp),%eax
-  801a75:	8b 00                	mov    (%eax),%eax
-  801a77:	89 04 24             	mov    %eax,(%esp)
-  801a7a:	e8 d2 fb ff ff       	call   801651 <dev_lookup>
-  801a7f:	85 c0                	test   %eax,%eax
-  801a81:	78 49                	js     801acc <ftruncate+0x80>
+  801a7b:	8d 45 f4             	lea    -0xc(%ebp),%eax
+  801a7e:	89 44 24 04          	mov    %eax,0x4(%esp)
+  801a82:	8b 45 f0             	mov    -0x10(%ebp),%eax
+  801a85:	8b 00                	mov    (%eax),%eax
+  801a87:	89 04 24             	mov    %eax,(%esp)
+  801a8a:	e8 d2 fb ff ff       	call   801661 <dev_lookup>
+  801a8f:	85 c0                	test   %eax,%eax
+  801a91:	78 49                	js     801adc <ftruncate+0x80>
 		return r;
 	if ((fd->fd_omode & O_ACCMODE) == O_RDONLY) {
-  801a83:	8b 45 f0             	mov    -0x10(%ebp),%eax
-  801a86:	f6 40 08 03          	testb  $0x3,0x8(%eax)
-  801a8a:	75 23                	jne    801aaf <ftruncate+0x63>
+  801a93:	8b 45 f0             	mov    -0x10(%ebp),%eax
+  801a96:	f6 40 08 03          	testb  $0x3,0x8(%eax)
+  801a9a:	75 23                	jne    801abf <ftruncate+0x63>
 		cprintf("[%08x] ftruncate %d -- bad mode\n",
 			thisenv->env_id, fdnum);
-  801a8c:	a1 04 40 80 00       	mov    0x804004,%eax
+  801a9c:	a1 04 40 80 00       	mov    0x804004,%eax
 	struct Fd *fd;
 	if ((r = fd_lookup(fdnum, &fd)) < 0
 	    || (r = dev_lookup(fd->fd_dev_id, &dev)) < 0)
 		return r;
 	if ((fd->fd_omode & O_ACCMODE) == O_RDONLY) {
 		cprintf("[%08x] ftruncate %d -- bad mode\n",
-  801a91:	8b 40 48             	mov    0x48(%eax),%eax
-  801a94:	89 5c 24 08          	mov    %ebx,0x8(%esp)
-  801a98:	89 44 24 04          	mov    %eax,0x4(%esp)
-  801a9c:	c7 04 24 1c 2e 80 00 	movl   $0x802e1c,(%esp)
-  801aa3:	e8 f7 e9 ff ff       	call   80049f <cprintf>
+  801aa1:	8b 40 48             	mov    0x48(%eax),%eax
+  801aa4:	89 5c 24 08          	mov    %ebx,0x8(%esp)
+  801aa8:	89 44 24 04          	mov    %eax,0x4(%esp)
+  801aac:	c7 04 24 3c 2e 80 00 	movl   $0x802e3c,(%esp)
+  801ab3:	e8 e7 e9 ff ff       	call   80049f <cprintf>
 			thisenv->env_id, fdnum);
 		return -E_INVAL;
-  801aa8:	b8 fd ff ff ff       	mov    $0xfffffffd,%eax
-  801aad:	eb 1d                	jmp    801acc <ftruncate+0x80>
+  801ab8:	b8 fd ff ff ff       	mov    $0xfffffffd,%eax
+  801abd:	eb 1d                	jmp    801adc <ftruncate+0x80>
 	}
 	if (!dev->dev_trunc)
-  801aaf:	8b 55 f4             	mov    -0xc(%ebp),%edx
-  801ab2:	8b 52 18             	mov    0x18(%edx),%edx
-  801ab5:	85 d2                	test   %edx,%edx
-  801ab7:	74 0e                	je     801ac7 <ftruncate+0x7b>
+  801abf:	8b 55 f4             	mov    -0xc(%ebp),%edx
+  801ac2:	8b 52 18             	mov    0x18(%edx),%edx
+  801ac5:	85 d2                	test   %edx,%edx
+  801ac7:	74 0e                	je     801ad7 <ftruncate+0x7b>
 		return -E_NOT_SUPP;
 	return (*dev->dev_trunc)(fd, newsize);
-  801ab9:	8b 4d 0c             	mov    0xc(%ebp),%ecx
-  801abc:	89 4c 24 04          	mov    %ecx,0x4(%esp)
-  801ac0:	89 04 24             	mov    %eax,(%esp)
-  801ac3:	ff d2                	call   *%edx
-  801ac5:	eb 05                	jmp    801acc <ftruncate+0x80>
+  801ac9:	8b 4d 0c             	mov    0xc(%ebp),%ecx
+  801acc:	89 4c 24 04          	mov    %ecx,0x4(%esp)
+  801ad0:	89 04 24             	mov    %eax,(%esp)
+  801ad3:	ff d2                	call   *%edx
+  801ad5:	eb 05                	jmp    801adc <ftruncate+0x80>
 		cprintf("[%08x] ftruncate %d -- bad mode\n",
 			thisenv->env_id, fdnum);
 		return -E_INVAL;
 	}
 	if (!dev->dev_trunc)
 		return -E_NOT_SUPP;
-  801ac7:	b8 f1 ff ff ff       	mov    $0xfffffff1,%eax
+  801ad7:	b8 f1 ff ff ff       	mov    $0xfffffff1,%eax
 	return (*dev->dev_trunc)(fd, newsize);
 }
-  801acc:	83 c4 24             	add    $0x24,%esp
-  801acf:	5b                   	pop    %ebx
-  801ad0:	5d                   	pop    %ebp
-  801ad1:	c3                   	ret    
+  801adc:	83 c4 24             	add    $0x24,%esp
+  801adf:	5b                   	pop    %ebx
+  801ae0:	5d                   	pop    %ebp
+  801ae1:	c3                   	ret    
 
-00801ad2 <fstat>:
+00801ae2 <fstat>:
 
 int
 fstat(int fdnum, struct Stat *stat)
 {
-  801ad2:	55                   	push   %ebp
-  801ad3:	89 e5                	mov    %esp,%ebp
-  801ad5:	53                   	push   %ebx
-  801ad6:	83 ec 24             	sub    $0x24,%esp
-  801ad9:	8b 5d 0c             	mov    0xc(%ebp),%ebx
+  801ae2:	55                   	push   %ebp
+  801ae3:	89 e5                	mov    %esp,%ebp
+  801ae5:	53                   	push   %ebx
+  801ae6:	83 ec 24             	sub    $0x24,%esp
+  801ae9:	8b 5d 0c             	mov    0xc(%ebp),%ebx
 	int r;
 	struct Dev *dev;
 	struct Fd *fd;
 
 	if ((r = fd_lookup(fdnum, &fd)) < 0
-  801adc:	8d 45 f0             	lea    -0x10(%ebp),%eax
-  801adf:	89 44 24 04          	mov    %eax,0x4(%esp)
-  801ae3:	8b 45 08             	mov    0x8(%ebp),%eax
-  801ae6:	89 04 24             	mov    %eax,(%esp)
-  801ae9:	e8 0d fb ff ff       	call   8015fb <fd_lookup>
-  801aee:	89 c2                	mov    %eax,%edx
-  801af0:	85 d2                	test   %edx,%edx
-  801af2:	78 52                	js     801b46 <fstat+0x74>
+  801aec:	8d 45 f0             	lea    -0x10(%ebp),%eax
+  801aef:	89 44 24 04          	mov    %eax,0x4(%esp)
+  801af3:	8b 45 08             	mov    0x8(%ebp),%eax
+  801af6:	89 04 24             	mov    %eax,(%esp)
+  801af9:	e8 0d fb ff ff       	call   80160b <fd_lookup>
+  801afe:	89 c2                	mov    %eax,%edx
+  801b00:	85 d2                	test   %edx,%edx
+  801b02:	78 52                	js     801b56 <fstat+0x74>
 	    || (r = dev_lookup(fd->fd_dev_id, &dev)) < 0)
-  801af4:	8d 45 f4             	lea    -0xc(%ebp),%eax
-  801af7:	89 44 24 04          	mov    %eax,0x4(%esp)
-  801afb:	8b 45 f0             	mov    -0x10(%ebp),%eax
-  801afe:	8b 00                	mov    (%eax),%eax
-  801b00:	89 04 24             	mov    %eax,(%esp)
-  801b03:	e8 49 fb ff ff       	call   801651 <dev_lookup>
-  801b08:	85 c0                	test   %eax,%eax
-  801b0a:	78 3a                	js     801b46 <fstat+0x74>
+  801b04:	8d 45 f4             	lea    -0xc(%ebp),%eax
+  801b07:	89 44 24 04          	mov    %eax,0x4(%esp)
+  801b0b:	8b 45 f0             	mov    -0x10(%ebp),%eax
+  801b0e:	8b 00                	mov    (%eax),%eax
+  801b10:	89 04 24             	mov    %eax,(%esp)
+  801b13:	e8 49 fb ff ff       	call   801661 <dev_lookup>
+  801b18:	85 c0                	test   %eax,%eax
+  801b1a:	78 3a                	js     801b56 <fstat+0x74>
 		return r;
 	if (!dev->dev_stat)
-  801b0c:	8b 45 f4             	mov    -0xc(%ebp),%eax
-  801b0f:	83 78 14 00          	cmpl   $0x0,0x14(%eax)
-  801b13:	74 2c                	je     801b41 <fstat+0x6f>
+  801b1c:	8b 45 f4             	mov    -0xc(%ebp),%eax
+  801b1f:	83 78 14 00          	cmpl   $0x0,0x14(%eax)
+  801b23:	74 2c                	je     801b51 <fstat+0x6f>
 		return -E_NOT_SUPP;
 	stat->st_name[0] = 0;
-  801b15:	c6 03 00             	movb   $0x0,(%ebx)
+  801b25:	c6 03 00             	movb   $0x0,(%ebx)
 	stat->st_size = 0;
-  801b18:	c7 83 80 00 00 00 00 	movl   $0x0,0x80(%ebx)
-  801b1f:	00 00 00 
+  801b28:	c7 83 80 00 00 00 00 	movl   $0x0,0x80(%ebx)
+  801b2f:	00 00 00 
 	stat->st_isdir = 0;
-  801b22:	c7 83 84 00 00 00 00 	movl   $0x0,0x84(%ebx)
-  801b29:	00 00 00 
+  801b32:	c7 83 84 00 00 00 00 	movl   $0x0,0x84(%ebx)
+  801b39:	00 00 00 
 	stat->st_dev = dev;
-  801b2c:	89 83 88 00 00 00    	mov    %eax,0x88(%ebx)
+  801b3c:	89 83 88 00 00 00    	mov    %eax,0x88(%ebx)
 	return (*dev->dev_stat)(fd, stat);
-  801b32:	89 5c 24 04          	mov    %ebx,0x4(%esp)
-  801b36:	8b 55 f0             	mov    -0x10(%ebp),%edx
-  801b39:	89 14 24             	mov    %edx,(%esp)
-  801b3c:	ff 50 14             	call   *0x14(%eax)
-  801b3f:	eb 05                	jmp    801b46 <fstat+0x74>
+  801b42:	89 5c 24 04          	mov    %ebx,0x4(%esp)
+  801b46:	8b 55 f0             	mov    -0x10(%ebp),%edx
+  801b49:	89 14 24             	mov    %edx,(%esp)
+  801b4c:	ff 50 14             	call   *0x14(%eax)
+  801b4f:	eb 05                	jmp    801b56 <fstat+0x74>
 
 	if ((r = fd_lookup(fdnum, &fd)) < 0
 	    || (r = dev_lookup(fd->fd_dev_id, &dev)) < 0)
 		return r;
 	if (!dev->dev_stat)
 		return -E_NOT_SUPP;
-  801b41:	b8 f1 ff ff ff       	mov    $0xfffffff1,%eax
+  801b51:	b8 f1 ff ff ff       	mov    $0xfffffff1,%eax
 	stat->st_name[0] = 0;
 	stat->st_size = 0;
 	stat->st_isdir = 0;
 	stat->st_dev = dev;
 	return (*dev->dev_stat)(fd, stat);
 }
-  801b46:	83 c4 24             	add    $0x24,%esp
-  801b49:	5b                   	pop    %ebx
-  801b4a:	5d                   	pop    %ebp
-  801b4b:	c3                   	ret    
+  801b56:	83 c4 24             	add    $0x24,%esp
+  801b59:	5b                   	pop    %ebx
+  801b5a:	5d                   	pop    %ebp
+  801b5b:	c3                   	ret    
 
-00801b4c <stat>:
+00801b5c <stat>:
 
 int
 stat(const char *path, struct Stat *stat)
 {
-  801b4c:	55                   	push   %ebp
-  801b4d:	89 e5                	mov    %esp,%ebp
-  801b4f:	56                   	push   %esi
-  801b50:	53                   	push   %ebx
-  801b51:	83 ec 10             	sub    $0x10,%esp
+  801b5c:	55                   	push   %ebp
+  801b5d:	89 e5                	mov    %esp,%ebp
+  801b5f:	56                   	push   %esi
+  801b60:	53                   	push   %ebx
+  801b61:	83 ec 10             	sub    $0x10,%esp
 	int fd, r;
 
 	if ((fd = open(path, O_RDONLY)) < 0)
-  801b54:	c7 44 24 04 00 00 00 	movl   $0x0,0x4(%esp)
-  801b5b:	00 
-  801b5c:	8b 45 08             	mov    0x8(%ebp),%eax
-  801b5f:	89 04 24             	mov    %eax,(%esp)
-  801b62:	e8 af 01 00 00       	call   801d16 <open>
-  801b67:	89 c3                	mov    %eax,%ebx
-  801b69:	85 db                	test   %ebx,%ebx
-  801b6b:	78 1b                	js     801b88 <stat+0x3c>
+  801b64:	c7 44 24 04 00 00 00 	movl   $0x0,0x4(%esp)
+  801b6b:	00 
+  801b6c:	8b 45 08             	mov    0x8(%ebp),%eax
+  801b6f:	89 04 24             	mov    %eax,(%esp)
+  801b72:	e8 af 01 00 00       	call   801d26 <open>
+  801b77:	89 c3                	mov    %eax,%ebx
+  801b79:	85 db                	test   %ebx,%ebx
+  801b7b:	78 1b                	js     801b98 <stat+0x3c>
 		return fd;
 	r = fstat(fd, stat);
-  801b6d:	8b 45 0c             	mov    0xc(%ebp),%eax
-  801b70:	89 44 24 04          	mov    %eax,0x4(%esp)
-  801b74:	89 1c 24             	mov    %ebx,(%esp)
-  801b77:	e8 56 ff ff ff       	call   801ad2 <fstat>
-  801b7c:	89 c6                	mov    %eax,%esi
+  801b7d:	8b 45 0c             	mov    0xc(%ebp),%eax
+  801b80:	89 44 24 04          	mov    %eax,0x4(%esp)
+  801b84:	89 1c 24             	mov    %ebx,(%esp)
+  801b87:	e8 56 ff ff ff       	call   801ae2 <fstat>
+  801b8c:	89 c6                	mov    %eax,%esi
 	close(fd);
-  801b7e:	89 1c 24             	mov    %ebx,(%esp)
-  801b81:	e8 bd fb ff ff       	call   801743 <close>
+  801b8e:	89 1c 24             	mov    %ebx,(%esp)
+  801b91:	e8 bd fb ff ff       	call   801753 <close>
 	return r;
-  801b86:	89 f0                	mov    %esi,%eax
+  801b96:	89 f0                	mov    %esi,%eax
 }
-  801b88:	83 c4 10             	add    $0x10,%esp
-  801b8b:	5b                   	pop    %ebx
-  801b8c:	5e                   	pop    %esi
-  801b8d:	5d                   	pop    %ebp
-  801b8e:	c3                   	ret    
+  801b98:	83 c4 10             	add    $0x10,%esp
+  801b9b:	5b                   	pop    %ebx
+  801b9c:	5e                   	pop    %esi
+  801b9d:	5d                   	pop    %ebp
+  801b9e:	c3                   	ret    
 
-00801b8f <fsipc>:
+00801b9f <fsipc>:
 // type: request code, passed as the simple integer IPC value.
 // dstva: virtual address at which to receive reply page, 0 if none.
 // Returns result from the file server.
 static int
 fsipc(unsigned type, void *dstva)
 {
-  801b8f:	55                   	push   %ebp
-  801b90:	89 e5                	mov    %esp,%ebp
-  801b92:	56                   	push   %esi
-  801b93:	53                   	push   %ebx
-  801b94:	83 ec 10             	sub    $0x10,%esp
-  801b97:	89 c6                	mov    %eax,%esi
-  801b99:	89 d3                	mov    %edx,%ebx
+  801b9f:	55                   	push   %ebp
+  801ba0:	89 e5                	mov    %esp,%ebp
+  801ba2:	56                   	push   %esi
+  801ba3:	53                   	push   %ebx
+  801ba4:	83 ec 10             	sub    $0x10,%esp
+  801ba7:	89 c6                	mov    %eax,%esi
+  801ba9:	89 d3                	mov    %edx,%ebx
 	static envid_t fsenv;
 	if (fsenv == 0)
-  801b9b:	83 3d 00 40 80 00 00 	cmpl   $0x0,0x804000
-  801ba2:	75 11                	jne    801bb5 <fsipc+0x26>
+  801bab:	83 3d 00 40 80 00 00 	cmpl   $0x0,0x804000
+  801bb2:	75 11                	jne    801bc5 <fsipc+0x26>
 		fsenv = ipc_find_env(ENV_TYPE_FS);
-  801ba4:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
-  801bab:	e8 4e 09 00 00       	call   8024fe <ipc_find_env>
-  801bb0:	a3 00 40 80 00       	mov    %eax,0x804000
+  801bb4:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
+  801bbb:	e8 4e 09 00 00       	call   80250e <ipc_find_env>
+  801bc0:	a3 00 40 80 00       	mov    %eax,0x804000
 	static_assert(sizeof(fsipcbuf) == PGSIZE);
 
 	if (debug)
 		cprintf("[%08x] fsipc %d %08x\n", thisenv->env_id, type, *(uint32_t *)&fsipcbuf);
 
 	ipc_send(fsenv, type, &fsipcbuf, PTE_P | PTE_W | PTE_U);
-  801bb5:	c7 44 24 0c 07 00 00 	movl   $0x7,0xc(%esp)
-  801bbc:	00 
-  801bbd:	c7 44 24 08 00 50 80 	movl   $0x805000,0x8(%esp)
-  801bc4:	00 
-  801bc5:	89 74 24 04          	mov    %esi,0x4(%esp)
-  801bc9:	a1 00 40 80 00       	mov    0x804000,%eax
-  801bce:	89 04 24             	mov    %eax,(%esp)
-  801bd1:	e8 c2 08 00 00       	call   802498 <ipc_send>
+  801bc5:	c7 44 24 0c 07 00 00 	movl   $0x7,0xc(%esp)
+  801bcc:	00 
+  801bcd:	c7 44 24 08 00 50 80 	movl   $0x805000,0x8(%esp)
+  801bd4:	00 
+  801bd5:	89 74 24 04          	mov    %esi,0x4(%esp)
+  801bd9:	a1 00 40 80 00       	mov    0x804000,%eax
+  801bde:	89 04 24             	mov    %eax,(%esp)
+  801be1:	e8 c2 08 00 00       	call   8024a8 <ipc_send>
 	return ipc_recv(NULL, dstva, NULL);
-  801bd6:	c7 44 24 08 00 00 00 	movl   $0x0,0x8(%esp)
-  801bdd:	00 
-  801bde:	89 5c 24 04          	mov    %ebx,0x4(%esp)
-  801be2:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
-  801be9:	e8 42 08 00 00       	call   802430 <ipc_recv>
+  801be6:	c7 44 24 08 00 00 00 	movl   $0x0,0x8(%esp)
+  801bed:	00 
+  801bee:	89 5c 24 04          	mov    %ebx,0x4(%esp)
+  801bf2:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
+  801bf9:	e8 42 08 00 00       	call   802440 <ipc_recv>
 }
-  801bee:	83 c4 10             	add    $0x10,%esp
-  801bf1:	5b                   	pop    %ebx
-  801bf2:	5e                   	pop    %esi
-  801bf3:	5d                   	pop    %ebp
-  801bf4:	c3                   	ret    
+  801bfe:	83 c4 10             	add    $0x10,%esp
+  801c01:	5b                   	pop    %ebx
+  801c02:	5e                   	pop    %esi
+  801c03:	5d                   	pop    %ebp
+  801c04:	c3                   	ret    
 
-00801bf5 <devfile_stat>:
+00801c05 <devfile_stat>:
 }
 
 
 static int
 devfile_stat(struct Fd *fd, struct Stat *st)
 {
-  801bf5:	55                   	push   %ebp
-  801bf6:	89 e5                	mov    %esp,%ebp
-  801bf8:	53                   	push   %ebx
-  801bf9:	83 ec 14             	sub    $0x14,%esp
-  801bfc:	8b 5d 0c             	mov    0xc(%ebp),%ebx
+  801c05:	55                   	push   %ebp
+  801c06:	89 e5                	mov    %esp,%ebp
+  801c08:	53                   	push   %ebx
+  801c09:	83 ec 14             	sub    $0x14,%esp
+  801c0c:	8b 5d 0c             	mov    0xc(%ebp),%ebx
 	int r;
 
 	fsipcbuf.stat.req_fileid = fd->fd_file.id;
-  801bff:	8b 45 08             	mov    0x8(%ebp),%eax
-  801c02:	8b 40 0c             	mov    0xc(%eax),%eax
-  801c05:	a3 00 50 80 00       	mov    %eax,0x805000
+  801c0f:	8b 45 08             	mov    0x8(%ebp),%eax
+  801c12:	8b 40 0c             	mov    0xc(%eax),%eax
+  801c15:	a3 00 50 80 00       	mov    %eax,0x805000
 	if ((r = fsipc(FSREQ_STAT, NULL)) < 0)
-  801c0a:	ba 00 00 00 00       	mov    $0x0,%edx
-  801c0f:	b8 05 00 00 00       	mov    $0x5,%eax
-  801c14:	e8 76 ff ff ff       	call   801b8f <fsipc>
-  801c19:	89 c2                	mov    %eax,%edx
-  801c1b:	85 d2                	test   %edx,%edx
-  801c1d:	78 2b                	js     801c4a <devfile_stat+0x55>
+  801c1a:	ba 00 00 00 00       	mov    $0x0,%edx
+  801c1f:	b8 05 00 00 00       	mov    $0x5,%eax
+  801c24:	e8 76 ff ff ff       	call   801b9f <fsipc>
+  801c29:	89 c2                	mov    %eax,%edx
+  801c2b:	85 d2                	test   %edx,%edx
+  801c2d:	78 2b                	js     801c5a <devfile_stat+0x55>
 		return r;
 	strcpy(st->st_name, fsipcbuf.statRet.ret_name);
-  801c1f:	c7 44 24 04 00 50 80 	movl   $0x805000,0x4(%esp)
-  801c26:	00 
-  801c27:	89 1c 24             	mov    %ebx,(%esp)
-  801c2a:	e8 cc ee ff ff       	call   800afb <strcpy>
+  801c2f:	c7 44 24 04 00 50 80 	movl   $0x805000,0x4(%esp)
+  801c36:	00 
+  801c37:	89 1c 24             	mov    %ebx,(%esp)
+  801c3a:	e8 bc ee ff ff       	call   800afb <strcpy>
 	st->st_size = fsipcbuf.statRet.ret_size;
-  801c2f:	a1 80 50 80 00       	mov    0x805080,%eax
-  801c34:	89 83 80 00 00 00    	mov    %eax,0x80(%ebx)
+  801c3f:	a1 80 50 80 00       	mov    0x805080,%eax
+  801c44:	89 83 80 00 00 00    	mov    %eax,0x80(%ebx)
 	st->st_isdir = fsipcbuf.statRet.ret_isdir;
-  801c3a:	a1 84 50 80 00       	mov    0x805084,%eax
-  801c3f:	89 83 84 00 00 00    	mov    %eax,0x84(%ebx)
+  801c4a:	a1 84 50 80 00       	mov    0x805084,%eax
+  801c4f:	89 83 84 00 00 00    	mov    %eax,0x84(%ebx)
 	return 0;
-  801c45:	b8 00 00 00 00       	mov    $0x0,%eax
+  801c55:	b8 00 00 00 00       	mov    $0x0,%eax
 }
-  801c4a:	83 c4 14             	add    $0x14,%esp
-  801c4d:	5b                   	pop    %ebx
-  801c4e:	5d                   	pop    %ebp
-  801c4f:	c3                   	ret    
+  801c5a:	83 c4 14             	add    $0x14,%esp
+  801c5d:	5b                   	pop    %ebx
+  801c5e:	5d                   	pop    %ebp
+  801c5f:	c3                   	ret    
 
-00801c50 <devfile_flush>:
+00801c60 <devfile_flush>:
 // open, unmapping it is enough to free up server-side resources.
 // Other than that, we just have to make sure our changes are flushed
 // to disk.
 static int
 devfile_flush(struct Fd *fd)
 {
-  801c50:	55                   	push   %ebp
-  801c51:	89 e5                	mov    %esp,%ebp
-  801c53:	83 ec 08             	sub    $0x8,%esp
+  801c60:	55                   	push   %ebp
+  801c61:	89 e5                	mov    %esp,%ebp
+  801c63:	83 ec 08             	sub    $0x8,%esp
 	fsipcbuf.flush.req_fileid = fd->fd_file.id;
-  801c56:	8b 45 08             	mov    0x8(%ebp),%eax
-  801c59:	8b 40 0c             	mov    0xc(%eax),%eax
-  801c5c:	a3 00 50 80 00       	mov    %eax,0x805000
+  801c66:	8b 45 08             	mov    0x8(%ebp),%eax
+  801c69:	8b 40 0c             	mov    0xc(%eax),%eax
+  801c6c:	a3 00 50 80 00       	mov    %eax,0x805000
 	return fsipc(FSREQ_FLUSH, NULL);
-  801c61:	ba 00 00 00 00       	mov    $0x0,%edx
-  801c66:	b8 06 00 00 00       	mov    $0x6,%eax
-  801c6b:	e8 1f ff ff ff       	call   801b8f <fsipc>
+  801c71:	ba 00 00 00 00       	mov    $0x0,%edx
+  801c76:	b8 06 00 00 00       	mov    $0x6,%eax
+  801c7b:	e8 1f ff ff ff       	call   801b9f <fsipc>
 }
-  801c70:	c9                   	leave  
-  801c71:	c3                   	ret    
+  801c80:	c9                   	leave  
+  801c81:	c3                   	ret    
 
-00801c72 <devfile_read>:
+00801c82 <devfile_read>:
 // Returns:
 // 	The number of bytes successfully read.
 // 	< 0 on error.
 static ssize_t
 devfile_read(struct Fd *fd, void *buf, size_t n)
 {
-  801c72:	55                   	push   %ebp
-  801c73:	89 e5                	mov    %esp,%ebp
-  801c75:	56                   	push   %esi
-  801c76:	53                   	push   %ebx
-  801c77:	83 ec 10             	sub    $0x10,%esp
-  801c7a:	8b 75 10             	mov    0x10(%ebp),%esi
+  801c82:	55                   	push   %ebp
+  801c83:	89 e5                	mov    %esp,%ebp
+  801c85:	56                   	push   %esi
+  801c86:	53                   	push   %ebx
+  801c87:	83 ec 10             	sub    $0x10,%esp
+  801c8a:	8b 75 10             	mov    0x10(%ebp),%esi
 	// filling fsipcbuf.read with the request arguments.  The
 	// bytes read will be written back to fsipcbuf by the file
 	// system server.
 	int r;
 
 	fsipcbuf.read.req_fileid = fd->fd_file.id;
-  801c7d:	8b 45 08             	mov    0x8(%ebp),%eax
-  801c80:	8b 40 0c             	mov    0xc(%eax),%eax
-  801c83:	a3 00 50 80 00       	mov    %eax,0x805000
+  801c8d:	8b 45 08             	mov    0x8(%ebp),%eax
+  801c90:	8b 40 0c             	mov    0xc(%eax),%eax
+  801c93:	a3 00 50 80 00       	mov    %eax,0x805000
 	fsipcbuf.read.req_n = n;
-  801c88:	89 35 04 50 80 00    	mov    %esi,0x805004
+  801c98:	89 35 04 50 80 00    	mov    %esi,0x805004
 	if ((r = fsipc(FSREQ_READ, NULL)) < 0)
-  801c8e:	ba 00 00 00 00       	mov    $0x0,%edx
-  801c93:	b8 03 00 00 00       	mov    $0x3,%eax
-  801c98:	e8 f2 fe ff ff       	call   801b8f <fsipc>
-  801c9d:	89 c3                	mov    %eax,%ebx
-  801c9f:	85 c0                	test   %eax,%eax
-  801ca1:	78 6a                	js     801d0d <devfile_read+0x9b>
+  801c9e:	ba 00 00 00 00       	mov    $0x0,%edx
+  801ca3:	b8 03 00 00 00       	mov    $0x3,%eax
+  801ca8:	e8 f2 fe ff ff       	call   801b9f <fsipc>
+  801cad:	89 c3                	mov    %eax,%ebx
+  801caf:	85 c0                	test   %eax,%eax
+  801cb1:	78 6a                	js     801d1d <devfile_read+0x9b>
 		return r;
 	assert(r <= n);
-  801ca3:	39 c6                	cmp    %eax,%esi
-  801ca5:	73 24                	jae    801ccb <devfile_read+0x59>
-  801ca7:	c7 44 24 0c 76 2e 80 	movl   $0x802e76,0xc(%esp)
-  801cae:	00 
-  801caf:	c7 44 24 08 7d 2e 80 	movl   $0x802e7d,0x8(%esp)
-  801cb6:	00 
-  801cb7:	c7 44 24 04 79 00 00 	movl   $0x79,0x4(%esp)
+  801cb3:	39 c6                	cmp    %eax,%esi
+  801cb5:	73 24                	jae    801cdb <devfile_read+0x59>
+  801cb7:	c7 44 24 0c 96 2e 80 	movl   $0x802e96,0xc(%esp)
   801cbe:	00 
-  801cbf:	c7 04 24 92 2e 80 00 	movl   $0x802e92,(%esp)
-  801cc6:	e8 db e6 ff ff       	call   8003a6 <_panic>
+  801cbf:	c7 44 24 08 9d 2e 80 	movl   $0x802e9d,0x8(%esp)
+  801cc6:	00 
+  801cc7:	c7 44 24 04 79 00 00 	movl   $0x79,0x4(%esp)
+  801cce:	00 
+  801ccf:	c7 04 24 b2 2e 80 00 	movl   $0x802eb2,(%esp)
+  801cd6:	e8 cb e6 ff ff       	call   8003a6 <_panic>
 	assert(r <= PGSIZE);
-  801ccb:	3d 00 10 00 00       	cmp    $0x1000,%eax
-  801cd0:	7e 24                	jle    801cf6 <devfile_read+0x84>
-  801cd2:	c7 44 24 0c 9d 2e 80 	movl   $0x802e9d,0xc(%esp)
-  801cd9:	00 
-  801cda:	c7 44 24 08 7d 2e 80 	movl   $0x802e7d,0x8(%esp)
-  801ce1:	00 
-  801ce2:	c7 44 24 04 7a 00 00 	movl   $0x7a,0x4(%esp)
+  801cdb:	3d 00 10 00 00       	cmp    $0x1000,%eax
+  801ce0:	7e 24                	jle    801d06 <devfile_read+0x84>
+  801ce2:	c7 44 24 0c bd 2e 80 	movl   $0x802ebd,0xc(%esp)
   801ce9:	00 
-  801cea:	c7 04 24 92 2e 80 00 	movl   $0x802e92,(%esp)
-  801cf1:	e8 b0 e6 ff ff       	call   8003a6 <_panic>
+  801cea:	c7 44 24 08 9d 2e 80 	movl   $0x802e9d,0x8(%esp)
+  801cf1:	00 
+  801cf2:	c7 44 24 04 7a 00 00 	movl   $0x7a,0x4(%esp)
+  801cf9:	00 
+  801cfa:	c7 04 24 b2 2e 80 00 	movl   $0x802eb2,(%esp)
+  801d01:	e8 a0 e6 ff ff       	call   8003a6 <_panic>
 	memmove(buf, &fsipcbuf, r);
-  801cf6:	89 44 24 08          	mov    %eax,0x8(%esp)
-  801cfa:	c7 44 24 04 00 50 80 	movl   $0x805000,0x4(%esp)
-  801d01:	00 
-  801d02:	8b 45 0c             	mov    0xc(%ebp),%eax
-  801d05:	89 04 24             	mov    %eax,(%esp)
-  801d08:	e8 e9 ef ff ff       	call   800cf6 <memmove>
+  801d06:	89 44 24 08          	mov    %eax,0x8(%esp)
+  801d0a:	c7 44 24 04 00 50 80 	movl   $0x805000,0x4(%esp)
+  801d11:	00 
+  801d12:	8b 45 0c             	mov    0xc(%ebp),%eax
+  801d15:	89 04 24             	mov    %eax,(%esp)
+  801d18:	e8 d9 ef ff ff       	call   800cf6 <memmove>
 	return r;
 }
-  801d0d:	89 d8                	mov    %ebx,%eax
-  801d0f:	83 c4 10             	add    $0x10,%esp
-  801d12:	5b                   	pop    %ebx
-  801d13:	5e                   	pop    %esi
-  801d14:	5d                   	pop    %ebp
-  801d15:	c3                   	ret    
+  801d1d:	89 d8                	mov    %ebx,%eax
+  801d1f:	83 c4 10             	add    $0x10,%esp
+  801d22:	5b                   	pop    %ebx
+  801d23:	5e                   	pop    %esi
+  801d24:	5d                   	pop    %ebp
+  801d25:	c3                   	ret    
 
-00801d16 <open>:
+00801d26 <open>:
 // 	The file descriptor index on success
 // 	-E_BAD_PATH if the path is too long (>= MAXPATHLEN)
 // 	< 0 for other errors.
 int
 open(const char *path, int mode)
 {
-  801d16:	55                   	push   %ebp
-  801d17:	89 e5                	mov    %esp,%ebp
-  801d19:	53                   	push   %ebx
-  801d1a:	83 ec 24             	sub    $0x24,%esp
-  801d1d:	8b 5d 08             	mov    0x8(%ebp),%ebx
+  801d26:	55                   	push   %ebp
+  801d27:	89 e5                	mov    %esp,%ebp
+  801d29:	53                   	push   %ebx
+  801d2a:	83 ec 24             	sub    $0x24,%esp
+  801d2d:	8b 5d 08             	mov    0x8(%ebp),%ebx
 	// file descriptor.
 
 	int r;
 	struct Fd *fd;
 
 	if (strlen(path) >= MAXPATHLEN)
-  801d20:	89 1c 24             	mov    %ebx,(%esp)
-  801d23:	e8 78 ed ff ff       	call   800aa0 <strlen>
-  801d28:	3d ff 03 00 00       	cmp    $0x3ff,%eax
-  801d2d:	7f 60                	jg     801d8f <open+0x79>
+  801d30:	89 1c 24             	mov    %ebx,(%esp)
+  801d33:	e8 68 ed ff ff       	call   800aa0 <strlen>
+  801d38:	3d ff 03 00 00       	cmp    $0x3ff,%eax
+  801d3d:	7f 60                	jg     801d9f <open+0x79>
 		return -E_BAD_PATH;
 
 	if ((r = fd_alloc(&fd)) < 0)
-  801d2f:	8d 45 f4             	lea    -0xc(%ebp),%eax
-  801d32:	89 04 24             	mov    %eax,(%esp)
-  801d35:	e8 4d f8 ff ff       	call   801587 <fd_alloc>
-  801d3a:	89 c2                	mov    %eax,%edx
-  801d3c:	85 d2                	test   %edx,%edx
-  801d3e:	78 54                	js     801d94 <open+0x7e>
+  801d3f:	8d 45 f4             	lea    -0xc(%ebp),%eax
+  801d42:	89 04 24             	mov    %eax,(%esp)
+  801d45:	e8 4d f8 ff ff       	call   801597 <fd_alloc>
+  801d4a:	89 c2                	mov    %eax,%edx
+  801d4c:	85 d2                	test   %edx,%edx
+  801d4e:	78 54                	js     801da4 <open+0x7e>
 		return r;
 
 	strcpy(fsipcbuf.open.req_path, path);
-  801d40:	89 5c 24 04          	mov    %ebx,0x4(%esp)
-  801d44:	c7 04 24 00 50 80 00 	movl   $0x805000,(%esp)
-  801d4b:	e8 ab ed ff ff       	call   800afb <strcpy>
+  801d50:	89 5c 24 04          	mov    %ebx,0x4(%esp)
+  801d54:	c7 04 24 00 50 80 00 	movl   $0x805000,(%esp)
+  801d5b:	e8 9b ed ff ff       	call   800afb <strcpy>
 	fsipcbuf.open.req_omode = mode;
-  801d50:	8b 45 0c             	mov    0xc(%ebp),%eax
-  801d53:	a3 00 54 80 00       	mov    %eax,0x805400
+  801d60:	8b 45 0c             	mov    0xc(%ebp),%eax
+  801d63:	a3 00 54 80 00       	mov    %eax,0x805400
 
 	if ((r = fsipc(FSREQ_OPEN, fd)) < 0) {
-  801d58:	8b 55 f4             	mov    -0xc(%ebp),%edx
-  801d5b:	b8 01 00 00 00       	mov    $0x1,%eax
-  801d60:	e8 2a fe ff ff       	call   801b8f <fsipc>
-  801d65:	89 c3                	mov    %eax,%ebx
-  801d67:	85 c0                	test   %eax,%eax
-  801d69:	79 17                	jns    801d82 <open+0x6c>
+  801d68:	8b 55 f4             	mov    -0xc(%ebp),%edx
+  801d6b:	b8 01 00 00 00       	mov    $0x1,%eax
+  801d70:	e8 2a fe ff ff       	call   801b9f <fsipc>
+  801d75:	89 c3                	mov    %eax,%ebx
+  801d77:	85 c0                	test   %eax,%eax
+  801d79:	79 17                	jns    801d92 <open+0x6c>
 		fd_close(fd, 0);
-  801d6b:	c7 44 24 04 00 00 00 	movl   $0x0,0x4(%esp)
-  801d72:	00 
-  801d73:	8b 45 f4             	mov    -0xc(%ebp),%eax
-  801d76:	89 04 24             	mov    %eax,(%esp)
-  801d79:	e8 44 f9 ff ff       	call   8016c2 <fd_close>
+  801d7b:	c7 44 24 04 00 00 00 	movl   $0x0,0x4(%esp)
+  801d82:	00 
+  801d83:	8b 45 f4             	mov    -0xc(%ebp),%eax
+  801d86:	89 04 24             	mov    %eax,(%esp)
+  801d89:	e8 44 f9 ff ff       	call   8016d2 <fd_close>
 		return r;
-  801d7e:	89 d8                	mov    %ebx,%eax
-  801d80:	eb 12                	jmp    801d94 <open+0x7e>
+  801d8e:	89 d8                	mov    %ebx,%eax
+  801d90:	eb 12                	jmp    801da4 <open+0x7e>
 	}
 	return fd2num(fd);
-  801d82:	8b 45 f4             	mov    -0xc(%ebp),%eax
-  801d85:	89 04 24             	mov    %eax,(%esp)
-  801d88:	e8 d3 f7 ff ff       	call   801560 <fd2num>
-  801d8d:	eb 05                	jmp    801d94 <open+0x7e>
+  801d92:	8b 45 f4             	mov    -0xc(%ebp),%eax
+  801d95:	89 04 24             	mov    %eax,(%esp)
+  801d98:	e8 d3 f7 ff ff       	call   801570 <fd2num>
+  801d9d:	eb 05                	jmp    801da4 <open+0x7e>
 
 	int r;
 	struct Fd *fd;
 
 	if (strlen(path) >= MAXPATHLEN)
 		return -E_BAD_PATH;
-  801d8f:	b8 f4 ff ff ff       	mov    $0xfffffff4,%eax
+  801d9f:	b8 f4 ff ff ff       	mov    $0xfffffff4,%eax
 	if ((r = fsipc(FSREQ_OPEN, fd)) < 0) {
 		fd_close(fd, 0);
 		return r;
 	}
 	return fd2num(fd);
 }
-  801d94:	83 c4 24             	add    $0x24,%esp
-  801d97:	5b                   	pop    %ebx
-  801d98:	5d                   	pop    %ebp
-  801d99:	c3                   	ret    
-  801d9a:	66 90                	xchg   %ax,%ax
-  801d9c:	66 90                	xchg   %ax,%ax
-  801d9e:	66 90                	xchg   %ax,%ax
+  801da4:	83 c4 24             	add    $0x24,%esp
+  801da7:	5b                   	pop    %ebx
+  801da8:	5d                   	pop    %ebp
+  801da9:	c3                   	ret    
+  801daa:	66 90                	xchg   %ax,%ax
+  801dac:	66 90                	xchg   %ax,%ax
+  801dae:	66 90                	xchg   %ax,%ax
 
-00801da0 <devpipe_stat>:
+00801db0 <devpipe_stat>:
 	return i;
 }
 
 static int
 devpipe_stat(struct Fd *fd, struct Stat *stat)
 {
-  801da0:	55                   	push   %ebp
-  801da1:	89 e5                	mov    %esp,%ebp
-  801da3:	56                   	push   %esi
-  801da4:	53                   	push   %ebx
-  801da5:	83 ec 10             	sub    $0x10,%esp
-  801da8:	8b 5d 0c             	mov    0xc(%ebp),%ebx
+  801db0:	55                   	push   %ebp
+  801db1:	89 e5                	mov    %esp,%ebp
+  801db3:	56                   	push   %esi
+  801db4:	53                   	push   %ebx
+  801db5:	83 ec 10             	sub    $0x10,%esp
+  801db8:	8b 5d 0c             	mov    0xc(%ebp),%ebx
 	struct Pipe *p = (struct Pipe*) fd2data(fd);
-  801dab:	8b 45 08             	mov    0x8(%ebp),%eax
-  801dae:	89 04 24             	mov    %eax,(%esp)
-  801db1:	e8 ba f7 ff ff       	call   801570 <fd2data>
-  801db6:	89 c6                	mov    %eax,%esi
+  801dbb:	8b 45 08             	mov    0x8(%ebp),%eax
+  801dbe:	89 04 24             	mov    %eax,(%esp)
+  801dc1:	e8 ba f7 ff ff       	call   801580 <fd2data>
+  801dc6:	89 c6                	mov    %eax,%esi
 	strcpy(stat->st_name, "<pipe>");
-  801db8:	c7 44 24 04 a9 2e 80 	movl   $0x802ea9,0x4(%esp)
-  801dbf:	00 
-  801dc0:	89 1c 24             	mov    %ebx,(%esp)
-  801dc3:	e8 33 ed ff ff       	call   800afb <strcpy>
+  801dc8:	c7 44 24 04 c9 2e 80 	movl   $0x802ec9,0x4(%esp)
+  801dcf:	00 
+  801dd0:	89 1c 24             	mov    %ebx,(%esp)
+  801dd3:	e8 23 ed ff ff       	call   800afb <strcpy>
 	stat->st_size = p->p_wpos - p->p_rpos;
-  801dc8:	8b 46 04             	mov    0x4(%esi),%eax
-  801dcb:	2b 06                	sub    (%esi),%eax
-  801dcd:	89 83 80 00 00 00    	mov    %eax,0x80(%ebx)
+  801dd8:	8b 46 04             	mov    0x4(%esi),%eax
+  801ddb:	2b 06                	sub    (%esi),%eax
+  801ddd:	89 83 80 00 00 00    	mov    %eax,0x80(%ebx)
 	stat->st_isdir = 0;
-  801dd3:	c7 83 84 00 00 00 00 	movl   $0x0,0x84(%ebx)
-  801dda:	00 00 00 
+  801de3:	c7 83 84 00 00 00 00 	movl   $0x0,0x84(%ebx)
+  801dea:	00 00 00 
 	stat->st_dev = &devpipe;
-  801ddd:	c7 83 88 00 00 00 24 	movl   $0x803024,0x88(%ebx)
-  801de4:	30 80 00 
+  801ded:	c7 83 88 00 00 00 24 	movl   $0x803024,0x88(%ebx)
+  801df4:	30 80 00 
 	return 0;
 }
-  801de7:	b8 00 00 00 00       	mov    $0x0,%eax
-  801dec:	83 c4 10             	add    $0x10,%esp
-  801def:	5b                   	pop    %ebx
-  801df0:	5e                   	pop    %esi
-  801df1:	5d                   	pop    %ebp
-  801df2:	c3                   	ret    
+  801df7:	b8 00 00 00 00       	mov    $0x0,%eax
+  801dfc:	83 c4 10             	add    $0x10,%esp
+  801dff:	5b                   	pop    %ebx
+  801e00:	5e                   	pop    %esi
+  801e01:	5d                   	pop    %ebp
+  801e02:	c3                   	ret    
 
-00801df3 <devpipe_close>:
+00801e03 <devpipe_close>:
 
 static int
 devpipe_close(struct Fd *fd)
 {
-  801df3:	55                   	push   %ebp
-  801df4:	89 e5                	mov    %esp,%ebp
-  801df6:	53                   	push   %ebx
-  801df7:	83 ec 14             	sub    $0x14,%esp
-  801dfa:	8b 5d 08             	mov    0x8(%ebp),%ebx
+  801e03:	55                   	push   %ebp
+  801e04:	89 e5                	mov    %esp,%ebp
+  801e06:	53                   	push   %ebx
+  801e07:	83 ec 14             	sub    $0x14,%esp
+  801e0a:	8b 5d 08             	mov    0x8(%ebp),%ebx
 	(void) sys_page_unmap(0, fd);
-  801dfd:	89 5c 24 04          	mov    %ebx,0x4(%esp)
-  801e01:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
-  801e08:	e8 43 f2 ff ff       	call   801050 <sys_page_unmap>
+  801e0d:	89 5c 24 04          	mov    %ebx,0x4(%esp)
+  801e11:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
+  801e18:	e8 33 f2 ff ff       	call   801050 <sys_page_unmap>
 	return sys_page_unmap(0, fd2data(fd));
-  801e0d:	89 1c 24             	mov    %ebx,(%esp)
-  801e10:	e8 5b f7 ff ff       	call   801570 <fd2data>
-  801e15:	89 44 24 04          	mov    %eax,0x4(%esp)
-  801e19:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
-  801e20:	e8 2b f2 ff ff       	call   801050 <sys_page_unmap>
+  801e1d:	89 1c 24             	mov    %ebx,(%esp)
+  801e20:	e8 5b f7 ff ff       	call   801580 <fd2data>
+  801e25:	89 44 24 04          	mov    %eax,0x4(%esp)
+  801e29:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
+  801e30:	e8 1b f2 ff ff       	call   801050 <sys_page_unmap>
 }
-  801e25:	83 c4 14             	add    $0x14,%esp
-  801e28:	5b                   	pop    %ebx
-  801e29:	5d                   	pop    %ebp
-  801e2a:	c3                   	ret    
+  801e35:	83 c4 14             	add    $0x14,%esp
+  801e38:	5b                   	pop    %ebx
+  801e39:	5d                   	pop    %ebp
+  801e3a:	c3                   	ret    
 
-00801e2b <_pipeisclosed>:
+00801e3b <_pipeisclosed>:
 	return r;
 }
 
 static int
 _pipeisclosed(struct Fd *fd, struct Pipe *p)
 {
-  801e2b:	55                   	push   %ebp
-  801e2c:	89 e5                	mov    %esp,%ebp
-  801e2e:	57                   	push   %edi
-  801e2f:	56                   	push   %esi
-  801e30:	53                   	push   %ebx
-  801e31:	83 ec 2c             	sub    $0x2c,%esp
-  801e34:	89 c6                	mov    %eax,%esi
-  801e36:	89 55 e4             	mov    %edx,-0x1c(%ebp)
+  801e3b:	55                   	push   %ebp
+  801e3c:	89 e5                	mov    %esp,%ebp
+  801e3e:	57                   	push   %edi
+  801e3f:	56                   	push   %esi
+  801e40:	53                   	push   %ebx
+  801e41:	83 ec 2c             	sub    $0x2c,%esp
+  801e44:	89 c6                	mov    %eax,%esi
+  801e46:	89 55 e4             	mov    %edx,-0x1c(%ebp)
 	int n, nn, ret;
 
 	while (1) {
 		n = thisenv->env_runs;
-  801e39:	a1 04 40 80 00       	mov    0x804004,%eax
-  801e3e:	8b 58 58             	mov    0x58(%eax),%ebx
+  801e49:	a1 04 40 80 00       	mov    0x804004,%eax
+  801e4e:	8b 58 58             	mov    0x58(%eax),%ebx
 		ret = pageref(fd) == pageref(p);
-  801e41:	89 34 24             	mov    %esi,(%esp)
-  801e44:	e8 fd 06 00 00       	call   802546 <pageref>
-  801e49:	89 c7                	mov    %eax,%edi
-  801e4b:	8b 45 e4             	mov    -0x1c(%ebp),%eax
-  801e4e:	89 04 24             	mov    %eax,(%esp)
-  801e51:	e8 f0 06 00 00       	call   802546 <pageref>
-  801e56:	39 c7                	cmp    %eax,%edi
-  801e58:	0f 94 c2             	sete   %dl
-  801e5b:	0f b6 c2             	movzbl %dl,%eax
+  801e51:	89 34 24             	mov    %esi,(%esp)
+  801e54:	e8 fd 06 00 00       	call   802556 <pageref>
+  801e59:	89 c7                	mov    %eax,%edi
+  801e5b:	8b 45 e4             	mov    -0x1c(%ebp),%eax
+  801e5e:	89 04 24             	mov    %eax,(%esp)
+  801e61:	e8 f0 06 00 00       	call   802556 <pageref>
+  801e66:	39 c7                	cmp    %eax,%edi
+  801e68:	0f 94 c2             	sete   %dl
+  801e6b:	0f b6 c2             	movzbl %dl,%eax
 		nn = thisenv->env_runs;
-  801e5e:	8b 0d 04 40 80 00    	mov    0x804004,%ecx
-  801e64:	8b 79 58             	mov    0x58(%ecx),%edi
+  801e6e:	8b 0d 04 40 80 00    	mov    0x804004,%ecx
+  801e74:	8b 79 58             	mov    0x58(%ecx),%edi
 		if (n == nn)
-  801e67:	39 fb                	cmp    %edi,%ebx
-  801e69:	74 21                	je     801e8c <_pipeisclosed+0x61>
+  801e77:	39 fb                	cmp    %edi,%ebx
+  801e79:	74 21                	je     801e9c <_pipeisclosed+0x61>
 			return ret;
 		if (n != nn && ret == 1)
-  801e6b:	84 d2                	test   %dl,%dl
-  801e6d:	74 ca                	je     801e39 <_pipeisclosed+0xe>
+  801e7b:	84 d2                	test   %dl,%dl
+  801e7d:	74 ca                	je     801e49 <_pipeisclosed+0xe>
 			cprintf("pipe race avoided\n", n, thisenv->env_runs, ret);
-  801e6f:	8b 51 58             	mov    0x58(%ecx),%edx
-  801e72:	89 44 24 0c          	mov    %eax,0xc(%esp)
-  801e76:	89 54 24 08          	mov    %edx,0x8(%esp)
-  801e7a:	89 5c 24 04          	mov    %ebx,0x4(%esp)
-  801e7e:	c7 04 24 b0 2e 80 00 	movl   $0x802eb0,(%esp)
-  801e85:	e8 15 e6 ff ff       	call   80049f <cprintf>
-  801e8a:	eb ad                	jmp    801e39 <_pipeisclosed+0xe>
+  801e7f:	8b 51 58             	mov    0x58(%ecx),%edx
+  801e82:	89 44 24 0c          	mov    %eax,0xc(%esp)
+  801e86:	89 54 24 08          	mov    %edx,0x8(%esp)
+  801e8a:	89 5c 24 04          	mov    %ebx,0x4(%esp)
+  801e8e:	c7 04 24 d0 2e 80 00 	movl   $0x802ed0,(%esp)
+  801e95:	e8 05 e6 ff ff       	call   80049f <cprintf>
+  801e9a:	eb ad                	jmp    801e49 <_pipeisclosed+0xe>
 	}
 }
-  801e8c:	83 c4 2c             	add    $0x2c,%esp
-  801e8f:	5b                   	pop    %ebx
-  801e90:	5e                   	pop    %esi
-  801e91:	5f                   	pop    %edi
-  801e92:	5d                   	pop    %ebp
-  801e93:	c3                   	ret    
+  801e9c:	83 c4 2c             	add    $0x2c,%esp
+  801e9f:	5b                   	pop    %ebx
+  801ea0:	5e                   	pop    %esi
+  801ea1:	5f                   	pop    %edi
+  801ea2:	5d                   	pop    %ebp
+  801ea3:	c3                   	ret    
 
-00801e94 <devpipe_write>:
+00801ea4 <devpipe_write>:
 	return i;
 }
 
 static ssize_t
 devpipe_write(struct Fd *fd, const void *vbuf, size_t n)
 {
-  801e94:	55                   	push   %ebp
-  801e95:	89 e5                	mov    %esp,%ebp
-  801e97:	57                   	push   %edi
-  801e98:	56                   	push   %esi
-  801e99:	53                   	push   %ebx
-  801e9a:	83 ec 1c             	sub    $0x1c,%esp
-  801e9d:	8b 75 08             	mov    0x8(%ebp),%esi
+  801ea4:	55                   	push   %ebp
+  801ea5:	89 e5                	mov    %esp,%ebp
+  801ea7:	57                   	push   %edi
+  801ea8:	56                   	push   %esi
+  801ea9:	53                   	push   %ebx
+  801eaa:	83 ec 1c             	sub    $0x1c,%esp
+  801ead:	8b 75 08             	mov    0x8(%ebp),%esi
 	const uint8_t *buf;
 	size_t i;
 	struct Pipe *p;
 
 	p = (struct Pipe*) fd2data(fd);
-  801ea0:	89 34 24             	mov    %esi,(%esp)
-  801ea3:	e8 c8 f6 ff ff       	call   801570 <fd2data>
+  801eb0:	89 34 24             	mov    %esi,(%esp)
+  801eb3:	e8 c8 f6 ff ff       	call   801580 <fd2data>
 	if (debug)
 		cprintf("[%08x] devpipe_write %08x %d rpos %d wpos %d\n",
 			thisenv->env_id, uvpt[PGNUM(p)], n, p->p_rpos, p->p_wpos);
 
 	buf = vbuf;
 	for (i = 0; i < n; i++) {
-  801ea8:	83 7d 10 00          	cmpl   $0x0,0x10(%ebp)
-  801eac:	74 61                	je     801f0f <devpipe_write+0x7b>
-  801eae:	89 c3                	mov    %eax,%ebx
-  801eb0:	bf 00 00 00 00       	mov    $0x0,%edi
-  801eb5:	eb 4a                	jmp    801f01 <devpipe_write+0x6d>
+  801eb8:	83 7d 10 00          	cmpl   $0x0,0x10(%ebp)
+  801ebc:	74 61                	je     801f1f <devpipe_write+0x7b>
+  801ebe:	89 c3                	mov    %eax,%ebx
+  801ec0:	bf 00 00 00 00       	mov    $0x0,%edi
+  801ec5:	eb 4a                	jmp    801f11 <devpipe_write+0x6d>
 		while (p->p_wpos >= p->p_rpos + sizeof(p->p_buf)) {
 			// pipe is full
 			// if all the readers are gone
 			// (it's only writers like us now),
 			// note eof
 			if (_pipeisclosed(fd, p))
-  801eb7:	89 da                	mov    %ebx,%edx
-  801eb9:	89 f0                	mov    %esi,%eax
-  801ebb:	e8 6b ff ff ff       	call   801e2b <_pipeisclosed>
-  801ec0:	85 c0                	test   %eax,%eax
-  801ec2:	75 54                	jne    801f18 <devpipe_write+0x84>
+  801ec7:	89 da                	mov    %ebx,%edx
+  801ec9:	89 f0                	mov    %esi,%eax
+  801ecb:	e8 6b ff ff ff       	call   801e3b <_pipeisclosed>
+  801ed0:	85 c0                	test   %eax,%eax
+  801ed2:	75 54                	jne    801f28 <devpipe_write+0x84>
 				return 0;
 			// yield and see what happens
 			if (debug)
 				cprintf("devpipe_write yield\n");
 			sys_yield();
-  801ec4:	e8 c1 f0 ff ff       	call   800f8a <sys_yield>
+  801ed4:	e8 b1 f0 ff ff       	call   800f8a <sys_yield>
 		cprintf("[%08x] devpipe_write %08x %d rpos %d wpos %d\n",
 			thisenv->env_id, uvpt[PGNUM(p)], n, p->p_rpos, p->p_wpos);
 
 	buf = vbuf;
 	for (i = 0; i < n; i++) {
 		while (p->p_wpos >= p->p_rpos + sizeof(p->p_buf)) {
-  801ec9:	8b 43 04             	mov    0x4(%ebx),%eax
-  801ecc:	8b 0b                	mov    (%ebx),%ecx
-  801ece:	8d 51 20             	lea    0x20(%ecx),%edx
-  801ed1:	39 d0                	cmp    %edx,%eax
-  801ed3:	73 e2                	jae    801eb7 <devpipe_write+0x23>
+  801ed9:	8b 43 04             	mov    0x4(%ebx),%eax
+  801edc:	8b 0b                	mov    (%ebx),%ecx
+  801ede:	8d 51 20             	lea    0x20(%ecx),%edx
+  801ee1:	39 d0                	cmp    %edx,%eax
+  801ee3:	73 e2                	jae    801ec7 <devpipe_write+0x23>
 				cprintf("devpipe_write yield\n");
 			sys_yield();
 		}
 		// there's room for a byte.  store it.
 		// wait to increment wpos until the byte is stored!
 		p->p_buf[p->p_wpos % PIPEBUFSIZ] = buf[i];
-  801ed5:	8b 4d 0c             	mov    0xc(%ebp),%ecx
-  801ed8:	0f b6 0c 39          	movzbl (%ecx,%edi,1),%ecx
-  801edc:	88 4d e7             	mov    %cl,-0x19(%ebp)
-  801edf:	99                   	cltd   
-  801ee0:	c1 ea 1b             	shr    $0x1b,%edx
-  801ee3:	8d 0c 10             	lea    (%eax,%edx,1),%ecx
-  801ee6:	83 e1 1f             	and    $0x1f,%ecx
-  801ee9:	29 d1                	sub    %edx,%ecx
-  801eeb:	0f b6 55 e7          	movzbl -0x19(%ebp),%edx
-  801eef:	88 54 0b 08          	mov    %dl,0x8(%ebx,%ecx,1)
+  801ee5:	8b 4d 0c             	mov    0xc(%ebp),%ecx
+  801ee8:	0f b6 0c 39          	movzbl (%ecx,%edi,1),%ecx
+  801eec:	88 4d e7             	mov    %cl,-0x19(%ebp)
+  801eef:	99                   	cltd   
+  801ef0:	c1 ea 1b             	shr    $0x1b,%edx
+  801ef3:	8d 0c 10             	lea    (%eax,%edx,1),%ecx
+  801ef6:	83 e1 1f             	and    $0x1f,%ecx
+  801ef9:	29 d1                	sub    %edx,%ecx
+  801efb:	0f b6 55 e7          	movzbl -0x19(%ebp),%edx
+  801eff:	88 54 0b 08          	mov    %dl,0x8(%ebx,%ecx,1)
 		p->p_wpos++;
-  801ef3:	83 c0 01             	add    $0x1,%eax
-  801ef6:	89 43 04             	mov    %eax,0x4(%ebx)
+  801f03:	83 c0 01             	add    $0x1,%eax
+  801f06:	89 43 04             	mov    %eax,0x4(%ebx)
 	if (debug)
 		cprintf("[%08x] devpipe_write %08x %d rpos %d wpos %d\n",
 			thisenv->env_id, uvpt[PGNUM(p)], n, p->p_rpos, p->p_wpos);
 
 	buf = vbuf;
 	for (i = 0; i < n; i++) {
-  801ef9:	83 c7 01             	add    $0x1,%edi
-  801efc:	3b 7d 10             	cmp    0x10(%ebp),%edi
-  801eff:	74 13                	je     801f14 <devpipe_write+0x80>
+  801f09:	83 c7 01             	add    $0x1,%edi
+  801f0c:	3b 7d 10             	cmp    0x10(%ebp),%edi
+  801f0f:	74 13                	je     801f24 <devpipe_write+0x80>
 		while (p->p_wpos >= p->p_rpos + sizeof(p->p_buf)) {
-  801f01:	8b 43 04             	mov    0x4(%ebx),%eax
-  801f04:	8b 0b                	mov    (%ebx),%ecx
-  801f06:	8d 51 20             	lea    0x20(%ecx),%edx
-  801f09:	39 d0                	cmp    %edx,%eax
-  801f0b:	73 aa                	jae    801eb7 <devpipe_write+0x23>
-  801f0d:	eb c6                	jmp    801ed5 <devpipe_write+0x41>
+  801f11:	8b 43 04             	mov    0x4(%ebx),%eax
+  801f14:	8b 0b                	mov    (%ebx),%ecx
+  801f16:	8d 51 20             	lea    0x20(%ecx),%edx
+  801f19:	39 d0                	cmp    %edx,%eax
+  801f1b:	73 aa                	jae    801ec7 <devpipe_write+0x23>
+  801f1d:	eb c6                	jmp    801ee5 <devpipe_write+0x41>
 	if (debug)
 		cprintf("[%08x] devpipe_write %08x %d rpos %d wpos %d\n",
 			thisenv->env_id, uvpt[PGNUM(p)], n, p->p_rpos, p->p_wpos);
 
 	buf = vbuf;
 	for (i = 0; i < n; i++) {
-  801f0f:	bf 00 00 00 00       	mov    $0x0,%edi
+  801f1f:	bf 00 00 00 00       	mov    $0x0,%edi
 		// wait to increment wpos until the byte is stored!
 		p->p_buf[p->p_wpos % PIPEBUFSIZ] = buf[i];
 		p->p_wpos++;
 	}
 
 	return i;
-  801f14:	89 f8                	mov    %edi,%eax
-  801f16:	eb 05                	jmp    801f1d <devpipe_write+0x89>
+  801f24:	89 f8                	mov    %edi,%eax
+  801f26:	eb 05                	jmp    801f2d <devpipe_write+0x89>
 			// pipe is full
 			// if all the readers are gone
 			// (it's only writers like us now),
 			// note eof
 			if (_pipeisclosed(fd, p))
 				return 0;
-  801f18:	b8 00 00 00 00       	mov    $0x0,%eax
+  801f28:	b8 00 00 00 00       	mov    $0x0,%eax
 		p->p_buf[p->p_wpos % PIPEBUFSIZ] = buf[i];
 		p->p_wpos++;
 	}
 
 	return i;
 }
-  801f1d:	83 c4 1c             	add    $0x1c,%esp
-  801f20:	5b                   	pop    %ebx
-  801f21:	5e                   	pop    %esi
-  801f22:	5f                   	pop    %edi
-  801f23:	5d                   	pop    %ebp
-  801f24:	c3                   	ret    
+  801f2d:	83 c4 1c             	add    $0x1c,%esp
+  801f30:	5b                   	pop    %ebx
+  801f31:	5e                   	pop    %esi
+  801f32:	5f                   	pop    %edi
+  801f33:	5d                   	pop    %ebp
+  801f34:	c3                   	ret    
 
-00801f25 <devpipe_read>:
+00801f35 <devpipe_read>:
 	return _pipeisclosed(fd, p);
 }
 
 static ssize_t
 devpipe_read(struct Fd *fd, void *vbuf, size_t n)
 {
-  801f25:	55                   	push   %ebp
-  801f26:	89 e5                	mov    %esp,%ebp
-  801f28:	57                   	push   %edi
-  801f29:	56                   	push   %esi
-  801f2a:	53                   	push   %ebx
-  801f2b:	83 ec 1c             	sub    $0x1c,%esp
-  801f2e:	8b 7d 08             	mov    0x8(%ebp),%edi
+  801f35:	55                   	push   %ebp
+  801f36:	89 e5                	mov    %esp,%ebp
+  801f38:	57                   	push   %edi
+  801f39:	56                   	push   %esi
+  801f3a:	53                   	push   %ebx
+  801f3b:	83 ec 1c             	sub    $0x1c,%esp
+  801f3e:	8b 7d 08             	mov    0x8(%ebp),%edi
 	uint8_t *buf;
 	size_t i;
 	struct Pipe *p;
 
 	p = (struct Pipe*)fd2data(fd);
-  801f31:	89 3c 24             	mov    %edi,(%esp)
-  801f34:	e8 37 f6 ff ff       	call   801570 <fd2data>
+  801f41:	89 3c 24             	mov    %edi,(%esp)
+  801f44:	e8 37 f6 ff ff       	call   801580 <fd2data>
 	if (debug)
 		cprintf("[%08x] devpipe_read %08x %d rpos %d wpos %d\n",
 			thisenv->env_id, uvpt[PGNUM(p)], n, p->p_rpos, p->p_wpos);
 
 	buf = vbuf;
 	for (i = 0; i < n; i++) {
-  801f39:	83 7d 10 00          	cmpl   $0x0,0x10(%ebp)
-  801f3d:	74 54                	je     801f93 <devpipe_read+0x6e>
-  801f3f:	89 c3                	mov    %eax,%ebx
-  801f41:	be 00 00 00 00       	mov    $0x0,%esi
-  801f46:	eb 3e                	jmp    801f86 <devpipe_read+0x61>
+  801f49:	83 7d 10 00          	cmpl   $0x0,0x10(%ebp)
+  801f4d:	74 54                	je     801fa3 <devpipe_read+0x6e>
+  801f4f:	89 c3                	mov    %eax,%ebx
+  801f51:	be 00 00 00 00       	mov    $0x0,%esi
+  801f56:	eb 3e                	jmp    801f96 <devpipe_read+0x61>
 		while (p->p_rpos == p->p_wpos) {
 			// pipe is empty
 			// if we got any data, return it
 			if (i > 0)
 				return i;
-  801f48:	89 f0                	mov    %esi,%eax
-  801f4a:	eb 55                	jmp    801fa1 <devpipe_read+0x7c>
+  801f58:	89 f0                	mov    %esi,%eax
+  801f5a:	eb 55                	jmp    801fb1 <devpipe_read+0x7c>
 			// if all the writers are gone, note eof
 			if (_pipeisclosed(fd, p))
-  801f4c:	89 da                	mov    %ebx,%edx
-  801f4e:	89 f8                	mov    %edi,%eax
-  801f50:	e8 d6 fe ff ff       	call   801e2b <_pipeisclosed>
-  801f55:	85 c0                	test   %eax,%eax
-  801f57:	75 43                	jne    801f9c <devpipe_read+0x77>
+  801f5c:	89 da                	mov    %ebx,%edx
+  801f5e:	89 f8                	mov    %edi,%eax
+  801f60:	e8 d6 fe ff ff       	call   801e3b <_pipeisclosed>
+  801f65:	85 c0                	test   %eax,%eax
+  801f67:	75 43                	jne    801fac <devpipe_read+0x77>
 				return 0;
 			// yield and see what happens
 			if (debug)
 				cprintf("devpipe_read yield\n");
 			sys_yield();
-  801f59:	e8 2c f0 ff ff       	call   800f8a <sys_yield>
+  801f69:	e8 1c f0 ff ff       	call   800f8a <sys_yield>
 		cprintf("[%08x] devpipe_read %08x %d rpos %d wpos %d\n",
 			thisenv->env_id, uvpt[PGNUM(p)], n, p->p_rpos, p->p_wpos);
 
 	buf = vbuf;
 	for (i = 0; i < n; i++) {
 		while (p->p_rpos == p->p_wpos) {
-  801f5e:	8b 03                	mov    (%ebx),%eax
-  801f60:	3b 43 04             	cmp    0x4(%ebx),%eax
-  801f63:	74 e7                	je     801f4c <devpipe_read+0x27>
+  801f6e:	8b 03                	mov    (%ebx),%eax
+  801f70:	3b 43 04             	cmp    0x4(%ebx),%eax
+  801f73:	74 e7                	je     801f5c <devpipe_read+0x27>
 				cprintf("devpipe_read yield\n");
 			sys_yield();
 		}
 		// there's a byte.  take it.
 		// wait to increment rpos until the byte is taken!
 		buf[i] = p->p_buf[p->p_rpos % PIPEBUFSIZ];
-  801f65:	99                   	cltd   
-  801f66:	c1 ea 1b             	shr    $0x1b,%edx
-  801f69:	01 d0                	add    %edx,%eax
-  801f6b:	83 e0 1f             	and    $0x1f,%eax
-  801f6e:	29 d0                	sub    %edx,%eax
-  801f70:	0f b6 44 03 08       	movzbl 0x8(%ebx,%eax,1),%eax
-  801f75:	8b 4d 0c             	mov    0xc(%ebp),%ecx
-  801f78:	88 04 31             	mov    %al,(%ecx,%esi,1)
+  801f75:	99                   	cltd   
+  801f76:	c1 ea 1b             	shr    $0x1b,%edx
+  801f79:	01 d0                	add    %edx,%eax
+  801f7b:	83 e0 1f             	and    $0x1f,%eax
+  801f7e:	29 d0                	sub    %edx,%eax
+  801f80:	0f b6 44 03 08       	movzbl 0x8(%ebx,%eax,1),%eax
+  801f85:	8b 4d 0c             	mov    0xc(%ebp),%ecx
+  801f88:	88 04 31             	mov    %al,(%ecx,%esi,1)
 		p->p_rpos++;
-  801f7b:	83 03 01             	addl   $0x1,(%ebx)
+  801f8b:	83 03 01             	addl   $0x1,(%ebx)
 	if (debug)
 		cprintf("[%08x] devpipe_read %08x %d rpos %d wpos %d\n",
 			thisenv->env_id, uvpt[PGNUM(p)], n, p->p_rpos, p->p_wpos);
 
 	buf = vbuf;
 	for (i = 0; i < n; i++) {
-  801f7e:	83 c6 01             	add    $0x1,%esi
-  801f81:	3b 75 10             	cmp    0x10(%ebp),%esi
-  801f84:	74 12                	je     801f98 <devpipe_read+0x73>
+  801f8e:	83 c6 01             	add    $0x1,%esi
+  801f91:	3b 75 10             	cmp    0x10(%ebp),%esi
+  801f94:	74 12                	je     801fa8 <devpipe_read+0x73>
 		while (p->p_rpos == p->p_wpos) {
-  801f86:	8b 03                	mov    (%ebx),%eax
-  801f88:	3b 43 04             	cmp    0x4(%ebx),%eax
-  801f8b:	75 d8                	jne    801f65 <devpipe_read+0x40>
+  801f96:	8b 03                	mov    (%ebx),%eax
+  801f98:	3b 43 04             	cmp    0x4(%ebx),%eax
+  801f9b:	75 d8                	jne    801f75 <devpipe_read+0x40>
 			// pipe is empty
 			// if we got any data, return it
 			if (i > 0)
-  801f8d:	85 f6                	test   %esi,%esi
-  801f8f:	75 b7                	jne    801f48 <devpipe_read+0x23>
-  801f91:	eb b9                	jmp    801f4c <devpipe_read+0x27>
+  801f9d:	85 f6                	test   %esi,%esi
+  801f9f:	75 b7                	jne    801f58 <devpipe_read+0x23>
+  801fa1:	eb b9                	jmp    801f5c <devpipe_read+0x27>
 	if (debug)
 		cprintf("[%08x] devpipe_read %08x %d rpos %d wpos %d\n",
 			thisenv->env_id, uvpt[PGNUM(p)], n, p->p_rpos, p->p_wpos);
 
 	buf = vbuf;
 	for (i = 0; i < n; i++) {
-  801f93:	be 00 00 00 00       	mov    $0x0,%esi
+  801fa3:	be 00 00 00 00       	mov    $0x0,%esi
 		// there's a byte.  take it.
 		// wait to increment rpos until the byte is taken!
 		buf[i] = p->p_buf[p->p_rpos % PIPEBUFSIZ];
 		p->p_rpos++;
 	}
 	return i;
-  801f98:	89 f0                	mov    %esi,%eax
-  801f9a:	eb 05                	jmp    801fa1 <devpipe_read+0x7c>
+  801fa8:	89 f0                	mov    %esi,%eax
+  801faa:	eb 05                	jmp    801fb1 <devpipe_read+0x7c>
 			// if we got any data, return it
 			if (i > 0)
 				return i;
 			// if all the writers are gone, note eof
 			if (_pipeisclosed(fd, p))
 				return 0;
-  801f9c:	b8 00 00 00 00       	mov    $0x0,%eax
+  801fac:	b8 00 00 00 00       	mov    $0x0,%eax
 		// wait to increment rpos until the byte is taken!
 		buf[i] = p->p_buf[p->p_rpos % PIPEBUFSIZ];
 		p->p_rpos++;
 	}
 	return i;
 }
-  801fa1:	83 c4 1c             	add    $0x1c,%esp
-  801fa4:	5b                   	pop    %ebx
-  801fa5:	5e                   	pop    %esi
-  801fa6:	5f                   	pop    %edi
-  801fa7:	5d                   	pop    %ebp
-  801fa8:	c3                   	ret    
+  801fb1:	83 c4 1c             	add    $0x1c,%esp
+  801fb4:	5b                   	pop    %ebx
+  801fb5:	5e                   	pop    %esi
+  801fb6:	5f                   	pop    %edi
+  801fb7:	5d                   	pop    %ebp
+  801fb8:	c3                   	ret    
 
-00801fa9 <pipe>:
+00801fb9 <pipe>:
 	uint8_t p_buf[PIPEBUFSIZ];	// data buffer
 };
 
 int
 pipe(int pfd[2])
 {
-  801fa9:	55                   	push   %ebp
-  801faa:	89 e5                	mov    %esp,%ebp
-  801fac:	56                   	push   %esi
-  801fad:	53                   	push   %ebx
-  801fae:	83 ec 30             	sub    $0x30,%esp
+  801fb9:	55                   	push   %ebp
+  801fba:	89 e5                	mov    %esp,%ebp
+  801fbc:	56                   	push   %esi
+  801fbd:	53                   	push   %ebx
+  801fbe:	83 ec 30             	sub    $0x30,%esp
 	int r;
 	struct Fd *fd0, *fd1;
 	void *va;
 
 	// allocate the file descriptor table entries
 	if ((r = fd_alloc(&fd0)) < 0
-  801fb1:	8d 45 f4             	lea    -0xc(%ebp),%eax
-  801fb4:	89 04 24             	mov    %eax,(%esp)
-  801fb7:	e8 cb f5 ff ff       	call   801587 <fd_alloc>
-  801fbc:	89 c2                	mov    %eax,%edx
-  801fbe:	85 d2                	test   %edx,%edx
-  801fc0:	0f 88 4d 01 00 00    	js     802113 <pipe+0x16a>
+  801fc1:	8d 45 f4             	lea    -0xc(%ebp),%eax
+  801fc4:	89 04 24             	mov    %eax,(%esp)
+  801fc7:	e8 cb f5 ff ff       	call   801597 <fd_alloc>
+  801fcc:	89 c2                	mov    %eax,%edx
+  801fce:	85 d2                	test   %edx,%edx
+  801fd0:	0f 88 4d 01 00 00    	js     802123 <pipe+0x16a>
 	    || (r = sys_page_alloc(0, fd0, PTE_P|PTE_W|PTE_U|PTE_SHARE)) < 0)
-  801fc6:	c7 44 24 08 07 04 00 	movl   $0x407,0x8(%esp)
-  801fcd:	00 
-  801fce:	8b 45 f4             	mov    -0xc(%ebp),%eax
-  801fd1:	89 44 24 04          	mov    %eax,0x4(%esp)
-  801fd5:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
-  801fdc:	e8 c8 ef ff ff       	call   800fa9 <sys_page_alloc>
-  801fe1:	89 c2                	mov    %eax,%edx
-  801fe3:	85 d2                	test   %edx,%edx
-  801fe5:	0f 88 28 01 00 00    	js     802113 <pipe+0x16a>
+  801fd6:	c7 44 24 08 07 04 00 	movl   $0x407,0x8(%esp)
+  801fdd:	00 
+  801fde:	8b 45 f4             	mov    -0xc(%ebp),%eax
+  801fe1:	89 44 24 04          	mov    %eax,0x4(%esp)
+  801fe5:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
+  801fec:	e8 b8 ef ff ff       	call   800fa9 <sys_page_alloc>
+  801ff1:	89 c2                	mov    %eax,%edx
+  801ff3:	85 d2                	test   %edx,%edx
+  801ff5:	0f 88 28 01 00 00    	js     802123 <pipe+0x16a>
 		goto err;
 
 	if ((r = fd_alloc(&fd1)) < 0
-  801feb:	8d 45 f0             	lea    -0x10(%ebp),%eax
-  801fee:	89 04 24             	mov    %eax,(%esp)
-  801ff1:	e8 91 f5 ff ff       	call   801587 <fd_alloc>
-  801ff6:	89 c3                	mov    %eax,%ebx
-  801ff8:	85 c0                	test   %eax,%eax
-  801ffa:	0f 88 fe 00 00 00    	js     8020fe <pipe+0x155>
+  801ffb:	8d 45 f0             	lea    -0x10(%ebp),%eax
+  801ffe:	89 04 24             	mov    %eax,(%esp)
+  802001:	e8 91 f5 ff ff       	call   801597 <fd_alloc>
+  802006:	89 c3                	mov    %eax,%ebx
+  802008:	85 c0                	test   %eax,%eax
+  80200a:	0f 88 fe 00 00 00    	js     80210e <pipe+0x155>
 	    || (r = sys_page_alloc(0, fd1, PTE_P|PTE_W|PTE_U|PTE_SHARE)) < 0)
-  802000:	c7 44 24 08 07 04 00 	movl   $0x407,0x8(%esp)
-  802007:	00 
-  802008:	8b 45 f0             	mov    -0x10(%ebp),%eax
-  80200b:	89 44 24 04          	mov    %eax,0x4(%esp)
-  80200f:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
-  802016:	e8 8e ef ff ff       	call   800fa9 <sys_page_alloc>
-  80201b:	89 c3                	mov    %eax,%ebx
-  80201d:	85 c0                	test   %eax,%eax
-  80201f:	0f 88 d9 00 00 00    	js     8020fe <pipe+0x155>
+  802010:	c7 44 24 08 07 04 00 	movl   $0x407,0x8(%esp)
+  802017:	00 
+  802018:	8b 45 f0             	mov    -0x10(%ebp),%eax
+  80201b:	89 44 24 04          	mov    %eax,0x4(%esp)
+  80201f:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
+  802026:	e8 7e ef ff ff       	call   800fa9 <sys_page_alloc>
+  80202b:	89 c3                	mov    %eax,%ebx
+  80202d:	85 c0                	test   %eax,%eax
+  80202f:	0f 88 d9 00 00 00    	js     80210e <pipe+0x155>
 		goto err1;
 
 	// allocate the pipe structure as first data page in both
 	va = fd2data(fd0);
-  802025:	8b 45 f4             	mov    -0xc(%ebp),%eax
-  802028:	89 04 24             	mov    %eax,(%esp)
-  80202b:	e8 40 f5 ff ff       	call   801570 <fd2data>
-  802030:	89 c6                	mov    %eax,%esi
+  802035:	8b 45 f4             	mov    -0xc(%ebp),%eax
+  802038:	89 04 24             	mov    %eax,(%esp)
+  80203b:	e8 40 f5 ff ff       	call   801580 <fd2data>
+  802040:	89 c6                	mov    %eax,%esi
 	if ((r = sys_page_alloc(0, va, PTE_P|PTE_W|PTE_U|PTE_SHARE)) < 0)
-  802032:	c7 44 24 08 07 04 00 	movl   $0x407,0x8(%esp)
-  802039:	00 
-  80203a:	89 44 24 04          	mov    %eax,0x4(%esp)
-  80203e:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
-  802045:	e8 5f ef ff ff       	call   800fa9 <sys_page_alloc>
-  80204a:	89 c3                	mov    %eax,%ebx
-  80204c:	85 c0                	test   %eax,%eax
-  80204e:	0f 88 97 00 00 00    	js     8020eb <pipe+0x142>
+  802042:	c7 44 24 08 07 04 00 	movl   $0x407,0x8(%esp)
+  802049:	00 
+  80204a:	89 44 24 04          	mov    %eax,0x4(%esp)
+  80204e:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
+  802055:	e8 4f ef ff ff       	call   800fa9 <sys_page_alloc>
+  80205a:	89 c3                	mov    %eax,%ebx
+  80205c:	85 c0                	test   %eax,%eax
+  80205e:	0f 88 97 00 00 00    	js     8020fb <pipe+0x142>
 		goto err2;
 	if ((r = sys_page_map(0, va, 0, fd2data(fd1), PTE_P|PTE_W|PTE_U|PTE_SHARE)) < 0)
-  802054:	8b 45 f0             	mov    -0x10(%ebp),%eax
-  802057:	89 04 24             	mov    %eax,(%esp)
-  80205a:	e8 11 f5 ff ff       	call   801570 <fd2data>
-  80205f:	c7 44 24 10 07 04 00 	movl   $0x407,0x10(%esp)
-  802066:	00 
-  802067:	89 44 24 0c          	mov    %eax,0xc(%esp)
-  80206b:	c7 44 24 08 00 00 00 	movl   $0x0,0x8(%esp)
-  802072:	00 
-  802073:	89 74 24 04          	mov    %esi,0x4(%esp)
-  802077:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
-  80207e:	e8 7a ef ff ff       	call   800ffd <sys_page_map>
-  802083:	89 c3                	mov    %eax,%ebx
-  802085:	85 c0                	test   %eax,%eax
-  802087:	78 52                	js     8020db <pipe+0x132>
+  802064:	8b 45 f0             	mov    -0x10(%ebp),%eax
+  802067:	89 04 24             	mov    %eax,(%esp)
+  80206a:	e8 11 f5 ff ff       	call   801580 <fd2data>
+  80206f:	c7 44 24 10 07 04 00 	movl   $0x407,0x10(%esp)
+  802076:	00 
+  802077:	89 44 24 0c          	mov    %eax,0xc(%esp)
+  80207b:	c7 44 24 08 00 00 00 	movl   $0x0,0x8(%esp)
+  802082:	00 
+  802083:	89 74 24 04          	mov    %esi,0x4(%esp)
+  802087:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
+  80208e:	e8 6a ef ff ff       	call   800ffd <sys_page_map>
+  802093:	89 c3                	mov    %eax,%ebx
+  802095:	85 c0                	test   %eax,%eax
+  802097:	78 52                	js     8020eb <pipe+0x132>
 		goto err3;
 
 	// set up fd structures
 	fd0->fd_dev_id = devpipe.dev_id;
-  802089:	8b 15 24 30 80 00    	mov    0x803024,%edx
-  80208f:	8b 45 f4             	mov    -0xc(%ebp),%eax
-  802092:	89 10                	mov    %edx,(%eax)
+  802099:	8b 15 24 30 80 00    	mov    0x803024,%edx
+  80209f:	8b 45 f4             	mov    -0xc(%ebp),%eax
+  8020a2:	89 10                	mov    %edx,(%eax)
 	fd0->fd_omode = O_RDONLY;
-  802094:	8b 45 f4             	mov    -0xc(%ebp),%eax
-  802097:	c7 40 08 00 00 00 00 	movl   $0x0,0x8(%eax)
+  8020a4:	8b 45 f4             	mov    -0xc(%ebp),%eax
+  8020a7:	c7 40 08 00 00 00 00 	movl   $0x0,0x8(%eax)
 
 	fd1->fd_dev_id = devpipe.dev_id;
-  80209e:	8b 15 24 30 80 00    	mov    0x803024,%edx
-  8020a4:	8b 45 f0             	mov    -0x10(%ebp),%eax
-  8020a7:	89 10                	mov    %edx,(%eax)
+  8020ae:	8b 15 24 30 80 00    	mov    0x803024,%edx
+  8020b4:	8b 45 f0             	mov    -0x10(%ebp),%eax
+  8020b7:	89 10                	mov    %edx,(%eax)
 	fd1->fd_omode = O_WRONLY;
-  8020a9:	8b 45 f0             	mov    -0x10(%ebp),%eax
-  8020ac:	c7 40 08 01 00 00 00 	movl   $0x1,0x8(%eax)
+  8020b9:	8b 45 f0             	mov    -0x10(%ebp),%eax
+  8020bc:	c7 40 08 01 00 00 00 	movl   $0x1,0x8(%eax)
 
 	if (debug)
 		cprintf("[%08x] pipecreate %08x\n", thisenv->env_id, uvpt[PGNUM(va)]);
 
 	pfd[0] = fd2num(fd0);
-  8020b3:	8b 45 f4             	mov    -0xc(%ebp),%eax
-  8020b6:	89 04 24             	mov    %eax,(%esp)
-  8020b9:	e8 a2 f4 ff ff       	call   801560 <fd2num>
-  8020be:	8b 4d 08             	mov    0x8(%ebp),%ecx
-  8020c1:	89 01                	mov    %eax,(%ecx)
-	pfd[1] = fd2num(fd1);
-  8020c3:	8b 45 f0             	mov    -0x10(%ebp),%eax
+  8020c3:	8b 45 f4             	mov    -0xc(%ebp),%eax
   8020c6:	89 04 24             	mov    %eax,(%esp)
-  8020c9:	e8 92 f4 ff ff       	call   801560 <fd2num>
+  8020c9:	e8 a2 f4 ff ff       	call   801570 <fd2num>
   8020ce:	8b 4d 08             	mov    0x8(%ebp),%ecx
-  8020d1:	89 41 04             	mov    %eax,0x4(%ecx)
+  8020d1:	89 01                	mov    %eax,(%ecx)
+	pfd[1] = fd2num(fd1);
+  8020d3:	8b 45 f0             	mov    -0x10(%ebp),%eax
+  8020d6:	89 04 24             	mov    %eax,(%esp)
+  8020d9:	e8 92 f4 ff ff       	call   801570 <fd2num>
+  8020de:	8b 4d 08             	mov    0x8(%ebp),%ecx
+  8020e1:	89 41 04             	mov    %eax,0x4(%ecx)
 	return 0;
-  8020d4:	b8 00 00 00 00       	mov    $0x0,%eax
-  8020d9:	eb 38                	jmp    802113 <pipe+0x16a>
+  8020e4:	b8 00 00 00 00       	mov    $0x0,%eax
+  8020e9:	eb 38                	jmp    802123 <pipe+0x16a>
 
     err3:
 	sys_page_unmap(0, va);
-  8020db:	89 74 24 04          	mov    %esi,0x4(%esp)
-  8020df:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
-  8020e6:	e8 65 ef ff ff       	call   801050 <sys_page_unmap>
+  8020eb:	89 74 24 04          	mov    %esi,0x4(%esp)
+  8020ef:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
+  8020f6:	e8 55 ef ff ff       	call   801050 <sys_page_unmap>
     err2:
 	sys_page_unmap(0, fd1);
-  8020eb:	8b 45 f0             	mov    -0x10(%ebp),%eax
-  8020ee:	89 44 24 04          	mov    %eax,0x4(%esp)
-  8020f2:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
-  8020f9:	e8 52 ef ff ff       	call   801050 <sys_page_unmap>
+  8020fb:	8b 45 f0             	mov    -0x10(%ebp),%eax
+  8020fe:	89 44 24 04          	mov    %eax,0x4(%esp)
+  802102:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
+  802109:	e8 42 ef ff ff       	call   801050 <sys_page_unmap>
     err1:
 	sys_page_unmap(0, fd0);
-  8020fe:	8b 45 f4             	mov    -0xc(%ebp),%eax
-  802101:	89 44 24 04          	mov    %eax,0x4(%esp)
-  802105:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
-  80210c:	e8 3f ef ff ff       	call   801050 <sys_page_unmap>
-  802111:	89 d8                	mov    %ebx,%eax
+  80210e:	8b 45 f4             	mov    -0xc(%ebp),%eax
+  802111:	89 44 24 04          	mov    %eax,0x4(%esp)
+  802115:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
+  80211c:	e8 2f ef ff ff       	call   801050 <sys_page_unmap>
+  802121:	89 d8                	mov    %ebx,%eax
     err:
 	return r;
 }
-  802113:	83 c4 30             	add    $0x30,%esp
-  802116:	5b                   	pop    %ebx
-  802117:	5e                   	pop    %esi
-  802118:	5d                   	pop    %ebp
-  802119:	c3                   	ret    
+  802123:	83 c4 30             	add    $0x30,%esp
+  802126:	5b                   	pop    %ebx
+  802127:	5e                   	pop    %esi
+  802128:	5d                   	pop    %ebp
+  802129:	c3                   	ret    
 
-0080211a <pipeisclosed>:
+0080212a <pipeisclosed>:
 	}
 }
 
 int
 pipeisclosed(int fdnum)
 {
-  80211a:	55                   	push   %ebp
-  80211b:	89 e5                	mov    %esp,%ebp
-  80211d:	83 ec 28             	sub    $0x28,%esp
+  80212a:	55                   	push   %ebp
+  80212b:	89 e5                	mov    %esp,%ebp
+  80212d:	83 ec 28             	sub    $0x28,%esp
 	struct Fd *fd;
 	struct Pipe *p;
 	int r;
 
 	if ((r = fd_lookup(fdnum, &fd)) < 0)
-  802120:	8d 45 f4             	lea    -0xc(%ebp),%eax
-  802123:	89 44 24 04          	mov    %eax,0x4(%esp)
-  802127:	8b 45 08             	mov    0x8(%ebp),%eax
-  80212a:	89 04 24             	mov    %eax,(%esp)
-  80212d:	e8 c9 f4 ff ff       	call   8015fb <fd_lookup>
-  802132:	89 c2                	mov    %eax,%edx
-  802134:	85 d2                	test   %edx,%edx
-  802136:	78 15                	js     80214d <pipeisclosed+0x33>
+  802130:	8d 45 f4             	lea    -0xc(%ebp),%eax
+  802133:	89 44 24 04          	mov    %eax,0x4(%esp)
+  802137:	8b 45 08             	mov    0x8(%ebp),%eax
+  80213a:	89 04 24             	mov    %eax,(%esp)
+  80213d:	e8 c9 f4 ff ff       	call   80160b <fd_lookup>
+  802142:	89 c2                	mov    %eax,%edx
+  802144:	85 d2                	test   %edx,%edx
+  802146:	78 15                	js     80215d <pipeisclosed+0x33>
 		return r;
 	p = (struct Pipe*) fd2data(fd);
-  802138:	8b 45 f4             	mov    -0xc(%ebp),%eax
-  80213b:	89 04 24             	mov    %eax,(%esp)
-  80213e:	e8 2d f4 ff ff       	call   801570 <fd2data>
+  802148:	8b 45 f4             	mov    -0xc(%ebp),%eax
+  80214b:	89 04 24             	mov    %eax,(%esp)
+  80214e:	e8 2d f4 ff ff       	call   801580 <fd2data>
 	return _pipeisclosed(fd, p);
-  802143:	89 c2                	mov    %eax,%edx
-  802145:	8b 45 f4             	mov    -0xc(%ebp),%eax
-  802148:	e8 de fc ff ff       	call   801e2b <_pipeisclosed>
+  802153:	89 c2                	mov    %eax,%edx
+  802155:	8b 45 f4             	mov    -0xc(%ebp),%eax
+  802158:	e8 de fc ff ff       	call   801e3b <_pipeisclosed>
 }
-  80214d:	c9                   	leave  
-  80214e:	c3                   	ret    
+  80215d:	c9                   	leave  
+  80215e:	c3                   	ret    
 
-0080214f <wait>:
+0080215f <wait>:
 #include <inc/lib.h>
 
 // Waits until 'envid' exits.
 void
 wait(envid_t envid)
 {
-  80214f:	55                   	push   %ebp
-  802150:	89 e5                	mov    %esp,%ebp
-  802152:	56                   	push   %esi
-  802153:	53                   	push   %ebx
-  802154:	83 ec 10             	sub    $0x10,%esp
-  802157:	8b 45 08             	mov    0x8(%ebp),%eax
+  80215f:	55                   	push   %ebp
+  802160:	89 e5                	mov    %esp,%ebp
+  802162:	56                   	push   %esi
+  802163:	53                   	push   %ebx
+  802164:	83 ec 10             	sub    $0x10,%esp
+  802167:	8b 45 08             	mov    0x8(%ebp),%eax
 	const volatile struct Env *e;
 
 	assert(envid != 0);
-  80215a:	85 c0                	test   %eax,%eax
-  80215c:	75 24                	jne    802182 <wait+0x33>
-  80215e:	c7 44 24 0c c8 2e 80 	movl   $0x802ec8,0xc(%esp)
-  802165:	00 
-  802166:	c7 44 24 08 7d 2e 80 	movl   $0x802e7d,0x8(%esp)
-  80216d:	00 
-  80216e:	c7 44 24 04 09 00 00 	movl   $0x9,0x4(%esp)
+  80216a:	85 c0                	test   %eax,%eax
+  80216c:	75 24                	jne    802192 <wait+0x33>
+  80216e:	c7 44 24 0c e8 2e 80 	movl   $0x802ee8,0xc(%esp)
   802175:	00 
-  802176:	c7 04 24 d3 2e 80 00 	movl   $0x802ed3,(%esp)
-  80217d:	e8 24 e2 ff ff       	call   8003a6 <_panic>
+  802176:	c7 44 24 08 9d 2e 80 	movl   $0x802e9d,0x8(%esp)
+  80217d:	00 
+  80217e:	c7 44 24 04 09 00 00 	movl   $0x9,0x4(%esp)
+  802185:	00 
+  802186:	c7 04 24 f3 2e 80 00 	movl   $0x802ef3,(%esp)
+  80218d:	e8 14 e2 ff ff       	call   8003a6 <_panic>
 	e = &envs[ENVX(envid)];
-  802182:	89 c3                	mov    %eax,%ebx
-  802184:	81 e3 ff 03 00 00    	and    $0x3ff,%ebx
-  80218a:	6b db 7c             	imul   $0x7c,%ebx,%ebx
-  80218d:	81 c3 00 00 c0 ee    	add    $0xeec00000,%ebx
+  802192:	89 c3                	mov    %eax,%ebx
+  802194:	81 e3 ff 03 00 00    	and    $0x3ff,%ebx
+  80219a:	6b db 7c             	imul   $0x7c,%ebx,%ebx
+  80219d:	81 c3 00 00 c0 ee    	add    $0xeec00000,%ebx
 	while (e->env_id == envid && e->env_status != ENV_FREE)
-  802193:	8b 73 48             	mov    0x48(%ebx),%esi
-  802196:	39 c6                	cmp    %eax,%esi
-  802198:	75 1a                	jne    8021b4 <wait+0x65>
-  80219a:	8b 43 54             	mov    0x54(%ebx),%eax
-  80219d:	85 c0                	test   %eax,%eax
-  80219f:	74 13                	je     8021b4 <wait+0x65>
+  8021a3:	8b 73 48             	mov    0x48(%ebx),%esi
+  8021a6:	39 c6                	cmp    %eax,%esi
+  8021a8:	75 1a                	jne    8021c4 <wait+0x65>
+  8021aa:	8b 43 54             	mov    0x54(%ebx),%eax
+  8021ad:	85 c0                	test   %eax,%eax
+  8021af:	74 13                	je     8021c4 <wait+0x65>
 		sys_yield();
-  8021a1:	e8 e4 ed ff ff       	call   800f8a <sys_yield>
+  8021b1:	e8 d4 ed ff ff       	call   800f8a <sys_yield>
 {
 	const volatile struct Env *e;
 
 	assert(envid != 0);
 	e = &envs[ENVX(envid)];
 	while (e->env_id == envid && e->env_status != ENV_FREE)
-  8021a6:	8b 43 48             	mov    0x48(%ebx),%eax
-  8021a9:	39 f0                	cmp    %esi,%eax
-  8021ab:	75 07                	jne    8021b4 <wait+0x65>
-  8021ad:	8b 43 54             	mov    0x54(%ebx),%eax
-  8021b0:	85 c0                	test   %eax,%eax
-  8021b2:	75 ed                	jne    8021a1 <wait+0x52>
+  8021b6:	8b 43 48             	mov    0x48(%ebx),%eax
+  8021b9:	39 f0                	cmp    %esi,%eax
+  8021bb:	75 07                	jne    8021c4 <wait+0x65>
+  8021bd:	8b 43 54             	mov    0x54(%ebx),%eax
+  8021c0:	85 c0                	test   %eax,%eax
+  8021c2:	75 ed                	jne    8021b1 <wait+0x52>
 		sys_yield();
 }
-  8021b4:	83 c4 10             	add    $0x10,%esp
-  8021b7:	5b                   	pop    %ebx
-  8021b8:	5e                   	pop    %esi
-  8021b9:	5d                   	pop    %ebp
-  8021ba:	c3                   	ret    
-  8021bb:	66 90                	xchg   %ax,%ax
-  8021bd:	66 90                	xchg   %ax,%ax
-  8021bf:	90                   	nop
+  8021c4:	83 c4 10             	add    $0x10,%esp
+  8021c7:	5b                   	pop    %ebx
+  8021c8:	5e                   	pop    %esi
+  8021c9:	5d                   	pop    %ebp
+  8021ca:	c3                   	ret    
+  8021cb:	66 90                	xchg   %ax,%ax
+  8021cd:	66 90                	xchg   %ax,%ax
+  8021cf:	90                   	nop
 
-008021c0 <devcons_close>:
+008021d0 <devcons_close>:
 	return tot;
 }
 
 static int
 devcons_close(struct Fd *fd)
 {
-  8021c0:	55                   	push   %ebp
-  8021c1:	89 e5                	mov    %esp,%ebp
+  8021d0:	55                   	push   %ebp
+  8021d1:	89 e5                	mov    %esp,%ebp
 	USED(fd);
 
 	return 0;
 }
-  8021c3:	b8 00 00 00 00       	mov    $0x0,%eax
-  8021c8:	5d                   	pop    %ebp
-  8021c9:	c3                   	ret    
+  8021d3:	b8 00 00 00 00       	mov    $0x0,%eax
+  8021d8:	5d                   	pop    %ebp
+  8021d9:	c3                   	ret    
 
-008021ca <devcons_stat>:
+008021da <devcons_stat>:
 
 static int
 devcons_stat(struct Fd *fd, struct Stat *stat)
 {
-  8021ca:	55                   	push   %ebp
-  8021cb:	89 e5                	mov    %esp,%ebp
-  8021cd:	83 ec 18             	sub    $0x18,%esp
+  8021da:	55                   	push   %ebp
+  8021db:	89 e5                	mov    %esp,%ebp
+  8021dd:	83 ec 18             	sub    $0x18,%esp
 	strcpy(stat->st_name, "<cons>");
-  8021d0:	c7 44 24 04 de 2e 80 	movl   $0x802ede,0x4(%esp)
-  8021d7:	00 
-  8021d8:	8b 45 0c             	mov    0xc(%ebp),%eax
-  8021db:	89 04 24             	mov    %eax,(%esp)
-  8021de:	e8 18 e9 ff ff       	call   800afb <strcpy>
+  8021e0:	c7 44 24 04 fe 2e 80 	movl   $0x802efe,0x4(%esp)
+  8021e7:	00 
+  8021e8:	8b 45 0c             	mov    0xc(%ebp),%eax
+  8021eb:	89 04 24             	mov    %eax,(%esp)
+  8021ee:	e8 08 e9 ff ff       	call   800afb <strcpy>
 	return 0;
 }
-  8021e3:	b8 00 00 00 00       	mov    $0x0,%eax
-  8021e8:	c9                   	leave  
-  8021e9:	c3                   	ret    
+  8021f3:	b8 00 00 00 00       	mov    $0x0,%eax
+  8021f8:	c9                   	leave  
+  8021f9:	c3                   	ret    
 
-008021ea <devcons_write>:
+008021fa <devcons_write>:
 	return 1;
 }
 
 static ssize_t
 devcons_write(struct Fd *fd, const void *vbuf, size_t n)
 {
-  8021ea:	55                   	push   %ebp
-  8021eb:	89 e5                	mov    %esp,%ebp
-  8021ed:	57                   	push   %edi
-  8021ee:	56                   	push   %esi
-  8021ef:	53                   	push   %ebx
-  8021f0:	81 ec 9c 00 00 00    	sub    $0x9c,%esp
+  8021fa:	55                   	push   %ebp
+  8021fb:	89 e5                	mov    %esp,%ebp
+  8021fd:	57                   	push   %edi
+  8021fe:	56                   	push   %esi
+  8021ff:	53                   	push   %ebx
+  802200:	81 ec 9c 00 00 00    	sub    $0x9c,%esp
 	int tot, m;
 	char buf[128];
 
 	// mistake: have to nul-terminate arg to sys_cputs,
 	// so we have to copy vbuf into buf in chunks and nul-terminate.
 	for (tot = 0; tot < n; tot += m) {
-  8021f6:	83 7d 10 00          	cmpl   $0x0,0x10(%ebp)
-  8021fa:	74 4a                	je     802246 <devcons_write+0x5c>
-  8021fc:	b8 00 00 00 00       	mov    $0x0,%eax
-  802201:	bb 00 00 00 00       	mov    $0x0,%ebx
+  802206:	83 7d 10 00          	cmpl   $0x0,0x10(%ebp)
+  80220a:	74 4a                	je     802256 <devcons_write+0x5c>
+  80220c:	b8 00 00 00 00       	mov    $0x0,%eax
+  802211:	bb 00 00 00 00       	mov    $0x0,%ebx
 		m = n - tot;
 		if (m > sizeof(buf) - 1)
 			m = sizeof(buf) - 1;
 		memmove(buf, (char*)vbuf + tot, m);
-  802206:	8d bd 68 ff ff ff    	lea    -0x98(%ebp),%edi
+  802216:	8d bd 68 ff ff ff    	lea    -0x98(%ebp),%edi
 	char buf[128];
 
 	// mistake: have to nul-terminate arg to sys_cputs,
 	// so we have to copy vbuf into buf in chunks and nul-terminate.
 	for (tot = 0; tot < n; tot += m) {
 		m = n - tot;
-  80220c:	8b 75 10             	mov    0x10(%ebp),%esi
-  80220f:	29 c6                	sub    %eax,%esi
+  80221c:	8b 75 10             	mov    0x10(%ebp),%esi
+  80221f:	29 c6                	sub    %eax,%esi
 		if (m > sizeof(buf) - 1)
-  802211:	83 fe 7f             	cmp    $0x7f,%esi
+  802221:	83 fe 7f             	cmp    $0x7f,%esi
 	char buf[128];
 
 	// mistake: have to nul-terminate arg to sys_cputs,
 	// so we have to copy vbuf into buf in chunks and nul-terminate.
 	for (tot = 0; tot < n; tot += m) {
 		m = n - tot;
-  802214:	ba 7f 00 00 00       	mov    $0x7f,%edx
-  802219:	0f 47 f2             	cmova  %edx,%esi
+  802224:	ba 7f 00 00 00       	mov    $0x7f,%edx
+  802229:	0f 47 f2             	cmova  %edx,%esi
 		if (m > sizeof(buf) - 1)
 			m = sizeof(buf) - 1;
 		memmove(buf, (char*)vbuf + tot, m);
-  80221c:	89 74 24 08          	mov    %esi,0x8(%esp)
-  802220:	03 45 0c             	add    0xc(%ebp),%eax
-  802223:	89 44 24 04          	mov    %eax,0x4(%esp)
-  802227:	89 3c 24             	mov    %edi,(%esp)
-  80222a:	e8 c7 ea ff ff       	call   800cf6 <memmove>
+  80222c:	89 74 24 08          	mov    %esi,0x8(%esp)
+  802230:	03 45 0c             	add    0xc(%ebp),%eax
+  802233:	89 44 24 04          	mov    %eax,0x4(%esp)
+  802237:	89 3c 24             	mov    %edi,(%esp)
+  80223a:	e8 b7 ea ff ff       	call   800cf6 <memmove>
 		sys_cputs(buf, m);
-  80222f:	89 74 24 04          	mov    %esi,0x4(%esp)
-  802233:	89 3c 24             	mov    %edi,(%esp)
-  802236:	e8 a1 ec ff ff       	call   800edc <sys_cputs>
+  80223f:	89 74 24 04          	mov    %esi,0x4(%esp)
+  802243:	89 3c 24             	mov    %edi,(%esp)
+  802246:	e8 91 ec ff ff       	call   800edc <sys_cputs>
 	int tot, m;
 	char buf[128];
 
 	// mistake: have to nul-terminate arg to sys_cputs,
 	// so we have to copy vbuf into buf in chunks and nul-terminate.
 	for (tot = 0; tot < n; tot += m) {
-  80223b:	01 f3                	add    %esi,%ebx
-  80223d:	89 d8                	mov    %ebx,%eax
-  80223f:	3b 5d 10             	cmp    0x10(%ebp),%ebx
-  802242:	72 c8                	jb     80220c <devcons_write+0x22>
-  802244:	eb 05                	jmp    80224b <devcons_write+0x61>
-  802246:	bb 00 00 00 00       	mov    $0x0,%ebx
+  80224b:	01 f3                	add    %esi,%ebx
+  80224d:	89 d8                	mov    %ebx,%eax
+  80224f:	3b 5d 10             	cmp    0x10(%ebp),%ebx
+  802252:	72 c8                	jb     80221c <devcons_write+0x22>
+  802254:	eb 05                	jmp    80225b <devcons_write+0x61>
+  802256:	bb 00 00 00 00       	mov    $0x0,%ebx
 			m = sizeof(buf) - 1;
 		memmove(buf, (char*)vbuf + tot, m);
 		sys_cputs(buf, m);
 	}
 	return tot;
 }
-  80224b:	89 d8                	mov    %ebx,%eax
-  80224d:	81 c4 9c 00 00 00    	add    $0x9c,%esp
-  802253:	5b                   	pop    %ebx
-  802254:	5e                   	pop    %esi
-  802255:	5f                   	pop    %edi
-  802256:	5d                   	pop    %ebp
-  802257:	c3                   	ret    
+  80225b:	89 d8                	mov    %ebx,%eax
+  80225d:	81 c4 9c 00 00 00    	add    $0x9c,%esp
+  802263:	5b                   	pop    %ebx
+  802264:	5e                   	pop    %esi
+  802265:	5f                   	pop    %edi
+  802266:	5d                   	pop    %ebp
+  802267:	c3                   	ret    
 
-00802258 <devcons_read>:
+00802268 <devcons_read>:
 	return fd2num(fd);
 }
 
 static ssize_t
 devcons_read(struct Fd *fd, void *vbuf, size_t n)
 {
-  802258:	55                   	push   %ebp
-  802259:	89 e5                	mov    %esp,%ebp
-  80225b:	83 ec 08             	sub    $0x8,%esp
+  802268:	55                   	push   %ebp
+  802269:	89 e5                	mov    %esp,%ebp
+  80226b:	83 ec 08             	sub    $0x8,%esp
 	int c;
 
 	if (n == 0)
 		return 0;
-  80225e:	b8 00 00 00 00       	mov    $0x0,%eax
+  80226e:	b8 00 00 00 00       	mov    $0x0,%eax
 static ssize_t
 devcons_read(struct Fd *fd, void *vbuf, size_t n)
 {
 	int c;
 
 	if (n == 0)
-  802263:	83 7d 10 00          	cmpl   $0x0,0x10(%ebp)
-  802267:	75 07                	jne    802270 <devcons_read+0x18>
-  802269:	eb 28                	jmp    802293 <devcons_read+0x3b>
+  802273:	83 7d 10 00          	cmpl   $0x0,0x10(%ebp)
+  802277:	75 07                	jne    802280 <devcons_read+0x18>
+  802279:	eb 28                	jmp    8022a3 <devcons_read+0x3b>
 		return 0;
 
 	while ((c = sys_cgetc()) == 0)
 		sys_yield();
-  80226b:	e8 1a ed ff ff       	call   800f8a <sys_yield>
+  80227b:	e8 0a ed ff ff       	call   800f8a <sys_yield>
 	int c;
 
 	if (n == 0)
 		return 0;
 
 	while ((c = sys_cgetc()) == 0)
-  802270:	e8 85 ec ff ff       	call   800efa <sys_cgetc>
-  802275:	85 c0                	test   %eax,%eax
-  802277:	74 f2                	je     80226b <devcons_read+0x13>
+  802280:	e8 75 ec ff ff       	call   800efa <sys_cgetc>
+  802285:	85 c0                	test   %eax,%eax
+  802287:	74 f2                	je     80227b <devcons_read+0x13>
 		sys_yield();
 	if (c < 0)
-  802279:	85 c0                	test   %eax,%eax
-  80227b:	78 16                	js     802293 <devcons_read+0x3b>
+  802289:	85 c0                	test   %eax,%eax
+  80228b:	78 16                	js     8022a3 <devcons_read+0x3b>
 		return c;
 	if (c == 0x04)	// ctl-d is eof
-  80227d:	83 f8 04             	cmp    $0x4,%eax
-  802280:	74 0c                	je     80228e <devcons_read+0x36>
+  80228d:	83 f8 04             	cmp    $0x4,%eax
+  802290:	74 0c                	je     80229e <devcons_read+0x36>
 		return 0;
 	*(char*)vbuf = c;
-  802282:	8b 55 0c             	mov    0xc(%ebp),%edx
-  802285:	88 02                	mov    %al,(%edx)
+  802292:	8b 55 0c             	mov    0xc(%ebp),%edx
+  802295:	88 02                	mov    %al,(%edx)
 	return 1;
-  802287:	b8 01 00 00 00       	mov    $0x1,%eax
-  80228c:	eb 05                	jmp    802293 <devcons_read+0x3b>
+  802297:	b8 01 00 00 00       	mov    $0x1,%eax
+  80229c:	eb 05                	jmp    8022a3 <devcons_read+0x3b>
 	while ((c = sys_cgetc()) == 0)
 		sys_yield();
 	if (c < 0)
 		return c;
 	if (c == 0x04)	// ctl-d is eof
 		return 0;
-  80228e:	b8 00 00 00 00       	mov    $0x0,%eax
+  80229e:	b8 00 00 00 00       	mov    $0x0,%eax
 	*(char*)vbuf = c;
 	return 1;
 }
-  802293:	c9                   	leave  
-  802294:	c3                   	ret    
+  8022a3:	c9                   	leave  
+  8022a4:	c3                   	ret    
 
-00802295 <cputchar>:
+008022a5 <cputchar>:
 #include <inc/string.h>
 #include <inc/lib.h>
 
 void
 cputchar(int ch)
 {
-  802295:	55                   	push   %ebp
-  802296:	89 e5                	mov    %esp,%ebp
-  802298:	83 ec 28             	sub    $0x28,%esp
+  8022a5:	55                   	push   %ebp
+  8022a6:	89 e5                	mov    %esp,%ebp
+  8022a8:	83 ec 28             	sub    $0x28,%esp
 	char c = ch;
-  80229b:	8b 45 08             	mov    0x8(%ebp),%eax
-  80229e:	88 45 f7             	mov    %al,-0x9(%ebp)
+  8022ab:	8b 45 08             	mov    0x8(%ebp),%eax
+  8022ae:	88 45 f7             	mov    %al,-0x9(%ebp)
 
 	// Unlike standard Unix's putchar,
 	// the cputchar function _always_ outputs to the system console.
 	sys_cputs(&c, 1);
-  8022a1:	c7 44 24 04 01 00 00 	movl   $0x1,0x4(%esp)
-  8022a8:	00 
-  8022a9:	8d 45 f7             	lea    -0x9(%ebp),%eax
-  8022ac:	89 04 24             	mov    %eax,(%esp)
-  8022af:	e8 28 ec ff ff       	call   800edc <sys_cputs>
+  8022b1:	c7 44 24 04 01 00 00 	movl   $0x1,0x4(%esp)
+  8022b8:	00 
+  8022b9:	8d 45 f7             	lea    -0x9(%ebp),%eax
+  8022bc:	89 04 24             	mov    %eax,(%esp)
+  8022bf:	e8 18 ec ff ff       	call   800edc <sys_cputs>
 }
-  8022b4:	c9                   	leave  
-  8022b5:	c3                   	ret    
+  8022c4:	c9                   	leave  
+  8022c5:	c3                   	ret    
 
-008022b6 <getchar>:
+008022c6 <getchar>:
 
 int
 getchar(void)
 {
-  8022b6:	55                   	push   %ebp
-  8022b7:	89 e5                	mov    %esp,%ebp
-  8022b9:	83 ec 28             	sub    $0x28,%esp
+  8022c6:	55                   	push   %ebp
+  8022c7:	89 e5                	mov    %esp,%ebp
+  8022c9:	83 ec 28             	sub    $0x28,%esp
 	int r;
 
 	// JOS does, however, support standard _input_ redirection,
 	// allowing the user to redirect script files to the shell and such.
 	// getchar() reads a character from file descriptor 0.
 	r = read(0, &c, 1);
-  8022bc:	c7 44 24 08 01 00 00 	movl   $0x1,0x8(%esp)
-  8022c3:	00 
-  8022c4:	8d 45 f7             	lea    -0x9(%ebp),%eax
-  8022c7:	89 44 24 04          	mov    %eax,0x4(%esp)
-  8022cb:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
-  8022d2:	e8 cf f5 ff ff       	call   8018a6 <read>
+  8022cc:	c7 44 24 08 01 00 00 	movl   $0x1,0x8(%esp)
+  8022d3:	00 
+  8022d4:	8d 45 f7             	lea    -0x9(%ebp),%eax
+  8022d7:	89 44 24 04          	mov    %eax,0x4(%esp)
+  8022db:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
+  8022e2:	e8 cf f5 ff ff       	call   8018b6 <read>
 	if (r < 0)
-  8022d7:	85 c0                	test   %eax,%eax
-  8022d9:	78 0f                	js     8022ea <getchar+0x34>
+  8022e7:	85 c0                	test   %eax,%eax
+  8022e9:	78 0f                	js     8022fa <getchar+0x34>
 		return r;
 	if (r < 1)
-  8022db:	85 c0                	test   %eax,%eax
-  8022dd:	7e 06                	jle    8022e5 <getchar+0x2f>
+  8022eb:	85 c0                	test   %eax,%eax
+  8022ed:	7e 06                	jle    8022f5 <getchar+0x2f>
 		return -E_EOF;
 	return c;
-  8022df:	0f b6 45 f7          	movzbl -0x9(%ebp),%eax
-  8022e3:	eb 05                	jmp    8022ea <getchar+0x34>
+  8022ef:	0f b6 45 f7          	movzbl -0x9(%ebp),%eax
+  8022f3:	eb 05                	jmp    8022fa <getchar+0x34>
 	// getchar() reads a character from file descriptor 0.
 	r = read(0, &c, 1);
 	if (r < 0)
 		return r;
 	if (r < 1)
 		return -E_EOF;
-  8022e5:	b8 f8 ff ff ff       	mov    $0xfffffff8,%eax
+  8022f5:	b8 f8 ff ff ff       	mov    $0xfffffff8,%eax
 	return c;
 }
-  8022ea:	c9                   	leave  
-  8022eb:	c3                   	ret    
+  8022fa:	c9                   	leave  
+  8022fb:	c3                   	ret    
 
-008022ec <iscons>:
+008022fc <iscons>:
 	.dev_stat =	devcons_stat
 };
 
 int
 iscons(int fdnum)
 {
-  8022ec:	55                   	push   %ebp
-  8022ed:	89 e5                	mov    %esp,%ebp
-  8022ef:	83 ec 28             	sub    $0x28,%esp
+  8022fc:	55                   	push   %ebp
+  8022fd:	89 e5                	mov    %esp,%ebp
+  8022ff:	83 ec 28             	sub    $0x28,%esp
 	int r;
 	struct Fd *fd;
 
 	if ((r = fd_lookup(fdnum, &fd)) < 0)
-  8022f2:	8d 45 f4             	lea    -0xc(%ebp),%eax
-  8022f5:	89 44 24 04          	mov    %eax,0x4(%esp)
-  8022f9:	8b 45 08             	mov    0x8(%ebp),%eax
-  8022fc:	89 04 24             	mov    %eax,(%esp)
-  8022ff:	e8 f7 f2 ff ff       	call   8015fb <fd_lookup>
-  802304:	85 c0                	test   %eax,%eax
-  802306:	78 11                	js     802319 <iscons+0x2d>
+  802302:	8d 45 f4             	lea    -0xc(%ebp),%eax
+  802305:	89 44 24 04          	mov    %eax,0x4(%esp)
+  802309:	8b 45 08             	mov    0x8(%ebp),%eax
+  80230c:	89 04 24             	mov    %eax,(%esp)
+  80230f:	e8 f7 f2 ff ff       	call   80160b <fd_lookup>
+  802314:	85 c0                	test   %eax,%eax
+  802316:	78 11                	js     802329 <iscons+0x2d>
 		return r;
 	return fd->fd_dev_id == devcons.dev_id;
-  802308:	8b 45 f4             	mov    -0xc(%ebp),%eax
-  80230b:	8b 15 40 30 80 00    	mov    0x803040,%edx
-  802311:	39 10                	cmp    %edx,(%eax)
-  802313:	0f 94 c0             	sete   %al
-  802316:	0f b6 c0             	movzbl %al,%eax
+  802318:	8b 45 f4             	mov    -0xc(%ebp),%eax
+  80231b:	8b 15 40 30 80 00    	mov    0x803040,%edx
+  802321:	39 10                	cmp    %edx,(%eax)
+  802323:	0f 94 c0             	sete   %al
+  802326:	0f b6 c0             	movzbl %al,%eax
 }
-  802319:	c9                   	leave  
-  80231a:	c3                   	ret    
+  802329:	c9                   	leave  
+  80232a:	c3                   	ret    
 
-0080231b <opencons>:
+0080232b <opencons>:
 
 int
 opencons(void)
 {
-  80231b:	55                   	push   %ebp
-  80231c:	89 e5                	mov    %esp,%ebp
-  80231e:	83 ec 28             	sub    $0x28,%esp
+  80232b:	55                   	push   %ebp
+  80232c:	89 e5                	mov    %esp,%ebp
+  80232e:	83 ec 28             	sub    $0x28,%esp
 	int r;
 	struct Fd* fd;
 
 	if ((r = fd_alloc(&fd)) < 0)
-  802321:	8d 45 f4             	lea    -0xc(%ebp),%eax
-  802324:	89 04 24             	mov    %eax,(%esp)
-  802327:	e8 5b f2 ff ff       	call   801587 <fd_alloc>
+  802331:	8d 45 f4             	lea    -0xc(%ebp),%eax
+  802334:	89 04 24             	mov    %eax,(%esp)
+  802337:	e8 5b f2 ff ff       	call   801597 <fd_alloc>
 		return r;
-  80232c:	89 c2                	mov    %eax,%edx
+  80233c:	89 c2                	mov    %eax,%edx
 opencons(void)
 {
 	int r;
 	struct Fd* fd;
 
 	if ((r = fd_alloc(&fd)) < 0)
-  80232e:	85 c0                	test   %eax,%eax
-  802330:	78 40                	js     802372 <opencons+0x57>
+  80233e:	85 c0                	test   %eax,%eax
+  802340:	78 40                	js     802382 <opencons+0x57>
 		return r;
 	if ((r = sys_page_alloc(0, fd, PTE_P|PTE_U|PTE_W|PTE_SHARE)) < 0)
-  802332:	c7 44 24 08 07 04 00 	movl   $0x407,0x8(%esp)
-  802339:	00 
-  80233a:	8b 45 f4             	mov    -0xc(%ebp),%eax
-  80233d:	89 44 24 04          	mov    %eax,0x4(%esp)
-  802341:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
-  802348:	e8 5c ec ff ff       	call   800fa9 <sys_page_alloc>
+  802342:	c7 44 24 08 07 04 00 	movl   $0x407,0x8(%esp)
+  802349:	00 
+  80234a:	8b 45 f4             	mov    -0xc(%ebp),%eax
+  80234d:	89 44 24 04          	mov    %eax,0x4(%esp)
+  802351:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
+  802358:	e8 4c ec ff ff       	call   800fa9 <sys_page_alloc>
 		return r;
-  80234d:	89 c2                	mov    %eax,%edx
+  80235d:	89 c2                	mov    %eax,%edx
 	int r;
 	struct Fd* fd;
 
 	if ((r = fd_alloc(&fd)) < 0)
 		return r;
 	if ((r = sys_page_alloc(0, fd, PTE_P|PTE_U|PTE_W|PTE_SHARE)) < 0)
-  80234f:	85 c0                	test   %eax,%eax
-  802351:	78 1f                	js     802372 <opencons+0x57>
+  80235f:	85 c0                	test   %eax,%eax
+  802361:	78 1f                	js     802382 <opencons+0x57>
 		return r;
 	fd->fd_dev_id = devcons.dev_id;
-  802353:	8b 15 40 30 80 00    	mov    0x803040,%edx
-  802359:	8b 45 f4             	mov    -0xc(%ebp),%eax
-  80235c:	89 10                	mov    %edx,(%eax)
+  802363:	8b 15 40 30 80 00    	mov    0x803040,%edx
+  802369:	8b 45 f4             	mov    -0xc(%ebp),%eax
+  80236c:	89 10                	mov    %edx,(%eax)
 	fd->fd_omode = O_RDWR;
-  80235e:	8b 45 f4             	mov    -0xc(%ebp),%eax
-  802361:	c7 40 08 02 00 00 00 	movl   $0x2,0x8(%eax)
+  80236e:	8b 45 f4             	mov    -0xc(%ebp),%eax
+  802371:	c7 40 08 02 00 00 00 	movl   $0x2,0x8(%eax)
 	return fd2num(fd);
-  802368:	89 04 24             	mov    %eax,(%esp)
-  80236b:	e8 f0 f1 ff ff       	call   801560 <fd2num>
-  802370:	89 c2                	mov    %eax,%edx
+  802378:	89 04 24             	mov    %eax,(%esp)
+  80237b:	e8 f0 f1 ff ff       	call   801570 <fd2num>
+  802380:	89 c2                	mov    %eax,%edx
 }
-  802372:	89 d0                	mov    %edx,%eax
-  802374:	c9                   	leave  
-  802375:	c3                   	ret    
+  802382:	89 d0                	mov    %edx,%eax
+  802384:	c9                   	leave  
+  802385:	c3                   	ret    
 
-00802376 <set_pgfault_handler>:
+00802386 <set_pgfault_handler>:
 // at UXSTACKTOP), and tell the kernel to call the assembly-language
 // _pgfault_upcall routine when a page fault occurs.
 //
 void
 set_pgfault_handler(void (*handler)(struct UTrapframe *utf))
 {
-  802376:	55                   	push   %ebp
-  802377:	89 e5                	mov    %esp,%ebp
-  802379:	83 ec 18             	sub    $0x18,%esp
+  802386:	55                   	push   %ebp
+  802387:	89 e5                	mov    %esp,%ebp
+  802389:	83 ec 18             	sub    $0x18,%esp
 	int r;
 	if (_pgfault_handler == 0) {
-  80237c:	83 3d 00 60 80 00 00 	cmpl   $0x0,0x806000
-  802383:	75 50                	jne    8023d5 <set_pgfault_handler+0x5f>
+  80238c:	83 3d 00 60 80 00 00 	cmpl   $0x0,0x806000
+  802393:	75 50                	jne    8023e5 <set_pgfault_handler+0x5f>
 		// First time through!
 		if ((r = sys_page_alloc(0, (void*)(UXSTACKTOP - PGSIZE), PTE_U | PTE_P | PTE_W)) < 0) {
-  802385:	c7 44 24 08 07 00 00 	movl   $0x7,0x8(%esp)
-  80238c:	00 
-  80238d:	c7 44 24 04 00 f0 bf 	movl   $0xeebff000,0x4(%esp)
-  802394:	ee 
-  802395:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
-  80239c:	e8 08 ec ff ff       	call   800fa9 <sys_page_alloc>
-  8023a1:	85 c0                	test   %eax,%eax
-  8023a3:	79 1c                	jns    8023c1 <set_pgfault_handler+0x4b>
+  802395:	c7 44 24 08 07 00 00 	movl   $0x7,0x8(%esp)
+  80239c:	00 
+  80239d:	c7 44 24 04 00 f0 bf 	movl   $0xeebff000,0x4(%esp)
+  8023a4:	ee 
+  8023a5:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
+  8023ac:	e8 f8 eb ff ff       	call   800fa9 <sys_page_alloc>
+  8023b1:	85 c0                	test   %eax,%eax
+  8023b3:	79 1c                	jns    8023d1 <set_pgfault_handler+0x4b>
 			panic("set_pgfault_handler: sys_page_alloc");
-  8023a5:	c7 44 24 08 ec 2e 80 	movl   $0x802eec,0x8(%esp)
-  8023ac:	00 
-  8023ad:	c7 44 24 04 1f 00 00 	movl   $0x1f,0x4(%esp)
-  8023b4:	00 
-  8023b5:	c7 04 24 10 2f 80 00 	movl   $0x802f10,(%esp)
-  8023bc:	e8 e5 df ff ff       	call   8003a6 <_panic>
+  8023b5:	c7 44 24 08 0c 2f 80 	movl   $0x802f0c,0x8(%esp)
+  8023bc:	00 
+  8023bd:	c7 44 24 04 1f 00 00 	movl   $0x1f,0x4(%esp)
+  8023c4:	00 
+  8023c5:	c7 04 24 30 2f 80 00 	movl   $0x802f30,(%esp)
+  8023cc:	e8 d5 df ff ff       	call   8003a6 <_panic>
 		}
 		sys_env_set_pgfault_upcall(0, _pgfault_upcall);
-  8023c1:	c7 44 24 04 df 23 80 	movl   $0x8023df,0x4(%esp)
-  8023c8:	00 
-  8023c9:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
-  8023d0:	e8 74 ed ff ff       	call   801149 <sys_env_set_pgfault_upcall>
+  8023d1:	c7 44 24 04 ef 23 80 	movl   $0x8023ef,0x4(%esp)
+  8023d8:	00 
+  8023d9:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
+  8023e0:	e8 64 ed ff ff       	call   801149 <sys_env_set_pgfault_upcall>
 	}
 
 	// Save handler pointer for assembly to call.
 	_pgfault_handler = handler;
-  8023d5:	8b 45 08             	mov    0x8(%ebp),%eax
-  8023d8:	a3 00 60 80 00       	mov    %eax,0x806000
+  8023e5:	8b 45 08             	mov    0x8(%ebp),%eax
+  8023e8:	a3 00 60 80 00       	mov    %eax,0x806000
 }
-  8023dd:	c9                   	leave  
-  8023de:	c3                   	ret    
+  8023ed:	c9                   	leave  
+  8023ee:	c3                   	ret    
 
-008023df <_pgfault_upcall>:
+008023ef <_pgfault_upcall>:
 
 .text
 .globl _pgfault_upcall
 _pgfault_upcall:
 	// Call the C page fault handler.
 	pushl %esp			// function argument: pointer to UTF
-  8023df:	54                   	push   %esp
+  8023ef:	54                   	push   %esp
 	movl _pgfault_handler, %eax
-  8023e0:	a1 00 60 80 00       	mov    0x806000,%eax
+  8023f0:	a1 00 60 80 00       	mov    0x806000,%eax
 	call *%eax
-  8023e5:	ff d0                	call   *%eax
+  8023f5:	ff d0                	call   *%eax
 	addl $4, %esp			// pop function argument
-  8023e7:	83 c4 04             	add    $0x4,%esp
+  8023f7:	83 c4 04             	add    $0x4,%esp
 	//
 	// LAB 4: Your code here.
 	
 	// Get utf base pointer	
 	// ebx = utf
 	movl %esp, %ebx	
-  8023ea:	89 e3                	mov    %esp,%ebx
+  8023fa:	89 e3                	mov    %esp,%ebx
 
 	// ecx = utf->eip
 	movl $0xa, %esi
-  8023ec:	be 0a 00 00 00       	mov    $0xa,%esi
+  8023fc:	be 0a 00 00 00       	mov    $0xa,%esi
 	movl (%ebx, %esi, 4), %ecx
-  8023f1:	8b 0c b3             	mov    (%ebx,%esi,4),%ecx
+  802401:	8b 0c b3             	mov    (%ebx,%esi,4),%ecx
 
 	// edx = &utf->esp
 	movl $0xc, %esi
-  8023f4:	be 0c 00 00 00       	mov    $0xc,%esi
+  802404:	be 0c 00 00 00       	mov    $0xc,%esi
 	leal (%ebx, %esi, 4), %edx
-  8023f9:	8d 14 b3             	lea    (%ebx,%esi,4),%edx
+  802409:	8d 14 b3             	lea    (%ebx,%esi,4),%edx
 
 	// eax = utf->esp
 	movl (%edx), %eax
-  8023fc:	8b 02                	mov    (%edx),%eax
+  80240c:	8b 02                	mov    (%edx),%eax
 
 	// utf->esp -= 4
 	subl $0x4, %eax 					// eax -= 4
-  8023fe:	83 e8 04             	sub    $0x4,%eax
+  80240e:	83 e8 04             	sub    $0x4,%eax
 	movl %eax, (%edx)  					// *edx = eax
-  802401:	89 02                	mov    %eax,(%edx)
+  802411:	89 02                	mov    %eax,(%edx)
 
 	// push trap-time eip onto trap-time stack
 	// *(utf->esp) = utf->eip
 	movl %ecx, (%eax)
-  802403:	89 08                	mov    %ecx,(%eax)
+  802413:	89 08                	mov    %ecx,(%eax)
 	// 1. utf->eip = utf->eflags
 	// 2. utf->eflags = utf->esp
 	
 	// -------- 1 -----------
 	// eax = utf->eflags
 	movl $0xb, %esi
-  802405:	be 0b 00 00 00       	mov    $0xb,%esi
+  802415:	be 0b 00 00 00       	mov    $0xb,%esi
 	movl (%ebx, %esi, 4), %eax 
-  80240a:	8b 04 b3             	mov    (%ebx,%esi,4),%eax
+  80241a:	8b 04 b3             	mov    (%ebx,%esi,4),%eax
 
 	// ecx = &utf->eip
 	movl $0xa, %esi
-  80240d:	be 0a 00 00 00       	mov    $0xa,%esi
+  80241d:	be 0a 00 00 00       	mov    $0xa,%esi
 	leal (%ebx, %esi, 4), %ecx
-  802412:	8d 0c b3             	lea    (%ebx,%esi,4),%ecx
+  802422:	8d 0c b3             	lea    (%ebx,%esi,4),%ecx
 
 	// utf->eip = utf->eflags
 	movl %eax, (%ecx)
-  802415:	89 01                	mov    %eax,(%ecx)
+  802425:	89 01                	mov    %eax,(%ecx)
 
 	// -------- 2 -----------
 	// ecx = &utf->elfags
 	movl $0xb, %esi
-  802417:	be 0b 00 00 00       	mov    $0xb,%esi
+  802427:	be 0b 00 00 00       	mov    $0xb,%esi
 	leal (%ebx, %esi, 4), %ecx
-  80241c:	8d 0c b3             	lea    (%ebx,%esi,4),%ecx
+  80242c:	8d 0c b3             	lea    (%ebx,%esi,4),%ecx
 
 	// eax = utf->esp
 	movl $0xc, %esi
-  80241f:	be 0c 00 00 00       	mov    $0xc,%esi
+  80242f:	be 0c 00 00 00       	mov    $0xc,%esi
 	movl (%ebx, %esi, 4), %eax
-  802424:	8b 04 b3             	mov    (%ebx,%esi,4),%eax
+  802434:	8b 04 b3             	mov    (%ebx,%esi,4),%eax
 
 	// utf->eflags = utf->esp
 	movl %eax, (%ecx)
-  802427:	89 01                	mov    %eax,(%ecx)
+  802437:	89 01                	mov    %eax,(%ecx)
 
 	// Restore the trap-time registers.  After you do this, you
 	// can no longer modify any general-purpose registers.
 	// LAB 4: Your code here.
 	addl $0x8, %esp    		// ignore fault_va and tf_err
-  802429:	83 c4 08             	add    $0x8,%esp
+  802439:	83 c4 08             	add    $0x8,%esp
 	popal
-  80242c:	61                   	popa   
+  80243c:	61                   	popa   
 
 	// Restore eflags from the stack.  After you do this, you can
 	// no longer use arithmetic operations or anything else that
 	// modifies eflags.
 	// LAB 4: Your code here.
 	popfl
-  80242d:	9d                   	popf   
+  80243d:	9d                   	popf   
 
 	// Switch back to the adjusted trap-time stack.
 	// LAB 4: Your code here.
 	popl %esp
-  80242e:	5c                   	pop    %esp
+  80243e:	5c                   	pop    %esp
 	// Return to re-execute the instruction that faulted.
 	// LAB 4: Your code here.
-  80242f:	c3                   	ret    
+  80243f:	c3                   	ret    
 
-00802430 <ipc_recv>:
+00802440 <ipc_recv>:
 //   If 'pg' is null, pass sys_ipc_recv a value that it will understand
 //   as meaning "no page".  (Zero is not the right value, since that's
 //   a perfectly valid place to map a page.)
 int32_t
 ipc_recv(envid_t *from_env_store, void *pg, int *perm_store)
 {
-  802430:	55                   	push   %ebp
-  802431:	89 e5                	mov    %esp,%ebp
-  802433:	56                   	push   %esi
-  802434:	53                   	push   %ebx
-  802435:	83 ec 10             	sub    $0x10,%esp
-  802438:	8b 75 08             	mov    0x8(%ebp),%esi
-  80243b:	8b 45 0c             	mov    0xc(%ebp),%eax
-  80243e:	8b 5d 10             	mov    0x10(%ebp),%ebx
+  802440:	55                   	push   %ebp
+  802441:	89 e5                	mov    %esp,%ebp
+  802443:	56                   	push   %esi
+  802444:	53                   	push   %ebx
+  802445:	83 ec 10             	sub    $0x10,%esp
+  802448:	8b 75 08             	mov    0x8(%ebp),%esi
+  80244b:	8b 45 0c             	mov    0xc(%ebp),%eax
+  80244e:	8b 5d 10             	mov    0x10(%ebp),%ebx
 	// use UTOP to indicate a no mapping
 	int err_code = sys_ipc_recv(pg == NULL ? (void*)UTOP : pg);
-  802441:	85 c0                	test   %eax,%eax
-  802443:	ba 00 00 c0 ee       	mov    $0xeec00000,%edx
-  802448:	0f 44 c2             	cmove  %edx,%eax
-  80244b:	89 04 24             	mov    %eax,(%esp)
-  80244e:	e8 6c ed ff ff       	call   8011bf <sys_ipc_recv>
+  802451:	85 c0                	test   %eax,%eax
+  802453:	ba 00 00 c0 ee       	mov    $0xeec00000,%edx
+  802458:	0f 44 c2             	cmove  %edx,%eax
+  80245b:	89 04 24             	mov    %eax,(%esp)
+  80245e:	e8 5c ed ff ff       	call   8011bf <sys_ipc_recv>
 	if (err_code < 0) {
-  802453:	85 c0                	test   %eax,%eax
-  802455:	79 16                	jns    80246d <ipc_recv+0x3d>
+  802463:	85 c0                	test   %eax,%eax
+  802465:	79 16                	jns    80247d <ipc_recv+0x3d>
 		if (from_env_store) *from_env_store = 0;
-  802457:	85 f6                	test   %esi,%esi
-  802459:	74 06                	je     802461 <ipc_recv+0x31>
-  80245b:	c7 06 00 00 00 00    	movl   $0x0,(%esi)
+  802467:	85 f6                	test   %esi,%esi
+  802469:	74 06                	je     802471 <ipc_recv+0x31>
+  80246b:	c7 06 00 00 00 00    	movl   $0x0,(%esi)
 		if (perm_store) *perm_store = 0;
-  802461:	85 db                	test   %ebx,%ebx
-  802463:	74 2c                	je     802491 <ipc_recv+0x61>
-  802465:	c7 03 00 00 00 00    	movl   $0x0,(%ebx)
-  80246b:	eb 24                	jmp    802491 <ipc_recv+0x61>
+  802471:	85 db                	test   %ebx,%ebx
+  802473:	74 2c                	je     8024a1 <ipc_recv+0x61>
+  802475:	c7 03 00 00 00 00    	movl   $0x0,(%ebx)
+  80247b:	eb 24                	jmp    8024a1 <ipc_recv+0x61>
 	} else {
 		if (from_env_store) *from_env_store = thisenv->env_ipc_from;
-  80246d:	85 f6                	test   %esi,%esi
-  80246f:	74 0a                	je     80247b <ipc_recv+0x4b>
-  802471:	a1 04 40 80 00       	mov    0x804004,%eax
-  802476:	8b 40 74             	mov    0x74(%eax),%eax
-  802479:	89 06                	mov    %eax,(%esi)
+  80247d:	85 f6                	test   %esi,%esi
+  80247f:	74 0a                	je     80248b <ipc_recv+0x4b>
+  802481:	a1 04 40 80 00       	mov    0x804004,%eax
+  802486:	8b 40 74             	mov    0x74(%eax),%eax
+  802489:	89 06                	mov    %eax,(%esi)
 		if (perm_store) *perm_store = thisenv->env_ipc_perm;
-  80247b:	85 db                	test   %ebx,%ebx
-  80247d:	74 0a                	je     802489 <ipc_recv+0x59>
-  80247f:	a1 04 40 80 00       	mov    0x804004,%eax
-  802484:	8b 40 78             	mov    0x78(%eax),%eax
-  802487:	89 03                	mov    %eax,(%ebx)
+  80248b:	85 db                	test   %ebx,%ebx
+  80248d:	74 0a                	je     802499 <ipc_recv+0x59>
+  80248f:	a1 04 40 80 00       	mov    0x804004,%eax
+  802494:	8b 40 78             	mov    0x78(%eax),%eax
+  802497:	89 03                	mov    %eax,(%ebx)
 	}
 	return err_code < 0 ? err_code : thisenv->env_ipc_value;
-  802489:	a1 04 40 80 00       	mov    0x804004,%eax
-  80248e:	8b 40 70             	mov    0x70(%eax),%eax
+  802499:	a1 04 40 80 00       	mov    0x804004,%eax
+  80249e:	8b 40 70             	mov    0x70(%eax),%eax
 }
-  802491:	83 c4 10             	add    $0x10,%esp
-  802494:	5b                   	pop    %ebx
-  802495:	5e                   	pop    %esi
-  802496:	5d                   	pop    %ebp
-  802497:	c3                   	ret    
+  8024a1:	83 c4 10             	add    $0x10,%esp
+  8024a4:	5b                   	pop    %ebx
+  8024a5:	5e                   	pop    %esi
+  8024a6:	5d                   	pop    %ebp
+  8024a7:	c3                   	ret    
 
-00802498 <ipc_send>:
+008024a8 <ipc_send>:
 //   Use sys_yield() to be CPU-friendly.
 //   If 'pg' is null, pass sys_ipc_recv a value that it will understand
 //   as meaning "no page".  (Zero is not the right value.)
 void
 ipc_send(envid_t to_env, uint32_t val, void *pg, int perm)
 {
-  802498:	55                   	push   %ebp
-  802499:	89 e5                	mov    %esp,%ebp
-  80249b:	57                   	push   %edi
-  80249c:	56                   	push   %esi
-  80249d:	53                   	push   %ebx
-  80249e:	83 ec 1c             	sub    $0x1c,%esp
-  8024a1:	8b 7d 08             	mov    0x8(%ebp),%edi
-  8024a4:	8b 75 0c             	mov    0xc(%ebp),%esi
-  8024a7:	8b 5d 10             	mov    0x10(%ebp),%ebx
+  8024a8:	55                   	push   %ebp
+  8024a9:	89 e5                	mov    %esp,%ebp
+  8024ab:	57                   	push   %edi
+  8024ac:	56                   	push   %esi
+  8024ad:	53                   	push   %ebx
+  8024ae:	83 ec 1c             	sub    $0x1c,%esp
+  8024b1:	8b 7d 08             	mov    0x8(%ebp),%edi
+  8024b4:	8b 75 0c             	mov    0xc(%ebp),%esi
+  8024b7:	8b 5d 10             	mov    0x10(%ebp),%ebx
 	int err_code;
 	while ((err_code = sys_ipc_try_send(to_env, val, pg == NULL ? (void*)UTOP : pg, perm))) {
-  8024aa:	eb 25                	jmp    8024d1 <ipc_send+0x39>
+  8024ba:	eb 25                	jmp    8024e1 <ipc_send+0x39>
 		if (err_code != -E_IPC_NOT_RECV) {
-  8024ac:	83 f8 f9             	cmp    $0xfffffff9,%eax
-  8024af:	74 20                	je     8024d1 <ipc_send+0x39>
+  8024bc:	83 f8 f9             	cmp    $0xfffffff9,%eax
+  8024bf:	74 20                	je     8024e1 <ipc_send+0x39>
 			panic("ipc_send:%e", err_code);
-  8024b1:	89 44 24 0c          	mov    %eax,0xc(%esp)
-  8024b5:	c7 44 24 08 1e 2f 80 	movl   $0x802f1e,0x8(%esp)
-  8024bc:	00 
-  8024bd:	c7 44 24 04 33 00 00 	movl   $0x33,0x4(%esp)
-  8024c4:	00 
-  8024c5:	c7 04 24 2a 2f 80 00 	movl   $0x802f2a,(%esp)
-  8024cc:	e8 d5 de ff ff       	call   8003a6 <_panic>
+  8024c1:	89 44 24 0c          	mov    %eax,0xc(%esp)
+  8024c5:	c7 44 24 08 3e 2f 80 	movl   $0x802f3e,0x8(%esp)
+  8024cc:	00 
+  8024cd:	c7 44 24 04 33 00 00 	movl   $0x33,0x4(%esp)
+  8024d4:	00 
+  8024d5:	c7 04 24 4a 2f 80 00 	movl   $0x802f4a,(%esp)
+  8024dc:	e8 c5 de ff ff       	call   8003a6 <_panic>
 //   as meaning "no page".  (Zero is not the right value.)
 void
 ipc_send(envid_t to_env, uint32_t val, void *pg, int perm)
 {
 	int err_code;
 	while ((err_code = sys_ipc_try_send(to_env, val, pg == NULL ? (void*)UTOP : pg, perm))) {
-  8024d1:	85 db                	test   %ebx,%ebx
-  8024d3:	b8 00 00 c0 ee       	mov    $0xeec00000,%eax
-  8024d8:	0f 45 c3             	cmovne %ebx,%eax
-  8024db:	8b 55 14             	mov    0x14(%ebp),%edx
-  8024de:	89 54 24 0c          	mov    %edx,0xc(%esp)
-  8024e2:	89 44 24 08          	mov    %eax,0x8(%esp)
-  8024e6:	89 74 24 04          	mov    %esi,0x4(%esp)
-  8024ea:	89 3c 24             	mov    %edi,(%esp)
-  8024ed:	e8 aa ec ff ff       	call   80119c <sys_ipc_try_send>
-  8024f2:	85 c0                	test   %eax,%eax
-  8024f4:	75 b6                	jne    8024ac <ipc_send+0x14>
+  8024e1:	85 db                	test   %ebx,%ebx
+  8024e3:	b8 00 00 c0 ee       	mov    $0xeec00000,%eax
+  8024e8:	0f 45 c3             	cmovne %ebx,%eax
+  8024eb:	8b 55 14             	mov    0x14(%ebp),%edx
+  8024ee:	89 54 24 0c          	mov    %edx,0xc(%esp)
+  8024f2:	89 44 24 08          	mov    %eax,0x8(%esp)
+  8024f6:	89 74 24 04          	mov    %esi,0x4(%esp)
+  8024fa:	89 3c 24             	mov    %edi,(%esp)
+  8024fd:	e8 9a ec ff ff       	call   80119c <sys_ipc_try_send>
+  802502:	85 c0                	test   %eax,%eax
+  802504:	75 b6                	jne    8024bc <ipc_send+0x14>
 		if (err_code != -E_IPC_NOT_RECV) {
 			panic("ipc_send:%e", err_code);
 		}
 	}
 }
-  8024f6:	83 c4 1c             	add    $0x1c,%esp
-  8024f9:	5b                   	pop    %ebx
-  8024fa:	5e                   	pop    %esi
-  8024fb:	5f                   	pop    %edi
-  8024fc:	5d                   	pop    %ebp
-  8024fd:	c3                   	ret    
+  802506:	83 c4 1c             	add    $0x1c,%esp
+  802509:	5b                   	pop    %ebx
+  80250a:	5e                   	pop    %esi
+  80250b:	5f                   	pop    %edi
+  80250c:	5d                   	pop    %ebp
+  80250d:	c3                   	ret    
 
-008024fe <ipc_find_env>:
+0080250e <ipc_find_env>:
 // Find the first environment of the given type.  We'll use this to
 // find special environments.
 // Returns 0 if no such environment exists.
 envid_t
 ipc_find_env(enum EnvType type)
 {
-  8024fe:	55                   	push   %ebp
-  8024ff:	89 e5                	mov    %esp,%ebp
-  802501:	8b 4d 08             	mov    0x8(%ebp),%ecx
+  80250e:	55                   	push   %ebp
+  80250f:	89 e5                	mov    %esp,%ebp
+  802511:	8b 4d 08             	mov    0x8(%ebp),%ecx
 	int i;
 	for (i = 0; i < NENV; i++)
 		if (envs[i].env_type == type)
-  802504:	a1 50 00 c0 ee       	mov    0xeec00050,%eax
-  802509:	39 c8                	cmp    %ecx,%eax
-  80250b:	74 17                	je     802524 <ipc_find_env+0x26>
+  802514:	a1 50 00 c0 ee       	mov    0xeec00050,%eax
+  802519:	39 c8                	cmp    %ecx,%eax
+  80251b:	74 17                	je     802534 <ipc_find_env+0x26>
 // Returns 0 if no such environment exists.
 envid_t
 ipc_find_env(enum EnvType type)
 {
 	int i;
 	for (i = 0; i < NENV; i++)
-  80250d:	b8 01 00 00 00       	mov    $0x1,%eax
+  80251d:	b8 01 00 00 00       	mov    $0x1,%eax
 		if (envs[i].env_type == type)
-  802512:	6b d0 7c             	imul   $0x7c,%eax,%edx
-  802515:	81 c2 00 00 c0 ee    	add    $0xeec00000,%edx
-  80251b:	8b 52 50             	mov    0x50(%edx),%edx
-  80251e:	39 ca                	cmp    %ecx,%edx
-  802520:	75 14                	jne    802536 <ipc_find_env+0x38>
-  802522:	eb 05                	jmp    802529 <ipc_find_env+0x2b>
+  802522:	6b d0 7c             	imul   $0x7c,%eax,%edx
+  802525:	81 c2 00 00 c0 ee    	add    $0xeec00000,%edx
+  80252b:	8b 52 50             	mov    0x50(%edx),%edx
+  80252e:	39 ca                	cmp    %ecx,%edx
+  802530:	75 14                	jne    802546 <ipc_find_env+0x38>
+  802532:	eb 05                	jmp    802539 <ipc_find_env+0x2b>
 // Returns 0 if no such environment exists.
 envid_t
 ipc_find_env(enum EnvType type)
 {
 	int i;
 	for (i = 0; i < NENV; i++)
-  802524:	b8 00 00 00 00       	mov    $0x0,%eax
+  802534:	b8 00 00 00 00       	mov    $0x0,%eax
 		if (envs[i].env_type == type)
 			return envs[i].env_id;
-  802529:	6b c0 7c             	imul   $0x7c,%eax,%eax
-  80252c:	05 08 00 c0 ee       	add    $0xeec00008,%eax
-  802531:	8b 40 40             	mov    0x40(%eax),%eax
-  802534:	eb 0e                	jmp    802544 <ipc_find_env+0x46>
+  802539:	6b c0 7c             	imul   $0x7c,%eax,%eax
+  80253c:	05 08 00 c0 ee       	add    $0xeec00008,%eax
+  802541:	8b 40 40             	mov    0x40(%eax),%eax
+  802544:	eb 0e                	jmp    802554 <ipc_find_env+0x46>
 // Returns 0 if no such environment exists.
 envid_t
 ipc_find_env(enum EnvType type)
 {
 	int i;
 	for (i = 0; i < NENV; i++)
-  802536:	83 c0 01             	add    $0x1,%eax
-  802539:	3d 00 04 00 00       	cmp    $0x400,%eax
-  80253e:	75 d2                	jne    802512 <ipc_find_env+0x14>
+  802546:	83 c0 01             	add    $0x1,%eax
+  802549:	3d 00 04 00 00       	cmp    $0x400,%eax
+  80254e:	75 d2                	jne    802522 <ipc_find_env+0x14>
 		if (envs[i].env_type == type)
 			return envs[i].env_id;
 	return 0;
-  802540:	66 b8 00 00          	mov    $0x0,%ax
+  802550:	66 b8 00 00          	mov    $0x0,%ax
 }
-  802544:	5d                   	pop    %ebp
-  802545:	c3                   	ret    
+  802554:	5d                   	pop    %ebp
+  802555:	c3                   	ret    
 
-00802546 <pageref>:
+00802556 <pageref>:
 #include <inc/lib.h>
 
 int
 pageref(void *v)
 {
-  802546:	55                   	push   %ebp
-  802547:	89 e5                	mov    %esp,%ebp
-  802549:	8b 55 08             	mov    0x8(%ebp),%edx
+  802556:	55                   	push   %ebp
+  802557:	89 e5                	mov    %esp,%ebp
+  802559:	8b 55 08             	mov    0x8(%ebp),%edx
 	pte_t pte;
 
 	if (!(uvpd[PDX(v)] & PTE_P))
-  80254c:	89 d0                	mov    %edx,%eax
-  80254e:	c1 e8 16             	shr    $0x16,%eax
-  802551:	8b 0c 85 00 d0 7b ef 	mov    -0x10843000(,%eax,4),%ecx
+  80255c:	89 d0                	mov    %edx,%eax
+  80255e:	c1 e8 16             	shr    $0x16,%eax
+  802561:	8b 0c 85 00 d0 7b ef 	mov    -0x10843000(,%eax,4),%ecx
 		return 0;
-  802558:	b8 00 00 00 00       	mov    $0x0,%eax
+  802568:	b8 00 00 00 00       	mov    $0x0,%eax
 int
 pageref(void *v)
 {
 	pte_t pte;
 
 	if (!(uvpd[PDX(v)] & PTE_P))
-  80255d:	f6 c1 01             	test   $0x1,%cl
-  802560:	74 1d                	je     80257f <pageref+0x39>
+  80256d:	f6 c1 01             	test   $0x1,%cl
+  802570:	74 1d                	je     80258f <pageref+0x39>
 		return 0;
 	pte = uvpt[PGNUM(v)];
-  802562:	c1 ea 0c             	shr    $0xc,%edx
-  802565:	8b 14 95 00 00 40 ef 	mov    -0x10c00000(,%edx,4),%edx
+  802572:	c1 ea 0c             	shr    $0xc,%edx
+  802575:	8b 14 95 00 00 40 ef 	mov    -0x10c00000(,%edx,4),%edx
 	if (!(pte & PTE_P))
-  80256c:	f6 c2 01             	test   $0x1,%dl
-  80256f:	74 0e                	je     80257f <pageref+0x39>
+  80257c:	f6 c2 01             	test   $0x1,%dl
+  80257f:	74 0e                	je     80258f <pageref+0x39>
 		return 0;
 	return pages[PGNUM(pte)].pp_ref;
-  802571:	c1 ea 0c             	shr    $0xc,%edx
-  802574:	0f b7 04 d5 04 00 00 	movzwl -0x10fffffc(,%edx,8),%eax
-  80257b:	ef 
-  80257c:	0f b7 c0             	movzwl %ax,%eax
+  802581:	c1 ea 0c             	shr    $0xc,%edx
+  802584:	0f b7 04 d5 04 00 00 	movzwl -0x10fffffc(,%edx,8),%eax
+  80258b:	ef 
+  80258c:	0f b7 c0             	movzwl %ax,%eax
 }
-  80257f:	5d                   	pop    %ebp
-  802580:	c3                   	ret    
-  802581:	66 90                	xchg   %ax,%ax
-  802583:	66 90                	xchg   %ax,%ax
-  802585:	66 90                	xchg   %ax,%ax
-  802587:	66 90                	xchg   %ax,%ax
-  802589:	66 90                	xchg   %ax,%ax
-  80258b:	66 90                	xchg   %ax,%ax
-  80258d:	66 90                	xchg   %ax,%ax
-  80258f:	90                   	nop
+  80258f:	5d                   	pop    %ebp
+  802590:	c3                   	ret    
+  802591:	66 90                	xchg   %ax,%ax
+  802593:	66 90                	xchg   %ax,%ax
+  802595:	66 90                	xchg   %ax,%ax
+  802597:	66 90                	xchg   %ax,%ax
+  802599:	66 90                	xchg   %ax,%ax
+  80259b:	66 90                	xchg   %ax,%ax
+  80259d:	66 90                	xchg   %ax,%ax
+  80259f:	90                   	nop
 
-00802590 <__udivdi3>:
-  802590:	55                   	push   %ebp
-  802591:	57                   	push   %edi
-  802592:	56                   	push   %esi
-  802593:	83 ec 0c             	sub    $0xc,%esp
-  802596:	8b 44 24 28          	mov    0x28(%esp),%eax
-  80259a:	8b 7c 24 1c          	mov    0x1c(%esp),%edi
-  80259e:	8b 6c 24 20          	mov    0x20(%esp),%ebp
-  8025a2:	8b 4c 24 24          	mov    0x24(%esp),%ecx
-  8025a6:	85 c0                	test   %eax,%eax
-  8025a8:	89 7c 24 04          	mov    %edi,0x4(%esp)
-  8025ac:	89 ea                	mov    %ebp,%edx
-  8025ae:	89 0c 24             	mov    %ecx,(%esp)
-  8025b1:	75 2d                	jne    8025e0 <__udivdi3+0x50>
-  8025b3:	39 e9                	cmp    %ebp,%ecx
-  8025b5:	77 61                	ja     802618 <__udivdi3+0x88>
-  8025b7:	85 c9                	test   %ecx,%ecx
-  8025b9:	89 ce                	mov    %ecx,%esi
-  8025bb:	75 0b                	jne    8025c8 <__udivdi3+0x38>
-  8025bd:	b8 01 00 00 00       	mov    $0x1,%eax
-  8025c2:	31 d2                	xor    %edx,%edx
-  8025c4:	f7 f1                	div    %ecx
-  8025c6:	89 c6                	mov    %eax,%esi
-  8025c8:	31 d2                	xor    %edx,%edx
-  8025ca:	89 e8                	mov    %ebp,%eax
-  8025cc:	f7 f6                	div    %esi
-  8025ce:	89 c5                	mov    %eax,%ebp
-  8025d0:	89 f8                	mov    %edi,%eax
-  8025d2:	f7 f6                	div    %esi
-  8025d4:	89 ea                	mov    %ebp,%edx
-  8025d6:	83 c4 0c             	add    $0xc,%esp
-  8025d9:	5e                   	pop    %esi
-  8025da:	5f                   	pop    %edi
-  8025db:	5d                   	pop    %ebp
-  8025dc:	c3                   	ret    
-  8025dd:	8d 76 00             	lea    0x0(%esi),%esi
-  8025e0:	39 e8                	cmp    %ebp,%eax
-  8025e2:	77 24                	ja     802608 <__udivdi3+0x78>
-  8025e4:	0f bd e8             	bsr    %eax,%ebp
-  8025e7:	83 f5 1f             	xor    $0x1f,%ebp
-  8025ea:	75 3c                	jne    802628 <__udivdi3+0x98>
-  8025ec:	8b 74 24 04          	mov    0x4(%esp),%esi
-  8025f0:	39 34 24             	cmp    %esi,(%esp)
-  8025f3:	0f 86 9f 00 00 00    	jbe    802698 <__udivdi3+0x108>
-  8025f9:	39 d0                	cmp    %edx,%eax
-  8025fb:	0f 82 97 00 00 00    	jb     802698 <__udivdi3+0x108>
-  802601:	8d b4 26 00 00 00 00 	lea    0x0(%esi,%eiz,1),%esi
-  802608:	31 d2                	xor    %edx,%edx
-  80260a:	31 c0                	xor    %eax,%eax
-  80260c:	83 c4 0c             	add    $0xc,%esp
-  80260f:	5e                   	pop    %esi
-  802610:	5f                   	pop    %edi
-  802611:	5d                   	pop    %ebp
-  802612:	c3                   	ret    
-  802613:	90                   	nop
-  802614:	8d 74 26 00          	lea    0x0(%esi,%eiz,1),%esi
-  802618:	89 f8                	mov    %edi,%eax
-  80261a:	f7 f1                	div    %ecx
-  80261c:	31 d2                	xor    %edx,%edx
-  80261e:	83 c4 0c             	add    $0xc,%esp
-  802621:	5e                   	pop    %esi
-  802622:	5f                   	pop    %edi
-  802623:	5d                   	pop    %ebp
-  802624:	c3                   	ret    
-  802625:	8d 76 00             	lea    0x0(%esi),%esi
-  802628:	89 e9                	mov    %ebp,%ecx
-  80262a:	8b 3c 24             	mov    (%esp),%edi
-  80262d:	d3 e0                	shl    %cl,%eax
-  80262f:	89 c6                	mov    %eax,%esi
-  802631:	b8 20 00 00 00       	mov    $0x20,%eax
-  802636:	29 e8                	sub    %ebp,%eax
-  802638:	89 c1                	mov    %eax,%ecx
-  80263a:	d3 ef                	shr    %cl,%edi
-  80263c:	89 e9                	mov    %ebp,%ecx
-  80263e:	89 7c 24 08          	mov    %edi,0x8(%esp)
-  802642:	8b 3c 24             	mov    (%esp),%edi
-  802645:	09 74 24 08          	or     %esi,0x8(%esp)
-  802649:	89 d6                	mov    %edx,%esi
-  80264b:	d3 e7                	shl    %cl,%edi
-  80264d:	89 c1                	mov    %eax,%ecx
-  80264f:	89 3c 24             	mov    %edi,(%esp)
-  802652:	8b 7c 24 04          	mov    0x4(%esp),%edi
-  802656:	d3 ee                	shr    %cl,%esi
-  802658:	89 e9                	mov    %ebp,%ecx
-  80265a:	d3 e2                	shl    %cl,%edx
-  80265c:	89 c1                	mov    %eax,%ecx
-  80265e:	d3 ef                	shr    %cl,%edi
-  802660:	09 d7                	or     %edx,%edi
-  802662:	89 f2                	mov    %esi,%edx
-  802664:	89 f8                	mov    %edi,%eax
-  802666:	f7 74 24 08          	divl   0x8(%esp)
-  80266a:	89 d6                	mov    %edx,%esi
-  80266c:	89 c7                	mov    %eax,%edi
-  80266e:	f7 24 24             	mull   (%esp)
-  802671:	39 d6                	cmp    %edx,%esi
-  802673:	89 14 24             	mov    %edx,(%esp)
-  802676:	72 30                	jb     8026a8 <__udivdi3+0x118>
-  802678:	8b 54 24 04          	mov    0x4(%esp),%edx
-  80267c:	89 e9                	mov    %ebp,%ecx
-  80267e:	d3 e2                	shl    %cl,%edx
-  802680:	39 c2                	cmp    %eax,%edx
-  802682:	73 05                	jae    802689 <__udivdi3+0xf9>
-  802684:	3b 34 24             	cmp    (%esp),%esi
-  802687:	74 1f                	je     8026a8 <__udivdi3+0x118>
-  802689:	89 f8                	mov    %edi,%eax
-  80268b:	31 d2                	xor    %edx,%edx
-  80268d:	e9 7a ff ff ff       	jmp    80260c <__udivdi3+0x7c>
-  802692:	8d b6 00 00 00 00    	lea    0x0(%esi),%esi
-  802698:	31 d2                	xor    %edx,%edx
-  80269a:	b8 01 00 00 00       	mov    $0x1,%eax
-  80269f:	e9 68 ff ff ff       	jmp    80260c <__udivdi3+0x7c>
-  8026a4:	8d 74 26 00          	lea    0x0(%esi,%eiz,1),%esi
-  8026a8:	8d 47 ff             	lea    -0x1(%edi),%eax
-  8026ab:	31 d2                	xor    %edx,%edx
-  8026ad:	83 c4 0c             	add    $0xc,%esp
-  8026b0:	5e                   	pop    %esi
-  8026b1:	5f                   	pop    %edi
-  8026b2:	5d                   	pop    %ebp
-  8026b3:	c3                   	ret    
-  8026b4:	66 90                	xchg   %ax,%ax
-  8026b6:	66 90                	xchg   %ax,%ax
-  8026b8:	66 90                	xchg   %ax,%ax
-  8026ba:	66 90                	xchg   %ax,%ax
-  8026bc:	66 90                	xchg   %ax,%ax
-  8026be:	66 90                	xchg   %ax,%ax
+008025a0 <__udivdi3>:
+  8025a0:	55                   	push   %ebp
+  8025a1:	57                   	push   %edi
+  8025a2:	56                   	push   %esi
+  8025a3:	83 ec 0c             	sub    $0xc,%esp
+  8025a6:	8b 44 24 28          	mov    0x28(%esp),%eax
+  8025aa:	8b 7c 24 1c          	mov    0x1c(%esp),%edi
+  8025ae:	8b 6c 24 20          	mov    0x20(%esp),%ebp
+  8025b2:	8b 4c 24 24          	mov    0x24(%esp),%ecx
+  8025b6:	85 c0                	test   %eax,%eax
+  8025b8:	89 7c 24 04          	mov    %edi,0x4(%esp)
+  8025bc:	89 ea                	mov    %ebp,%edx
+  8025be:	89 0c 24             	mov    %ecx,(%esp)
+  8025c1:	75 2d                	jne    8025f0 <__udivdi3+0x50>
+  8025c3:	39 e9                	cmp    %ebp,%ecx
+  8025c5:	77 61                	ja     802628 <__udivdi3+0x88>
+  8025c7:	85 c9                	test   %ecx,%ecx
+  8025c9:	89 ce                	mov    %ecx,%esi
+  8025cb:	75 0b                	jne    8025d8 <__udivdi3+0x38>
+  8025cd:	b8 01 00 00 00       	mov    $0x1,%eax
+  8025d2:	31 d2                	xor    %edx,%edx
+  8025d4:	f7 f1                	div    %ecx
+  8025d6:	89 c6                	mov    %eax,%esi
+  8025d8:	31 d2                	xor    %edx,%edx
+  8025da:	89 e8                	mov    %ebp,%eax
+  8025dc:	f7 f6                	div    %esi
+  8025de:	89 c5                	mov    %eax,%ebp
+  8025e0:	89 f8                	mov    %edi,%eax
+  8025e2:	f7 f6                	div    %esi
+  8025e4:	89 ea                	mov    %ebp,%edx
+  8025e6:	83 c4 0c             	add    $0xc,%esp
+  8025e9:	5e                   	pop    %esi
+  8025ea:	5f                   	pop    %edi
+  8025eb:	5d                   	pop    %ebp
+  8025ec:	c3                   	ret    
+  8025ed:	8d 76 00             	lea    0x0(%esi),%esi
+  8025f0:	39 e8                	cmp    %ebp,%eax
+  8025f2:	77 24                	ja     802618 <__udivdi3+0x78>
+  8025f4:	0f bd e8             	bsr    %eax,%ebp
+  8025f7:	83 f5 1f             	xor    $0x1f,%ebp
+  8025fa:	75 3c                	jne    802638 <__udivdi3+0x98>
+  8025fc:	8b 74 24 04          	mov    0x4(%esp),%esi
+  802600:	39 34 24             	cmp    %esi,(%esp)
+  802603:	0f 86 9f 00 00 00    	jbe    8026a8 <__udivdi3+0x108>
+  802609:	39 d0                	cmp    %edx,%eax
+  80260b:	0f 82 97 00 00 00    	jb     8026a8 <__udivdi3+0x108>
+  802611:	8d b4 26 00 00 00 00 	lea    0x0(%esi,%eiz,1),%esi
+  802618:	31 d2                	xor    %edx,%edx
+  80261a:	31 c0                	xor    %eax,%eax
+  80261c:	83 c4 0c             	add    $0xc,%esp
+  80261f:	5e                   	pop    %esi
+  802620:	5f                   	pop    %edi
+  802621:	5d                   	pop    %ebp
+  802622:	c3                   	ret    
+  802623:	90                   	nop
+  802624:	8d 74 26 00          	lea    0x0(%esi,%eiz,1),%esi
+  802628:	89 f8                	mov    %edi,%eax
+  80262a:	f7 f1                	div    %ecx
+  80262c:	31 d2                	xor    %edx,%edx
+  80262e:	83 c4 0c             	add    $0xc,%esp
+  802631:	5e                   	pop    %esi
+  802632:	5f                   	pop    %edi
+  802633:	5d                   	pop    %ebp
+  802634:	c3                   	ret    
+  802635:	8d 76 00             	lea    0x0(%esi),%esi
+  802638:	89 e9                	mov    %ebp,%ecx
+  80263a:	8b 3c 24             	mov    (%esp),%edi
+  80263d:	d3 e0                	shl    %cl,%eax
+  80263f:	89 c6                	mov    %eax,%esi
+  802641:	b8 20 00 00 00       	mov    $0x20,%eax
+  802646:	29 e8                	sub    %ebp,%eax
+  802648:	89 c1                	mov    %eax,%ecx
+  80264a:	d3 ef                	shr    %cl,%edi
+  80264c:	89 e9                	mov    %ebp,%ecx
+  80264e:	89 7c 24 08          	mov    %edi,0x8(%esp)
+  802652:	8b 3c 24             	mov    (%esp),%edi
+  802655:	09 74 24 08          	or     %esi,0x8(%esp)
+  802659:	89 d6                	mov    %edx,%esi
+  80265b:	d3 e7                	shl    %cl,%edi
+  80265d:	89 c1                	mov    %eax,%ecx
+  80265f:	89 3c 24             	mov    %edi,(%esp)
+  802662:	8b 7c 24 04          	mov    0x4(%esp),%edi
+  802666:	d3 ee                	shr    %cl,%esi
+  802668:	89 e9                	mov    %ebp,%ecx
+  80266a:	d3 e2                	shl    %cl,%edx
+  80266c:	89 c1                	mov    %eax,%ecx
+  80266e:	d3 ef                	shr    %cl,%edi
+  802670:	09 d7                	or     %edx,%edi
+  802672:	89 f2                	mov    %esi,%edx
+  802674:	89 f8                	mov    %edi,%eax
+  802676:	f7 74 24 08          	divl   0x8(%esp)
+  80267a:	89 d6                	mov    %edx,%esi
+  80267c:	89 c7                	mov    %eax,%edi
+  80267e:	f7 24 24             	mull   (%esp)
+  802681:	39 d6                	cmp    %edx,%esi
+  802683:	89 14 24             	mov    %edx,(%esp)
+  802686:	72 30                	jb     8026b8 <__udivdi3+0x118>
+  802688:	8b 54 24 04          	mov    0x4(%esp),%edx
+  80268c:	89 e9                	mov    %ebp,%ecx
+  80268e:	d3 e2                	shl    %cl,%edx
+  802690:	39 c2                	cmp    %eax,%edx
+  802692:	73 05                	jae    802699 <__udivdi3+0xf9>
+  802694:	3b 34 24             	cmp    (%esp),%esi
+  802697:	74 1f                	je     8026b8 <__udivdi3+0x118>
+  802699:	89 f8                	mov    %edi,%eax
+  80269b:	31 d2                	xor    %edx,%edx
+  80269d:	e9 7a ff ff ff       	jmp    80261c <__udivdi3+0x7c>
+  8026a2:	8d b6 00 00 00 00    	lea    0x0(%esi),%esi
+  8026a8:	31 d2                	xor    %edx,%edx
+  8026aa:	b8 01 00 00 00       	mov    $0x1,%eax
+  8026af:	e9 68 ff ff ff       	jmp    80261c <__udivdi3+0x7c>
+  8026b4:	8d 74 26 00          	lea    0x0(%esi,%eiz,1),%esi
+  8026b8:	8d 47 ff             	lea    -0x1(%edi),%eax
+  8026bb:	31 d2                	xor    %edx,%edx
+  8026bd:	83 c4 0c             	add    $0xc,%esp
+  8026c0:	5e                   	pop    %esi
+  8026c1:	5f                   	pop    %edi
+  8026c2:	5d                   	pop    %ebp
+  8026c3:	c3                   	ret    
+  8026c4:	66 90                	xchg   %ax,%ax
+  8026c6:	66 90                	xchg   %ax,%ax
+  8026c8:	66 90                	xchg   %ax,%ax
+  8026ca:	66 90                	xchg   %ax,%ax
+  8026cc:	66 90                	xchg   %ax,%ax
+  8026ce:	66 90                	xchg   %ax,%ax
 
-008026c0 <__umoddi3>:
-  8026c0:	55                   	push   %ebp
-  8026c1:	57                   	push   %edi
-  8026c2:	56                   	push   %esi
-  8026c3:	83 ec 14             	sub    $0x14,%esp
-  8026c6:	8b 44 24 28          	mov    0x28(%esp),%eax
-  8026ca:	8b 4c 24 24          	mov    0x24(%esp),%ecx
-  8026ce:	8b 74 24 2c          	mov    0x2c(%esp),%esi
-  8026d2:	89 c7                	mov    %eax,%edi
-  8026d4:	89 44 24 04          	mov    %eax,0x4(%esp)
-  8026d8:	8b 44 24 30          	mov    0x30(%esp),%eax
-  8026dc:	89 4c 24 10          	mov    %ecx,0x10(%esp)
-  8026e0:	89 34 24             	mov    %esi,(%esp)
-  8026e3:	89 4c 24 08          	mov    %ecx,0x8(%esp)
-  8026e7:	85 c0                	test   %eax,%eax
-  8026e9:	89 c2                	mov    %eax,%edx
-  8026eb:	89 7c 24 0c          	mov    %edi,0xc(%esp)
-  8026ef:	75 17                	jne    802708 <__umoddi3+0x48>
-  8026f1:	39 fe                	cmp    %edi,%esi
-  8026f3:	76 4b                	jbe    802740 <__umoddi3+0x80>
-  8026f5:	89 c8                	mov    %ecx,%eax
-  8026f7:	89 fa                	mov    %edi,%edx
-  8026f9:	f7 f6                	div    %esi
-  8026fb:	89 d0                	mov    %edx,%eax
-  8026fd:	31 d2                	xor    %edx,%edx
-  8026ff:	83 c4 14             	add    $0x14,%esp
-  802702:	5e                   	pop    %esi
-  802703:	5f                   	pop    %edi
-  802704:	5d                   	pop    %ebp
-  802705:	c3                   	ret    
-  802706:	66 90                	xchg   %ax,%ax
-  802708:	39 f8                	cmp    %edi,%eax
-  80270a:	77 54                	ja     802760 <__umoddi3+0xa0>
-  80270c:	0f bd e8             	bsr    %eax,%ebp
-  80270f:	83 f5 1f             	xor    $0x1f,%ebp
-  802712:	75 5c                	jne    802770 <__umoddi3+0xb0>
-  802714:	8b 7c 24 08          	mov    0x8(%esp),%edi
-  802718:	39 3c 24             	cmp    %edi,(%esp)
-  80271b:	0f 87 e7 00 00 00    	ja     802808 <__umoddi3+0x148>
-  802721:	8b 7c 24 04          	mov    0x4(%esp),%edi
-  802725:	29 f1                	sub    %esi,%ecx
-  802727:	19 c7                	sbb    %eax,%edi
-  802729:	89 4c 24 08          	mov    %ecx,0x8(%esp)
-  80272d:	89 7c 24 0c          	mov    %edi,0xc(%esp)
-  802731:	8b 44 24 08          	mov    0x8(%esp),%eax
-  802735:	8b 54 24 0c          	mov    0xc(%esp),%edx
-  802739:	83 c4 14             	add    $0x14,%esp
-  80273c:	5e                   	pop    %esi
-  80273d:	5f                   	pop    %edi
-  80273e:	5d                   	pop    %ebp
-  80273f:	c3                   	ret    
-  802740:	85 f6                	test   %esi,%esi
-  802742:	89 f5                	mov    %esi,%ebp
-  802744:	75 0b                	jne    802751 <__umoddi3+0x91>
-  802746:	b8 01 00 00 00       	mov    $0x1,%eax
-  80274b:	31 d2                	xor    %edx,%edx
-  80274d:	f7 f6                	div    %esi
-  80274f:	89 c5                	mov    %eax,%ebp
-  802751:	8b 44 24 04          	mov    0x4(%esp),%eax
-  802755:	31 d2                	xor    %edx,%edx
-  802757:	f7 f5                	div    %ebp
-  802759:	89 c8                	mov    %ecx,%eax
-  80275b:	f7 f5                	div    %ebp
-  80275d:	eb 9c                	jmp    8026fb <__umoddi3+0x3b>
-  80275f:	90                   	nop
-  802760:	89 c8                	mov    %ecx,%eax
-  802762:	89 fa                	mov    %edi,%edx
-  802764:	83 c4 14             	add    $0x14,%esp
-  802767:	5e                   	pop    %esi
-  802768:	5f                   	pop    %edi
-  802769:	5d                   	pop    %ebp
-  80276a:	c3                   	ret    
-  80276b:	90                   	nop
-  80276c:	8d 74 26 00          	lea    0x0(%esi,%eiz,1),%esi
-  802770:	8b 04 24             	mov    (%esp),%eax
-  802773:	be 20 00 00 00       	mov    $0x20,%esi
-  802778:	89 e9                	mov    %ebp,%ecx
-  80277a:	29 ee                	sub    %ebp,%esi
-  80277c:	d3 e2                	shl    %cl,%edx
-  80277e:	89 f1                	mov    %esi,%ecx
-  802780:	d3 e8                	shr    %cl,%eax
-  802782:	89 e9                	mov    %ebp,%ecx
-  802784:	89 44 24 04          	mov    %eax,0x4(%esp)
-  802788:	8b 04 24             	mov    (%esp),%eax
-  80278b:	09 54 24 04          	or     %edx,0x4(%esp)
-  80278f:	89 fa                	mov    %edi,%edx
-  802791:	d3 e0                	shl    %cl,%eax
-  802793:	89 f1                	mov    %esi,%ecx
-  802795:	89 44 24 08          	mov    %eax,0x8(%esp)
-  802799:	8b 44 24 10          	mov    0x10(%esp),%eax
-  80279d:	d3 ea                	shr    %cl,%edx
-  80279f:	89 e9                	mov    %ebp,%ecx
-  8027a1:	d3 e7                	shl    %cl,%edi
+008026d0 <__umoddi3>:
+  8026d0:	55                   	push   %ebp
+  8026d1:	57                   	push   %edi
+  8026d2:	56                   	push   %esi
+  8026d3:	83 ec 14             	sub    $0x14,%esp
+  8026d6:	8b 44 24 28          	mov    0x28(%esp),%eax
+  8026da:	8b 4c 24 24          	mov    0x24(%esp),%ecx
+  8026de:	8b 74 24 2c          	mov    0x2c(%esp),%esi
+  8026e2:	89 c7                	mov    %eax,%edi
+  8026e4:	89 44 24 04          	mov    %eax,0x4(%esp)
+  8026e8:	8b 44 24 30          	mov    0x30(%esp),%eax
+  8026ec:	89 4c 24 10          	mov    %ecx,0x10(%esp)
+  8026f0:	89 34 24             	mov    %esi,(%esp)
+  8026f3:	89 4c 24 08          	mov    %ecx,0x8(%esp)
+  8026f7:	85 c0                	test   %eax,%eax
+  8026f9:	89 c2                	mov    %eax,%edx
+  8026fb:	89 7c 24 0c          	mov    %edi,0xc(%esp)
+  8026ff:	75 17                	jne    802718 <__umoddi3+0x48>
+  802701:	39 fe                	cmp    %edi,%esi
+  802703:	76 4b                	jbe    802750 <__umoddi3+0x80>
+  802705:	89 c8                	mov    %ecx,%eax
+  802707:	89 fa                	mov    %edi,%edx
+  802709:	f7 f6                	div    %esi
+  80270b:	89 d0                	mov    %edx,%eax
+  80270d:	31 d2                	xor    %edx,%edx
+  80270f:	83 c4 14             	add    $0x14,%esp
+  802712:	5e                   	pop    %esi
+  802713:	5f                   	pop    %edi
+  802714:	5d                   	pop    %ebp
+  802715:	c3                   	ret    
+  802716:	66 90                	xchg   %ax,%ax
+  802718:	39 f8                	cmp    %edi,%eax
+  80271a:	77 54                	ja     802770 <__umoddi3+0xa0>
+  80271c:	0f bd e8             	bsr    %eax,%ebp
+  80271f:	83 f5 1f             	xor    $0x1f,%ebp
+  802722:	75 5c                	jne    802780 <__umoddi3+0xb0>
+  802724:	8b 7c 24 08          	mov    0x8(%esp),%edi
+  802728:	39 3c 24             	cmp    %edi,(%esp)
+  80272b:	0f 87 e7 00 00 00    	ja     802818 <__umoddi3+0x148>
+  802731:	8b 7c 24 04          	mov    0x4(%esp),%edi
+  802735:	29 f1                	sub    %esi,%ecx
+  802737:	19 c7                	sbb    %eax,%edi
+  802739:	89 4c 24 08          	mov    %ecx,0x8(%esp)
+  80273d:	89 7c 24 0c          	mov    %edi,0xc(%esp)
+  802741:	8b 44 24 08          	mov    0x8(%esp),%eax
+  802745:	8b 54 24 0c          	mov    0xc(%esp),%edx
+  802749:	83 c4 14             	add    $0x14,%esp
+  80274c:	5e                   	pop    %esi
+  80274d:	5f                   	pop    %edi
+  80274e:	5d                   	pop    %ebp
+  80274f:	c3                   	ret    
+  802750:	85 f6                	test   %esi,%esi
+  802752:	89 f5                	mov    %esi,%ebp
+  802754:	75 0b                	jne    802761 <__umoddi3+0x91>
+  802756:	b8 01 00 00 00       	mov    $0x1,%eax
+  80275b:	31 d2                	xor    %edx,%edx
+  80275d:	f7 f6                	div    %esi
+  80275f:	89 c5                	mov    %eax,%ebp
+  802761:	8b 44 24 04          	mov    0x4(%esp),%eax
+  802765:	31 d2                	xor    %edx,%edx
+  802767:	f7 f5                	div    %ebp
+  802769:	89 c8                	mov    %ecx,%eax
+  80276b:	f7 f5                	div    %ebp
+  80276d:	eb 9c                	jmp    80270b <__umoddi3+0x3b>
+  80276f:	90                   	nop
+  802770:	89 c8                	mov    %ecx,%eax
+  802772:	89 fa                	mov    %edi,%edx
+  802774:	83 c4 14             	add    $0x14,%esp
+  802777:	5e                   	pop    %esi
+  802778:	5f                   	pop    %edi
+  802779:	5d                   	pop    %ebp
+  80277a:	c3                   	ret    
+  80277b:	90                   	nop
+  80277c:	8d 74 26 00          	lea    0x0(%esi,%eiz,1),%esi
+  802780:	8b 04 24             	mov    (%esp),%eax
+  802783:	be 20 00 00 00       	mov    $0x20,%esi
+  802788:	89 e9                	mov    %ebp,%ecx
+  80278a:	29 ee                	sub    %ebp,%esi
+  80278c:	d3 e2                	shl    %cl,%edx
+  80278e:	89 f1                	mov    %esi,%ecx
+  802790:	d3 e8                	shr    %cl,%eax
+  802792:	89 e9                	mov    %ebp,%ecx
+  802794:	89 44 24 04          	mov    %eax,0x4(%esp)
+  802798:	8b 04 24             	mov    (%esp),%eax
+  80279b:	09 54 24 04          	or     %edx,0x4(%esp)
+  80279f:	89 fa                	mov    %edi,%edx
+  8027a1:	d3 e0                	shl    %cl,%eax
   8027a3:	89 f1                	mov    %esi,%ecx
-  8027a5:	d3 e8                	shr    %cl,%eax
-  8027a7:	89 e9                	mov    %ebp,%ecx
-  8027a9:	09 f8                	or     %edi,%eax
-  8027ab:	8b 7c 24 10          	mov    0x10(%esp),%edi
-  8027af:	f7 74 24 04          	divl   0x4(%esp)
-  8027b3:	d3 e7                	shl    %cl,%edi
-  8027b5:	89 7c 24 0c          	mov    %edi,0xc(%esp)
-  8027b9:	89 d7                	mov    %edx,%edi
-  8027bb:	f7 64 24 08          	mull   0x8(%esp)
-  8027bf:	39 d7                	cmp    %edx,%edi
-  8027c1:	89 c1                	mov    %eax,%ecx
-  8027c3:	89 14 24             	mov    %edx,(%esp)
-  8027c6:	72 2c                	jb     8027f4 <__umoddi3+0x134>
-  8027c8:	39 44 24 0c          	cmp    %eax,0xc(%esp)
-  8027cc:	72 22                	jb     8027f0 <__umoddi3+0x130>
-  8027ce:	8b 44 24 0c          	mov    0xc(%esp),%eax
-  8027d2:	29 c8                	sub    %ecx,%eax
-  8027d4:	19 d7                	sbb    %edx,%edi
-  8027d6:	89 e9                	mov    %ebp,%ecx
-  8027d8:	89 fa                	mov    %edi,%edx
-  8027da:	d3 e8                	shr    %cl,%eax
-  8027dc:	89 f1                	mov    %esi,%ecx
-  8027de:	d3 e2                	shl    %cl,%edx
-  8027e0:	89 e9                	mov    %ebp,%ecx
-  8027e2:	d3 ef                	shr    %cl,%edi
-  8027e4:	09 d0                	or     %edx,%eax
-  8027e6:	89 fa                	mov    %edi,%edx
-  8027e8:	83 c4 14             	add    $0x14,%esp
-  8027eb:	5e                   	pop    %esi
-  8027ec:	5f                   	pop    %edi
-  8027ed:	5d                   	pop    %ebp
-  8027ee:	c3                   	ret    
-  8027ef:	90                   	nop
-  8027f0:	39 d7                	cmp    %edx,%edi
-  8027f2:	75 da                	jne    8027ce <__umoddi3+0x10e>
-  8027f4:	8b 14 24             	mov    (%esp),%edx
-  8027f7:	89 c1                	mov    %eax,%ecx
-  8027f9:	2b 4c 24 08          	sub    0x8(%esp),%ecx
-  8027fd:	1b 54 24 04          	sbb    0x4(%esp),%edx
-  802801:	eb cb                	jmp    8027ce <__umoddi3+0x10e>
-  802803:	90                   	nop
-  802804:	8d 74 26 00          	lea    0x0(%esi,%eiz,1),%esi
-  802808:	3b 44 24 0c          	cmp    0xc(%esp),%eax
-  80280c:	0f 82 0f ff ff ff    	jb     802721 <__umoddi3+0x61>
-  802812:	e9 1a ff ff ff       	jmp    802731 <__umoddi3+0x71>
+  8027a5:	89 44 24 08          	mov    %eax,0x8(%esp)
+  8027a9:	8b 44 24 10          	mov    0x10(%esp),%eax
+  8027ad:	d3 ea                	shr    %cl,%edx
+  8027af:	89 e9                	mov    %ebp,%ecx
+  8027b1:	d3 e7                	shl    %cl,%edi
+  8027b3:	89 f1                	mov    %esi,%ecx
+  8027b5:	d3 e8                	shr    %cl,%eax
+  8027b7:	89 e9                	mov    %ebp,%ecx
+  8027b9:	09 f8                	or     %edi,%eax
+  8027bb:	8b 7c 24 10          	mov    0x10(%esp),%edi
+  8027bf:	f7 74 24 04          	divl   0x4(%esp)
+  8027c3:	d3 e7                	shl    %cl,%edi
+  8027c5:	89 7c 24 0c          	mov    %edi,0xc(%esp)
+  8027c9:	89 d7                	mov    %edx,%edi
+  8027cb:	f7 64 24 08          	mull   0x8(%esp)
+  8027cf:	39 d7                	cmp    %edx,%edi
+  8027d1:	89 c1                	mov    %eax,%ecx
+  8027d3:	89 14 24             	mov    %edx,(%esp)
+  8027d6:	72 2c                	jb     802804 <__umoddi3+0x134>
+  8027d8:	39 44 24 0c          	cmp    %eax,0xc(%esp)
+  8027dc:	72 22                	jb     802800 <__umoddi3+0x130>
+  8027de:	8b 44 24 0c          	mov    0xc(%esp),%eax
+  8027e2:	29 c8                	sub    %ecx,%eax
+  8027e4:	19 d7                	sbb    %edx,%edi
+  8027e6:	89 e9                	mov    %ebp,%ecx
+  8027e8:	89 fa                	mov    %edi,%edx
+  8027ea:	d3 e8                	shr    %cl,%eax
+  8027ec:	89 f1                	mov    %esi,%ecx
+  8027ee:	d3 e2                	shl    %cl,%edx
+  8027f0:	89 e9                	mov    %ebp,%ecx
+  8027f2:	d3 ef                	shr    %cl,%edi
+  8027f4:	09 d0                	or     %edx,%eax
+  8027f6:	89 fa                	mov    %edi,%edx
+  8027f8:	83 c4 14             	add    $0x14,%esp
+  8027fb:	5e                   	pop    %esi
+  8027fc:	5f                   	pop    %edi
+  8027fd:	5d                   	pop    %ebp
+  8027fe:	c3                   	ret    
+  8027ff:	90                   	nop
+  802800:	39 d7                	cmp    %edx,%edi
+  802802:	75 da                	jne    8027de <__umoddi3+0x10e>
+  802804:	8b 14 24             	mov    (%esp),%edx
+  802807:	89 c1                	mov    %eax,%ecx
+  802809:	2b 4c 24 08          	sub    0x8(%esp),%ecx
+  80280d:	1b 54 24 04          	sbb    0x4(%esp),%edx
+  802811:	eb cb                	jmp    8027de <__umoddi3+0x10e>
+  802813:	90                   	nop
+  802814:	8d 74 26 00          	lea    0x0(%esi,%eiz,1),%esi
+  802818:	3b 44 24 0c          	cmp    0xc(%esp),%eax
+  80281c:	0f 82 0f ff ff ff    	jb     802731 <__umoddi3+0x61>
+  802822:	e9 1a ff ff ff       	jmp    802741 <__umoddi3+0x71>

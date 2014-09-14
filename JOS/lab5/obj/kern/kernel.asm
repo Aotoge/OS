@@ -282,9 +282,9 @@ f01001f1:	e8 96 39 00 00       	call   f0103b8c <env_create>
 	ENV_CREATE(TEST, ENV_TYPE_USER);
 f01001f6:	c7 44 24 08 00 00 00 	movl   $0x0,0x8(%esp)
 f01001fd:	00 
-f01001fe:	c7 44 24 04 6e 4e 00 	movl   $0x4e6e,0x4(%esp)
+f01001fe:	c7 44 24 04 5e 4f 00 	movl   $0x4f5e,0x4(%esp)
 f0100205:	00 
-f0100206:	c7 04 24 19 a5 1b f0 	movl   $0xf01ba519,(%esp)
+f0100206:	c7 04 24 45 f4 1d f0 	movl   $0xf01df445,(%esp)
 f010020d:	e8 7a 39 00 00       	call   f0103b8c <env_create>
 	kbd_intr();
 	ENV_CREATE(user_primes, ENV_TYPE_USER);

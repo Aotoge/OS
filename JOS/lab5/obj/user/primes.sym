@@ -1,7 +1,7 @@
 00200010 R __STAB_BEGIN__
-00205d1c R __STAB_END__
-00205d1d R __STABSTR_BEGIN__
-002089d6 R __STABSTR_END__
+00205d28 R __STAB_END__
+00205d29 R __STABSTR_BEGIN__
+002089e2 R __STABSTR_END__
 00800020 T _start
 0080002c t args_exist
 00800033 T primeproc
@@ -50,10 +50,10 @@
 00800fef T sys_ipc_recv
 00801041 t pgfault
 00801130 T fork
-0080136a T sfork
-0080138c T ipc_recv
-008013f4 T ipc_send
-0080145a T ipc_find_env
+00801374 T sfork
+00801396 T ipc_recv
+008013fe T ipc_send
+00801464 T ipc_find_env
 008014b0 T fd2num
 008014c0 T fd2data
 008014d7 T fd_alloc

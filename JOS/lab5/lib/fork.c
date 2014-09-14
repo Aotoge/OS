@@ -76,9 +76,10 @@ duppage(envid_t envid, unsigned pn)
 	const pte_t pte = uvpt[pn];
 
 	int err_code;
-	// get current page permitssion
 	void* va = (void*)(pn * PGSIZE);
-	if ((pte & PTE_W) || (pte & PTE_COW)) { // for writable or copy-on-write page
+	// this page is not share page and it is writable or c-o-w
+	if ( !(pte & PTE_SHARE) &&
+			 ((pte & PTE_W) || (pte & PTE_COW))) {
 
 		// set as readonly and copy-on-write
 		int perm = PTE_U | PTE_P | PTE_COW;
@@ -91,8 +92,8 @@ duppage(envid_t envid, unsigned pn)
 			panic("duppage:sys_page_map:2:%e", err_code);
 		}
 
-	} else { // read-only page
-		int perm = PTE_U | PTE_P;
+	} else { // read-only page or share page
+		int perm = (pte & PTE_SYSCALL);
 		if ((err_code = sys_page_map(0, va, envid, va, perm)) < 0) {
 			panic("sys_page_map:3:%e", err_code);
 		}
