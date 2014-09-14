@@ -23,7 +23,7 @@ int32_t
 ipc_recv(envid_t *from_env_store, void *pg, int *perm_store)
 {
 	// use UTOP to indicate a no mapping
-	int err_code = sys_ipc_recv(pg == NULL ? pg : (void*)UTOP);
+	int err_code = sys_ipc_recv(pg == NULL ? (void*)UTOP : pg);
 	if (err_code < 0) {
 		if (from_env_store) *from_env_store = 0;
 		if (perm_store) *perm_store = 0;

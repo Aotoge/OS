@@ -46,9 +46,9 @@
 00800e99 T sys_ipc_try_send
 00800ebc T sys_ipc_recv
 00800f0e T ipc_recv
-00800f78 T ipc_send
-00800fde T ipc_find_env
-00801026 T _panic
+00800f76 T ipc_send
+00800fdc T ipc_find_env
+00801024 T _panic
 00801080 T __udivdi3
 008011b0 T __umoddi3
 00801580 r error_string

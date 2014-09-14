@@ -139,7 +139,26 @@ sys_env_set_trapframe(envid_t envid, struct Trapframe *tf)
 	// LAB 5: Your code here.
 	// Remember to check whether the user has supplied us with a good
 	// address!
-	panic("sys_env_set_trapframe not implemented");
+	struct Env* e;	
+	if (envid2env(envid, &e, 1) < 0) {
+		return -E_BAD_ENV;
+	}
+
+	// check eip and esp
+	if (!(tf->tf_eip >= UTEXT && tf->tf_eip < USTACKTOP &&
+			 tf->tf_esp <= USTACKTOP && tf->tf_esp > UTEXT)) {
+		panic("sys_env_set_trapframe:eip or esp is not valid.");
+	}
+
+	// ensure again (though env_alloc already set)
+	tf->tf_ds = GD_UD | 3;
+	tf->tf_es = GD_UD | 3;
+	tf->tf_ss = GD_UD | 3;
+	tf->tf_cs = GD_UT | 3;
+	tf->tf_eflags |= FL_IF;
+	
+	e->env_tf = *tf;
+	return 0;
 }
 
 // Set the page fault upcall for 'envid' by modifying the corresponding struct

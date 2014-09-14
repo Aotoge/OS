@@ -64,8 +64,7 @@ i386_init(void)
 #else
 	// Should not be necessary - drains keyboard because interrupt has given up.
 	kbd_intr();
-	// ENV_CREATE(user_primes, ENV_TYPE_USER);
-	ENV_CREATE(user_forktree, ENV_TYPE_USER);
+	ENV_CREATE(user_primes, ENV_TYPE_USER);
 #endif // TEST*
 
 	// Schedule and run the first user environment!

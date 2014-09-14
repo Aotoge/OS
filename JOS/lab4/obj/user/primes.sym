@@ -51,10 +51,10 @@
 008010dd T fork
 00801317 T sfork
 00801339 T ipc_recv
-008013a3 T ipc_send
-00801409 T ipc_find_env
-00801451 T set_pgfault_handler
-008014ba T _pgfault_upcall
+008013a1 T ipc_send
+00801407 T ipc_find_env
+0080144f T set_pgfault_handler
+008014b8 T _pgfault_upcall
 00801510 T __udivdi3
 00801640 T __umoddi3
 00801a20 r error_string

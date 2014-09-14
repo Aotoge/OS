@@ -9,7 +9,7 @@
 #include "fs.h"
 
 
-#define debug 0
+#define debug 1
 
 // The file system server maintains three structures
 // for each open file.
@@ -246,8 +246,8 @@ serve(void)
 		req = ipc_recv((int32_t *) &whom, fsreq, &perm);
 		if (debug)
 			cprintf("fs req %d from %08x [page %08x: %s]\n",
-				req, whom, uvpt[PGNUM(fsreq)], fsreq);
-
+						req, whom, uvpt[PGNUM(fsreq)], fsreq);
+		
 		// All requests must contain an argument page
 		if (!(perm & PTE_P)) {
 			cprintf("Invalid request from %08x: no argument page\n",

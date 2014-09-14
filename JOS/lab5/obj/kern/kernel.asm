@@ -199,7 +199,7 @@ f010011f:	c7 44 24 0c 00 70 00 	movl   $0x7000,0xc(%esp)
 f0100126:	00 
 f0100127:	c7 44 24 08 e4 6c 10 	movl   $0xf0106ce4,0x8(%esp)
 f010012e:	f0 
-f010012f:	c7 44 24 04 59 00 00 	movl   $0x59,0x4(%esp)
+f010012f:	c7 44 24 04 58 00 00 	movl   $0x58,0x4(%esp)
 f0100136:	00 
 f0100137:	c7 04 24 47 6d 10 f0 	movl   $0xf0106d47,(%esp)
 f010013e:	e8 fd fe ff ff       	call   f0100040 <_panic>
@@ -282,12 +282,12 @@ f01001f1:	e8 96 39 00 00       	call   f0103b8c <env_create>
 	ENV_CREATE(TEST, ENV_TYPE_USER);
 f01001f6:	c7 44 24 08 00 00 00 	movl   $0x0,0x8(%esp)
 f01001fd:	00 
-f01001fe:	c7 44 24 04 1c 4f 00 	movl   $0x4f1c,0x4(%esp)
+f01001fe:	c7 44 24 04 14 4f 00 	movl   $0x4f14,0x4(%esp)
 f0100205:	00 
-f0100206:	c7 04 24 f8 30 1f f0 	movl   $0xf01f30f8,(%esp)
+f0100206:	c7 04 24 b0 f7 1a f0 	movl   $0xf01af7b0,(%esp)
 f010020d:	e8 7a 39 00 00       	call   f0103b8c <env_create>
-	// ENV_CREATE(user_primes, ENV_TYPE_USER);
-	ENV_CREATE(user_forktree, ENV_TYPE_USER);
+	kbd_intr();
+	ENV_CREATE(user_primes, ENV_TYPE_USER);
 #endif // TEST*
 
 	// Schedule and run the first user environment!
@@ -319,7 +319,7 @@ f0100227:	77 20                	ja     f0100249 <mp_main+0x32>
 f0100229:	89 44 24 0c          	mov    %eax,0xc(%esp)
 f010022d:	c7 44 24 08 08 6d 10 	movl   $0xf0106d08,0x8(%esp)
 f0100234:	f0 
-f0100235:	c7 44 24 04 70 00 00 	movl   $0x70,0x4(%esp)
+f0100235:	c7 44 24 04 6f 00 00 	movl   $0x6f,0x4(%esp)
 f010023c:	00 
 f010023d:	c7 04 24 47 6d 10 f0 	movl   $0xf0106d47,(%esp)
 f0100244:	e8 f7 fd ff ff       	call   f0100040 <_panic>

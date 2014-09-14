@@ -190,7 +190,7 @@ f0106ee0 r shiftcode
 f0107260 r commands
 f0108340 r excnames.1564
 f0108390 r idt_idx
-f0108480 r perm_bit.1623
+f0108480 r perm_bit.1624
 f0108760 r error_string
 f0108a50 R __STAB_BEGIN__
 f01135e0 R __STAB_END__
