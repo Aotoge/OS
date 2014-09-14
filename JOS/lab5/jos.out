@@ -1,3 +1,10 @@
+perl: warning: Please check that your locale settings:
+	LANGUAGE = (unset),
+	LC_ALL = (unset),
+	LC_CTYPE = "UTF-8",
+	LANG = "en_US.UTF-8"
+    are supported and installed on your system.
+perl: warning: Falling back to the standard locale ("C").
 + cc kern/init.c
 + ld obj/kern/kernel
 + mk obj/kern/kernel.img
@@ -16,183 +23,180 @@ check_page() succeeded!
 check_kern_pgdir() succeeded!
 check_page_free_list(0) ok
 check_page_installed_pgdir() succeeded!
-SMP: CPU 0 found 4 CPU(s)
+SMP: CPU 0 found 1 CPU(s)
 enabled interrupts: 1 2 4
-SMP: CPU 1 starting
-SMP: CPU 2 starting
-SMP: CPU 3 starting
-CPU 2 is halt.
-CPU 3 is halt.
-CPU 2 is halt.
 FS is running
 FS can do I/O
-CPU 3 is halt.
 Device 1 presence: 1
-CPU 2 is halt.
 superblock is good
-CPU 0 is halt.
-CPU 3 is halt.
-CPU 0 is halt.
-CPU 2 is halt.
-CPU 1: 2 CPU 0 is halt.
-CPU 1 is halt.
-CPU 2: 3 CPU 1 is halt.
-CPU 2: 5 CPU 1 is halt.
-CPU 0: 7 CPU 1 is halt.
-CPU 0: 11 CPU 3: 13 CPU 1 is halt.
-CPU 2: 17 CPU 1 is halt.
-CPU 0: 19 CPU 3 is halt.
-CPU 0: 23 CPU 1 is halt.
-CPU 0: 29 CPU 2 is halt.
-CPU 2 is halt.
-CPU 3: 31 CPU 0 is halt.
-CPU 0 is halt.
-CPU 3 is halt.
-CPU 2: 37 CPU 1 is halt.
-CPU 0: 41 CPU 1 is halt.
-CPU 2: 43 CPU 2 is halt.
-CPU 1: 47 CPU 0 is halt.
-CPU 0 is halt.
-CPU 2 is halt.
-CPU 1: 53 CPU 0 is halt.
-CPU 2 is halt.
-CPU 1 is halt.
-CPU 1: 59 CPU 0 is halt.
-CPU 1 is halt.
-CPU 2: 61 CPU 1 is halt.
-CPU 0 is halt.
-CPU 2 is halt.
-CPU 2: 67 CPU 1 is halt.
-CPU 0 is halt.
-CPU 2: 71 CPU 3 is halt.
-CPU 2: 73 CPU 0 is halt.
-CPU 2: 79 CPU 3 is halt.
-CPU 2 is halt.
-CPU 1: 83 CPU 0 is halt.
-CPU 2 is halt.
-CPU 1: 89 CPU 3 is halt.
-CPU 1 is halt.
-CPU 2 is halt.
-CPU 1: 97 CPU 3 is halt.
-CPU 2 is halt.
-CPU 1: 101 CPU 3 is halt.
-CPU 2: 103 CPU 1 is halt.
-CPU 3: 107 CPU 3 is halt.
-CPU 2: 109 CPU 0: 113 CPU 2 is halt.
-CPU 3 is halt.
-CPU 2 is halt.
-CPU 0 is halt.
-CPU 3 is halt.
-CPU 0: 127 CPU 2 is halt.
-CPU 3 is halt.
-CPU 0: 131 CPU 0 is halt.
-CPU 3 is halt.
-CPU 2 is halt.
-CPU 0: 137 CPU 2 is halt.
-CPU 0: 139 CPU 1 is halt.
-CPU 0: 149 CPU 3: 151 CPU 1 is halt.
-CPU 0 is halt.
-CPU 3: 157 CPU 1 is halt.
-CPU 0 is halt.
-CPU 3: 163 CPU 3 is halt.
-CPU 0: 167 CPU 0 is halt.
-CPU 1: 173 CPU 1: 179 CPU 3 is halt.
-CPU 3 is halt.
-CPU 0: 181 CPU 1 is halt.
-CPU 1: 191 CPU 2: 193 CPU 0 is halt.
-CPU 3: 197 CPU 2 is halt.
-CPU 1: 199 CPU 0 is halt.
-CPU 1 is halt.
-CPU 2 is halt.
-CPU 0: 211 CPU 1 is halt.
-CPU 2 is halt.
-CPU 0 is halt.
-CPU 0 is halt.
-CPU 2 is halt.
-CPU 1 is halt.
-CPU 0 is halt.
-CPU 2: 223 CPU 1 is halt.
-CPU 3 is halt.
-CPU 2: 227 CPU 3 is halt.
-CPU 2 is halt.
-CPU 1: 229 CPU 3 is halt.
-CPU 0: 233 CPU 2 is halt.
-CPU 1: 239 CPU 1 is halt.
-CPU 0: 241 CPU 0 is halt.
-CPU 0: 251 CPU 2 is halt.
-CPU 1: 257 CPU 2: 263 CPU 0: 269 CPU 1: 271 CPU 3: 277 CPU 3: 281 CPU 0 is halt.
-CPU 1 is halt.
-CPU 3: 283 CPU 0 is halt.
-CPU 1 is halt.
-CPU 0: 293 CPU 1: 307 CPU 0 is halt.
-CPU 3: 311 CPU 1: 313 CPU 2 is halt.
-CPU 3 is halt.
-CPU 1: 317 CPU 2 is halt.
-CPU 1 is halt.
-CPU 3: 331 CPU 3 is halt.
-CPU 1 is halt.
-CPU 3 is halt.
-CPU 0: 337 CPU 1 is halt.
-CPU 0 is halt.
-CPU 0 is halt.
-CPU 3: 347 CPU 3 is halt.
-CPU 2: 349 CPU 0: 353 CPU 2 is halt.
-CPU 0: 359 CPU 3 is halt.
-CPU 2: 367 CPU 0 is halt.
-CPU 2 is halt.
-CPU 3: 373 CPU 2 is halt.
-CPU 0: 379 CPU 0 is halt.
-CPU 1: 383 CPU 2 is halt.
-CPU 3 is halt.
-CPU 1: 389 CPU 1 is halt.
-CPU 3 is halt.
-CPU 2 is halt.
-CPU 0: 397 CPU 1 is halt.
-CPU 0 is halt.
-CPU 3 is halt.
-CPU 0: 401 CPU 1 is halt.
-CPU 3 is halt.
-CPU 0 is halt.
-CPU 2: 409 CPU 3 is halt.
-CPU 0 is halt.
-CPU 2 is halt.
-CPU 2 is halt.
-CPU 3 is halt.
-CPU 0 is halt.
-CPU 2: 419 CPU 0 is halt.
-CPU 2: 421 CPU 3: 431 CPU 1: 433 CPU 1 is halt.
-CPU 0: 439 CPU 0 is halt.
-CPU 3: 443 CPU 2: 449 CPU 3: 457 CPU 1: 461 CPU 2: 463 CPU 1 is halt.
-CPU 2: 467 CPU 3 is halt.
-CPU 0 is halt.
-CPU 2: 479 CPU 1 is halt.
-CPU 2 is halt.
-CPU 2 is halt.
-CPU 0: 487 CPU 3 is halt.
-CPU 0 is halt.
-CPU 3: 491 CPU 2 is halt.
-CPU 0: 499 CPU 0: 503 CPU 0: 509 CPU 3: 521 CPU 0 is halt.
-CPU 3 is halt.
-CPU 3 is halt.
-CPU 2: 523 CPU 2 is halt.
-CPU 0 is halt.
-CPU 0 is halt.
-CPU 3: 541 CPU 2 is halt.
-CPU 0 is halt.
-CPU 3 is halt.
-CPU 1: 547 CPU 3 is halt.
-CPU 0 is halt.
-CPU 1 is halt.
-CPU 1 is halt.
-CPU 0 is halt.
-CPU 3: 557 CPU 3 is halt.
-CPU 2 is halt.
-CPU 0 is halt.
-CPU 2: 563 CPU 1 is halt.
-CPU 0 is halt.
-CPU 2: 569 CPU 1 is halt.
-CPU 3 is halt.
-CPU 2 is halt.
-CPU 1: 571 CPU 3 is halt.
-CPU 0 is halt.
-CPU 2: 577 CPU 3: 587 qemu: terminating on signal 15 from pid 5199
+2
+3
+5
+7
+11
+13
+17
+19
+23
+29
+31
+37
+41
+43
+47
+53
+59
+61
+67
+71
+73
+79
+83
+89
+97
+101
+103
+107
+109
+113
+127
+131
+137
+139
+149
+151
+157
+163
+167
+173
+179
+181
+191
+193
+197
+199
+211
+223
+227
+229
+233
+239
+241
+251
+257
+263
+269
+271
+277
+281
+283
+293
+307
+311
+313
+317
+331
+337
+347
+349
+353
+359
+367
+373
+379
+383
+389
+397
+401
+409
+419
+421
+431
+433
+439
+443
+449
+457
+461
+463
+467
+479
+487
+491
+499
+503
+509
+521
+523
+541
+547
+557
+563
+569
+571
+577
+587
+593
+599
+601
+607
+613
+617
+619
+631
+641
+643
+647
+653
+659
+661
+673
+677
+683
+691
+701
+709
+719
+727
+733
+739
+743
+751
+757
+761
+769
+773
+787
+797
+809
+811
+821
+823
+827
+829
+839
+853
+857
+859
+863
+877
+881
+883
+887
+907
+911
+919
+929
+937
+941
+947
+953
+967
+971
+977
+983
+991
+997
+1009
+
+QEMU: Terminated via GDBstub
