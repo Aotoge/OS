@@ -138,6 +138,8 @@ spawn(const char *prog, const char **argv)
 
 	if ((r = sys_env_set_status(child, ENV_RUNNABLE)) < 0)
 		panic("sys_env_set_status: %e", r);
+
+	cprintf("spawn return.\n");
 	return child;
 
 error:

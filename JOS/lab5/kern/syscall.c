@@ -538,6 +538,9 @@ syscall(uint32_t syscallno, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, 
 
 		case SYS_ipc_recv:
 			return sys_ipc_recv((void*)a1);
+
+		case SYS_env_set_trapframe:
+			return sys_env_set_trapframe(a1, (struct Trapframe*)a2);
 	}
 	return 0;
 }
